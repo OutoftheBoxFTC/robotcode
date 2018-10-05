@@ -22,14 +22,12 @@ public abstract class AutonamousProcedure extends LinearOpMode {
         robot.init();
         robot.initServos();
         threadManager = Executors.newCachedThreadPool();
-
+        vuforia = new CameraSystem(robot);
         try {
             //init providers
             vuforia.init();
             while (!isStarted()){
                 //send sensor calibration updates
-
-                telemetry.update();
                 idle();
             }
             //reorient

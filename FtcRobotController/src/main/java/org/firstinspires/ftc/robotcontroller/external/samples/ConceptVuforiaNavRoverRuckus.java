@@ -92,7 +92,6 @@ import java.util.List;
  */
 
 @TeleOp(name="Concept: Vuforia Rover Nav", group ="Concept")
-@Disabled
 public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
 
     /*
@@ -107,7 +106,7 @@ public class ConceptVuforiaNavRoverRuckus extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY = " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+    private static final String VUFORIA_KEY = "AUmZqRb/////AAABmVovv5V7wU+Yq0AT/j0llpg7JLpGJ/i/kVtxTuIjI43ZnFjmxAZJGY+UBD/e8pYFsPKm2hMyh1aZeCIgE7qZ30oUyVfzlF1PlXHTkeZ7uirb9SEC6xWtxGYzGy5uIbFQtCxF7kNZ9WroVI4CSLf6mlJvYe+hXdJxf3MUnYLzyU1hRuZjK5JRSxc+wvCviSnfwzsCRU+qgZ1kyUbnaxqskAiFSjyOLdvc03IGEgkFpz903ZZNSmTod/OHyPlhq1qVzcU7IJgrSheYGnoJYhiLELwIblrlxvrEq9fB3My/xcGMBjmfCJiAakb9NMSWEPhvbxMBkt3vT8zXMsIEf1XHO1G8Yddy9cQfJmVeS+V/2sbV";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here

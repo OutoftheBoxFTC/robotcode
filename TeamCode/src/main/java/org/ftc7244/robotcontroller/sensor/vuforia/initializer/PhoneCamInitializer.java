@@ -10,7 +10,8 @@ public class PhoneCamInitializer extends CameraInitializer {
     }
 
     @Override
-    public void init(VuforiaLocalizer.Parameters parameters) {
+    public boolean init(VuforiaLocalizer.Parameters parameters) {
         parameters.cameraDirection = direction;
+        return true;
     }
 }

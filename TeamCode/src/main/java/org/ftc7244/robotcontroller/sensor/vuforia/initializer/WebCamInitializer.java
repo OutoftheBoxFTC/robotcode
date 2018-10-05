@@ -11,8 +11,10 @@ public class WebCamInitializer extends CameraInitializer {
     }
 
     @Override
-    public void init(VuforiaLocalizer.Parameters parameters) {
+    public boolean init(VuforiaLocalizer.Parameters parameters) {
+        if(webcam == null)
+            return false;
         parameters.cameraName = webcam;
-
+        return true;
     }
 }
