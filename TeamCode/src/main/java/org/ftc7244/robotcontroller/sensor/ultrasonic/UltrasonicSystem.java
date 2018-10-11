@@ -1,12 +1,8 @@
 package org.ftc7244.robotcontroller.sensor.ultrasonic;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-public class UltrasonicError {
+public class UltrasonicSystem {
     SickUltrasonic leftFront, leftBack, rightFront, rightBack;
-    UltrasonicSide side;
-    public UltrasonicError(SickUltrasonic frontLeftSensor, SickUltrasonic backLeftSensor, SickUltrasonic frontRightSensor, SickUltrasonic backRightSensor){
-        this.side  = side;
+    public UltrasonicSystem(SickUltrasonic frontLeftSensor, SickUltrasonic backLeftSensor, SickUltrasonic frontRightSensor, SickUltrasonic backRightSensor){
         leftFront = frontLeftSensor;
         leftBack = backLeftSensor;
         rightFront = frontRightSensor;
@@ -28,6 +24,7 @@ public class UltrasonicError {
             return -1;
         }
     }
+
     public enum UltrasonicSide{
         LEFT,
         RIGHT
