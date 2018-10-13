@@ -1,17 +1,17 @@
 package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
-    private DistanceSensor distanceSensor;
     private WebcamName w1, w2;
+    private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
 
     public Robot(OpMode opMode) {
-        super(opMode, 0);
+        super(opMode, 1);
         //TODO determine counts per inch
     }
 
@@ -19,9 +19,13 @@ public class Robot extends Hardware {
     public void init() {
         HardwareMap map = opMode.hardwareMap;
 
-        distanceSensor = getOrNull(map, DistanceSensor.class, "distanceSensor");
         w1 = getOrNull(map, WebcamName.class, "w1");
         w2 = getOrNull(map, WebcamName.class, "w2");
+        leadingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingLeftUS"));
+        leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
+        trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
+        trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
+
     }
 
     @Override
@@ -61,15 +65,27 @@ public class Robot extends Hardware {
 
     }
 
-    public DistanceSensor getDistanceSensor() {
-        return distanceSensor;
-    }
-
     public WebcamName getW1() {
         return w1;
     }
 
     public WebcamName getW2() {
         return w2;
+    }
+
+    public SickUltrasonic getLeadingLeftUS() {
+        return leadingLeftUS;
+    }
+
+    public SickUltrasonic getTrailingLeftUS() {
+        return trailingLeftUS;
+    }
+
+    public SickUltrasonic getLeadingRightUS() {
+        return leadingRightUS;
+    }
+
+    public SickUltrasonic getTrailingRightUS() {
+        return trailingRightUS;
     }
 }
