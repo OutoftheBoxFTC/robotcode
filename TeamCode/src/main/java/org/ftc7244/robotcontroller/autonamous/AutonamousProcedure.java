@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 import org.ftc7244.robotcontroller.sensor.vuforia.CameraSystem;
 
 import java.util.concurrent.ExecutorService;
@@ -14,6 +15,7 @@ public abstract class AutonamousProcedure extends LinearOpMode {
 
     protected Robot robot;
     protected CameraSystem vuforia;
+    protected UltrasonicSystem ultrasonic;
     private ExecutorService threadManager;
 
     @Override
@@ -23,6 +25,7 @@ public abstract class AutonamousProcedure extends LinearOpMode {
         robot.initServos();
         threadManager = Executors.newCachedThreadPool();
         vuforia = new CameraSystem(robot);
+        ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         try {
             //init providers
             vuforia.init();

@@ -1,32 +1,32 @@
 package org.ftc7244.robotcontroller.sensor.ultrasonic;
 
 public class UltrasonicSystem {
-    SickUltrasonic leftFront, leftBack, rightFront, rightBack;
-    public UltrasonicSystem(SickUltrasonic frontLeftSensor, SickUltrasonic backLeftSensor, SickUltrasonic frontRightSensor, SickUltrasonic backRightSensor){
-        leftFront = frontLeftSensor;
-        leftBack = backLeftSensor;
-        rightFront = frontRightSensor;
-        rightBack = backRightSensor;
+
+    private static final double US_DISTANCE_LEFT = 1, US_DISTANCE_RIGHT = 1;
+
+    private UltrasonicSide[] sides;
+    public UltrasonicSystem(SickUltrasonic leftLeading, SickUltrasonic leftTrailing, SickUltrasonic rightLeading, SickUltrasonic rightTrailing){
+        sides = new UltrasonicSide[]{
+                new UltrasonicSide(rightLeading, rightTrailing, US_DISTANCE_RIGHT),
+                new UltrasonicSide(leftTrailing, leftLeading, US_DISTANCE_LEFT)
+        };
 
     }
     public void start(SickUltrasonic.Mode mode){
-        leftFront.setMode(mode);
-        leftBack.setMode(mode);
-        rightBack.setMode(mode);
-        rightFront.setMode(mode);
-    }
-    public double getError(UltrasonicSide side){
-        if(side == UltrasonicSide.LEFT){
-            return leftFront.getUltrasonicLevel() - leftBack.getUltrasonicLevel();
-        }else if(side == UltrasonicSide.RIGHT){
-            return rightFront.getUltrasonicLevel() - rightBack.getUltrasonicLevel();
-        }else{
-            return -1;
+        for(UltrasonicSide side : sides){
+            side.setMode(mode);
         }
     }
+    public double getError(Side side){
+        return side == null ? 0 : sides[side.index].getError();
+    }
 
-    public enum UltrasonicSide{
-        LEFT,
-        RIGHT
+    public enum Side {
+        LEFT(1),
+        RIGHT(0);
+        private int index;
+        Side(int index){
+            this.index = index;
+        }
     }
 }
