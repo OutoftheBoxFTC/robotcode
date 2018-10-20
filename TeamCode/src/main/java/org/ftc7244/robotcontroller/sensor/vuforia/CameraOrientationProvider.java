@@ -1,7 +1,6 @@
 package org.ftc7244.robotcontroller.sensor.vuforia;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -54,6 +53,8 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
             targets.get(1).setName("red_footprint");
             targets.get(2).setName("front_craters");
             targets.get(3).setName("back_space");
+            camera.linkTargets(targets);
+            robot.getOpMode().telemetry.addLine("Initialized Phone");
             return true;
         }
         return false;
@@ -78,6 +79,19 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
 
     public Orientation getRotation(){
         return orientation==null?new Orientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, Float.NaN, Float.NaN, Float.NaN, 0):orientation;
+    }
+
+    public double getX(){
+        return translation==null?Double.POSITIVE_INFINITY:translation.get(0);
+    }
+
+    public double getY(){
+        return translation==null?Double.POSITIVE_INFINITY:translation.get(0);
+    }
+
+    public double getR(){
+        return 0;
+        //TODO FINISH ME
     }
 
     public VectorF getTranslation(){
