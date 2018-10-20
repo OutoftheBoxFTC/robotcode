@@ -8,7 +8,7 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
     private WebcamName w1, w2;
-    private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
+    private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS, test;
 
     public Robot(OpMode opMode) {
         super(opMode, 1);
@@ -25,7 +25,7 @@ public class Robot extends Hardware {
         leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
-
+        test = new SickUltrasonic(getOrNull(map.analogInput, "testUltrasonic"));
     }
 
     @Override
@@ -87,5 +87,9 @@ public class Robot extends Hardware {
 
     public SickUltrasonic getTrailingRightUS() {
         return trailingRightUS;
+    }
+
+    public SickUltrasonic getTestUS() {
+        return test;
     }
 }
