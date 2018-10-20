@@ -35,8 +35,10 @@ public abstract class AutonamousProcedure extends LinearOpMode {
             run();
         }
         catch (Throwable t){
-            t.printStackTrace();
             RobotLog.e(t.getMessage());
+            telemetry.addData("ERROR", t.getMessage());
+            telemetry.update();
+            t.printStackTrace();
         }
         finally {
             //stop sensor providers

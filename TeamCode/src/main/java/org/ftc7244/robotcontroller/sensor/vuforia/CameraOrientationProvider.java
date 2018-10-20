@@ -61,6 +61,7 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
 
     @Override
     public void run() {
+        targets.activate();
         while (!Thread.currentThread().isInterrupted()){
             for (int i = 0; i < targets.size(); i++) {
                 VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener)targets.get(i).getListener();
@@ -72,6 +73,7 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
                 }
             }
         }
+        targets.deactivate();
     }
 
     public Orientation getRotation(){
