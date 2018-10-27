@@ -2,19 +2,22 @@ package org.ftc7244.robotcontroller.hardware;
 
 import android.support.annotation.NonNull;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.ftc7244.robotcontroller.sensor.Initializable;
+
 import java.util.Map;
 
 public abstract class Hardware {
-    protected OpMode opMode;
+    protected LinearOpMode opMode;
     protected double countsPerInch;
 
-    public Hardware(OpMode opMode, double countsPerInch) {
+    public Hardware(LinearOpMode opMode, double countsPerInch) {
         this.opMode = opMode;
         this.countsPerInch = countsPerInch;
     }
@@ -51,7 +54,7 @@ public abstract class Hardware {
         return null;
     }
 
-    protected <T extends HardwareDevice> T getOrNull(@NonNull HardwareMap map, Class<T> type, String name) {
+    protected <T> T getOrNull(@NonNull HardwareMap map, Class<T> type, String name) {
         try {
             T device = map.get(type, name);
             opMode.telemetry.addData("Device", device);
@@ -67,7 +70,7 @@ public abstract class Hardware {
 
 
     /**
-     * Waits for all the motors to have zero position and if it is not zero tell it to reset
+     * Waits for all the motors to have offsetReadingTo position and if it is not offsetReadingTo tell it to reset
      *
      * @param motors all the motors to reset
      */
@@ -135,7 +138,7 @@ public abstract class Hardware {
      */
     public abstract int getDriveEncoderAverage();
 
-    public OpMode getOpMode() {
+    public LinearOpMode getOpMode() {
         return opMode;
     }
 

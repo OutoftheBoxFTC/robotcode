@@ -11,8 +11,11 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
  */
 public class SickUltrasonic implements UltrasonicSensor {
 
+    //TODO find max reading for ultrasonic sensor
+
     private AnalogInput input;
     private Mode mode;
+
 
     /**
      * Automatically use ${@link Mode#INCHES} since this is AMERICA!
@@ -37,13 +40,14 @@ public class SickUltrasonic implements UltrasonicSensor {
     /**
      * Based off the {@link Mode} the distance will be returned from the sensor in the units specified.
      * However, if the sensor is out of its range: 9.84252 inches or 25 centimeters the code will return
-     * the maximum value possible.
+     * that the value is undefined.
      *
      * @return distance in units of {@link Mode}
      */
     @Override
     public double getUltrasonicLevel() {
-        return mode.multiplyer * input.getVoltage();
+        double reading = mode.multiplyer * input.getVoltage();
+        return reading >= mode.getCap()?Double.POSITIVE_INFINITY:reading;
     }
 
     @NonNull

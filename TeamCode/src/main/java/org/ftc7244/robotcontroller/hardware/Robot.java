@@ -1,5 +1,7 @@
 package org.ftc7244.robotcontroller.hardware;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,8 +11,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 public class Robot extends Hardware {
     private DistanceSensor distanceSensor;
     private WebcamName w1, w2;
+    private BNO055IMU imu;
 
-    public Robot(OpMode opMode) {
+    public Robot(LinearOpMode opMode) {
         super(opMode, 0);
         //TODO determine counts per inch
     }
@@ -22,6 +25,7 @@ public class Robot extends Hardware {
         distanceSensor = getOrNull(map, DistanceSensor.class, "distanceSensor");
         w1 = getOrNull(map, WebcamName.class, "w1");
         w2 = getOrNull(map, WebcamName.class, "w2");
+        imu = getOrNull(map, BNO055IMU.class, "imu");
     }
 
     @Override
@@ -71,5 +75,9 @@ public class Robot extends Hardware {
 
     public WebcamName getW2() {
         return w2;
+    }
+
+    public BNO055IMU getIMU() {
+        return imu;
     }
 }

@@ -15,6 +15,7 @@ public class UltrasonicSystem {
         rightBack.setMode(mode);
         rightFront.setMode(mode);
     }
+    //TODO tan inv this. This is going to be interpreted as the literal degree offset from the wall. We only justified an approximation in proportionality, not value
     public double getError(UltrasonicSide side){
         if(side == UltrasonicSide.LEFT){
             return leftFront.getUltrasonicLevel() - leftBack.getUltrasonicLevel();
@@ -26,7 +27,16 @@ public class UltrasonicSystem {
     }
 
     public enum UltrasonicSide{
-        LEFT,
-        RIGHT
+        LEFT(0),
+        RIGHT(Math.PI);
+        private double rotation;
+
+        UltrasonicSide(double rotation){
+            this.rotation = rotation;
+        }
+
+        public double getRotation() {
+            return rotation;
+        }
     }
 }
