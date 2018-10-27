@@ -17,6 +17,7 @@ import org.ftc7244.robotcontroller.sensor.RunnableSensorProvider;
 import org.ftc7244.robotcontroller.sensor.VariablyInitializable;
 import org.ftc7244.robotcontroller.sensor.vuforia.initializer.CameraInitializer;
 
+@Deprecated
 public class CameraOrientationProvider extends RunnableSensorProvider implements VariablyInitializable {
 
     private boolean showCameraFeed;

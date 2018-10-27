@@ -9,7 +9,7 @@ import org.ftc7244.robotcontroller.sensor.vuforia.initializer.PhoneCamInitialize
 import org.ftc7244.robotcontroller.sensor.vuforia.initializer.WebCamInitializer;
 
 import java.util.concurrent.ExecutorService;
-
+@Deprecated
 public class CameraSystem implements Initializable {
     private CameraOrientationProvider phone, w1, w2;
     private Robot robot;
