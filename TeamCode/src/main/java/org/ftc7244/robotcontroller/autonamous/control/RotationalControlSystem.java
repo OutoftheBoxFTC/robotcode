@@ -1,6 +1,6 @@
 package org.ftc7244.robotcontroller.autonamous.control;
 
-public abstract class ControlSystem {
+public abstract class RotationalControlSystem {
 
     /**
      *
@@ -8,5 +8,7 @@ public abstract class ControlSystem {
      * @return the correction power offset
      */
     public abstract double correction(double error);
+
+    public abstract void reset();
 
 }
