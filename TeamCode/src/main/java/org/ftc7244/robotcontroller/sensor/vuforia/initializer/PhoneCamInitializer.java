@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+
+@Deprecated
 public class PhoneCamInitializer extends CameraInitializer {
     private VuforiaLocalizer.CameraDirection direction;
 

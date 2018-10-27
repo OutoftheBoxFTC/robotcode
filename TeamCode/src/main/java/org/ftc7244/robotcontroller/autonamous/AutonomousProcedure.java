@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AutonamousProcedure extends LinearOpMode {
+public abstract class AutonomousProcedure extends LinearOpMode {
 
     protected Robot robot;
     protected CameraSystem vuforia;
