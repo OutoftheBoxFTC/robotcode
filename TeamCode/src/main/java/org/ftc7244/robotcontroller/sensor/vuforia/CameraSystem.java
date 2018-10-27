@@ -12,16 +12,14 @@ import java.util.concurrent.ExecutorService;
 @Deprecated
 public class CameraSystem implements Initializable {
     private CameraOrientationProvider phone, w1, w2;
-    private Robot robot;
     public CameraSystem(Robot robot){
         phone = new CameraOrientationProvider(true, new PhoneCamInitializer(VuforiaLocalizer.CameraDirection.BACK), robot);
         w1 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW1()), robot);
         w2 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW2()), robot);
-        this.robot = robot;
     }
 
     @Override
-    public void init() {
+    public void init(Robot robot) {
         if(!phone.init()){
             phone = null;
             robot.getOpMode().telemetry.addLine("Unable to initialize phone camera");

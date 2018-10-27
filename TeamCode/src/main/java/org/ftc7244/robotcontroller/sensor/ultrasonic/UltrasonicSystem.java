@@ -1,32 +1,42 @@
 package org.ftc7244.robotcontroller.sensor.ultrasonic;
 
 public class UltrasonicSystem {
-
-    private static final double US_DISTANCE_LEFT = 12, US_DISTANCE_RIGHT = 1;
-
-    private UltrasonicSide[] sides;
-    public UltrasonicSystem(SickUltrasonic leftLeading, SickUltrasonic leftTrailing, SickUltrasonic rightLeading, SickUltrasonic rightTrailing){
-        sides = new UltrasonicSide[]{
-                new UltrasonicSide(rightLeading, rightTrailing, US_DISTANCE_RIGHT),
-                new UltrasonicSide(leftTrailing, leftLeading, US_DISTANCE_LEFT)
-        };
+    SickUltrasonic leftFront, leftBack, rightFront, rightBack;
+    public UltrasonicSystem(SickUltrasonic frontLeftSensor, SickUltrasonic backLeftSensor, SickUltrasonic frontRightSensor, SickUltrasonic backRightSensor){
+        leftFront = frontLeftSensor;
+        leftBack = backLeftSensor;
+        rightFront = frontRightSensor;
+        rightBack = backRightSensor;
 
     }
     public void start(SickUltrasonic.Mode mode){
-        for(UltrasonicSide side : sides){
-            side.setMode(mode);
+        leftFront.setMode(mode);
+        leftBack.setMode(mode);
+        rightBack.setMode(mode);
+        rightFront.setMode(mode);
+    }
+    //TODO tan inv this. This is going to be interpreted as the literal degree offset from the wall. We only justified an approximation in proportionality, not value
+    public double getError(UltrasonicSide side){
+        if(side == UltrasonicSide.LEFT){
+            return leftFront.getUltrasonicLevel() - leftBack.getUltrasonicLevel();
+        }else if(side == UltrasonicSide.RIGHT){
+            return rightFront.getUltrasonicLevel() - rightBack.getUltrasonicLevel();
+        }else{
+            return -1;
         }
     }
-    public double getError(Side side){
-        return side == null ? 0 : sides[side.index].getError();
-    }
 
-    public enum Side {
-        LEFT(1),
-        RIGHT(0);
-        private int index;
-        Side(int index){
-            this.index = index;
+    public enum UltrasonicSide{
+        LEFT(0),
+        RIGHT(Math.PI);
+        private double rotation;
+
+        UltrasonicSide(double rotation){
+            this.rotation = rotation;
+        }
+
+        public double getRotation() {
+            return rotation;
         }
     }
 }

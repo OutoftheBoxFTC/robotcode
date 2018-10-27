@@ -28,7 +28,8 @@ public abstract class AutonomousProcedure extends LinearOpMode {
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         try {
             //init providers
-            vuforia.init();
+            vuforia.init(robot);
+
             while (!isStarted()){
                 //send sensor calibration updates
                 idle();
