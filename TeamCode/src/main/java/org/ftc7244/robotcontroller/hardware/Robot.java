@@ -1,6 +1,6 @@
 package org.ftc7244.robotcontroller.hardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,7 +10,7 @@ public class Robot extends Hardware {
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS, test;
 
-    public Robot(OpMode opMode) {
+    public Robot(LinearOpMode opMode) {
         super(opMode, 1);
         //TODO determine counts per inch
     }

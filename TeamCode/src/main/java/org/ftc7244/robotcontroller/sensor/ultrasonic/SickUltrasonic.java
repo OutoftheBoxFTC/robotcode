@@ -43,7 +43,7 @@ public class SickUltrasonic implements UltrasonicSensor {
      */
     @Override
     public double getUltrasonicLevel() {
-        return mode.multiplyer * input.getVoltage();
+        return mode.multiplier * input.getVoltage();
     }
 
     @NonNull
@@ -106,15 +106,15 @@ public class SickUltrasonic implements UltrasonicSensor {
         INCHES(9.84252),
         CENTIMETERS(25);
 
-        private final double multiplyer, cap;
+        private final double multiplier, cap;
 
         Mode(double distance) {
             this.cap = distance;
-            this.multiplyer = 2 * (distance / 10);
+            this.multiplier = 2 * (distance / 10);
         }
 
-        public double getMultiplyer() {
-            return multiplyer;
+        public double getMultiplier() {
+            return multiplier;
         }
 
         public double getCap() {

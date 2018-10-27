@@ -2,7 +2,7 @@ package org.ftc7244.robotcontroller.sensor.ultrasonic;
 
 public class UltrasonicSystem {
 
-    private static final double US_DISTANCE_LEFT = 1, US_DISTANCE_RIGHT = 1;
+    private static final double US_DISTANCE_LEFT = 12, US_DISTANCE_RIGHT = 1;
 
     private UltrasonicSide[] sides;
     public UltrasonicSystem(SickUltrasonic leftLeading, SickUltrasonic leftTrailing, SickUltrasonic rightLeading, SickUltrasonic rightTrailing){

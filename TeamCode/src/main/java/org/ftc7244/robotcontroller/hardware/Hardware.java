@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.hardware;
 
 import android.support.annotation.NonNull;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
@@ -11,10 +12,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 import java.util.Map;
 
 public abstract class Hardware {
-    protected OpMode opMode;
+    protected LinearOpMode opMode;
     protected double countsPerInch;
 
-    public Hardware(OpMode opMode, double countsPerInch) {
+    public Hardware(LinearOpMode opMode, double countsPerInch) {
         this.opMode = opMode;
         this.countsPerInch = countsPerInch;
     }
@@ -135,7 +136,7 @@ public abstract class Hardware {
      */
     public abstract int getDriveEncoderAverage();
 
-    public OpMode getOpMode() {
+    public LinearOpMode getOpMode() {
         return opMode;
     }
 
