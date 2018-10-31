@@ -1,6 +1,8 @@
 package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -9,7 +11,7 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 public class Robot extends Hardware {
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS, test;
-
+    private DcMotor leftDrive, rightDrive;
     public Robot(LinearOpMode opMode) {
         super(opMode, 1);
         //TODO determine counts per inch
@@ -26,6 +28,9 @@ public class Robot extends Hardware {
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
         test = new SickUltrasonic(getOrNull(map.analogInput, "testUltrasonic"));
+        leftDrive = getOrNull(map, DcMotor.class, "leftDrive");
+        rightDrive = getOrNull(map, DcMotor.class, "rightDrive");
+        rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
@@ -42,7 +47,8 @@ public class Robot extends Hardware {
 
     @Override
     public void drive(double leftPower, double rightPower) {
-
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
     }
 
     @Override
