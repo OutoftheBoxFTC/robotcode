@@ -12,35 +12,32 @@ import java.util.concurrent.ExecutorService;
 @Deprecated
 public class CameraSystem implements Initializable {
     private CameraOrientationProvider phone, w1, w2;
-    private Robot robot;
     public CameraSystem(Robot robot){
-        //phone = new CameraOrientationProvider(true, new PhoneCamInitializer(VuforiaLocalizer.CameraDirection.BACK), robot);
-        w1 = new CameraOrientationProvider(true
-                , new WebCamInitializer(robot.getW1()), robot);
-        //w2 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW2()), robot);
-        this.robot = robot;
+        phone = new CameraOrientationProvider(true, new PhoneCamInitializer(VuforiaLocalizer.CameraDirection.BACK), robot);
+        w1 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW1()), robot);
+        w2 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW2()), robot);
     }
 
     @Override
-    public void init() {
-        //if(!phone.init()){
-        //    phone = null;
-        //    robot.getOpMode().telemetry.addLine("Unable to initialize phone camera");
-        //}
+    public void init(Robot robot) {
+        if(!phone.init()){
+            phone = null;
+            robot.getOpMode().telemetry.addLine("Unable to initialize phone camera");
+        }
         if(!w1.init()) {
             w1 = null;
             robot.getOpMode().telemetry.addLine("Unable to initialize webcam 1");
         }
-        //if(!w2.init()) {
-        //    w2 = null;
-        //    robot.getOpMode().telemetry.addLine("Unable to initialize webcam 2");
-        //}
+        if(!w2.init()) {
+            w2 = null;
+            robot.getOpMode().telemetry.addLine("Unable to initialize webcam 2");
+        }
     }
 
     public void run(ExecutorService threadManager){
-        //if(phone != null)threadManager.execute(phone);
+        if(phone != null)threadManager.execute(phone);
         if(w1 != null)threadManager.execute(w1);
-        //if(w2 != null)threadManager.execute(w2);
+        if(w2 != null)threadManager.execute(w2);
     }
 
     public Orientation getRotation(InformationProvider provider){

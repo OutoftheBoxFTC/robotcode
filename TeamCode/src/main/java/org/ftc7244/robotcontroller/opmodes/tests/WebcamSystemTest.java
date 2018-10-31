@@ -1,25 +1,24 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.ftc7244.robotcontroller.autonamous.AutonamousProcedure;
-import org.ftc7244.robotcontroller.hardware.Robot;
-import org.ftc7244.robotcontroller.sensor.vuforia.CameraOrientationProvider;
+import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 import org.ftc7244.robotcontroller.sensor.vuforia.CameraSystem;
-import org.ftc7244.robotcontroller.sensor.vuforia.initializer.PhoneCamInitializer;
-import org.ftc7244.robotcontroller.sensor.vuforia.initializer.WebCamInitializer;
 
 @TeleOp(name = "Vuforia Camera System Test")
-public class WebcamSystemTest extends AutonamousProcedure {
-    Robot robot = new Robot(this);
+@Disabled
+public class WebcamSystemTest extends AutonomousProcedure {
 
     @Override
     protected void run() {
-        while (opModeIsActive()) {
-            telemetry.addData("Test", vuforia.getTranslation(CameraSystem.InformationProvider.W1).getData()[0]);
+        while (opModeIsActive()){
+            telemetry.addData("X", vuforia.getTranslation(CameraSystem.InformationProvider.PHONE).get(0));
+            telemetry.addData("Y", vuforia.getTranslation(CameraSystem.InformationProvider.PHONE).get(1));
+            telemetry.addData("Z", vuforia.getTranslation(CameraSystem.InformationProvider.PHONE).get(2));
+            telemetry.addData("R0", vuforia.getRotation(CameraSystem.InformationProvider.PHONE).firstAngle);
+            telemetry.addData("R1", vuforia.getRotation(CameraSystem.InformationProvider.PHONE).secondAngle);
+            telemetry.addData("R2", vuforia.getRotation(CameraSystem.InformationProvider.PHONE).thirdAngle);
             telemetry.update();
         }
     }
