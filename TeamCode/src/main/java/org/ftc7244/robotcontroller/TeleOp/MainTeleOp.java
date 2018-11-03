@@ -1,10 +1,11 @@
 package org.ftc7244.robotcontroller.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
-
-public class TeleOp extends LinearOpMode {
+@TeleOp(name="TeleOp")
+public class MainTeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
     @Override
     public void runOpMode() throws InterruptedException {
