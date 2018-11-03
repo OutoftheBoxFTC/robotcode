@@ -70,9 +70,9 @@ public abstract class Hardware {
 
 
     /**
-     * Waits for all the motors to have offsetReadingTo position and if it is not offsetReadingTo tell it to reset
+     * Waits for all the motors to have offsetReadingTo position and if it is not offsetReadingTo tell it to orient
      *
-     * @param motors all the motors to reset
+     * @param motors all the motors to orient
      */
     public static void resetMotors(@NonNull DcMotor... motors) {
         boolean notReset = true;
@@ -102,29 +102,29 @@ public abstract class Hardware {
 
     /**
      * Drives robot at a given power for a given amount of milliseconds
-     * @param leftPower Power to drive left side of robot
-     * @param rightPower Power to drive right side of robot
-     * @param timeMillis Time to drive robot for
+     * @param leftPower Power to driveController left side of robot
+     * @param rightPower Power to driveController right side of robot
+     * @param timeMillis Time to driveController robot for
      * @throws InterruptedException of code fails to terminate on stop requested
      */
     public abstract void drive(double leftPower, double rightPower, long timeMillis) throws InterruptedException;
 
     /**
      * Drives robot at a certain power for an indefinite amount of time
-     * @param leftPower Power to drive left side of robot
-     * @param rightPower Power to drive right side of robot
+     * @param leftPower Power to driveController left side of robot
+     * @param rightPower Power to driveController right side of robot
      */
     public abstract void drive(double leftPower, double rightPower);
 
     /**
      * Drives robot at a given power to a given distance using encoders
-     * @param power Power to drive robot at
-     * @param inches Inches to drive robot
+     * @param power Power to driveController robot at
+     * @param inches Inches to driveController robot
      */
     public abstract void driveToInch(double power, double inches);
 
     /**
-     * Resets the direction and encoder offsets of all the drive motors
+     * Resets the direction and encoder offsets of all the driveController motors
      */
     public abstract void resetDriveMotors();
 
@@ -134,7 +134,7 @@ public abstract class Hardware {
 
     /**
      *
-     * @return returns the average value of all drive motor encoders
+     * @return returns the average value of all driveController motor encoders
      */
     public abstract int getDriveEncoderAverage();
 

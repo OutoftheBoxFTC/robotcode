@@ -3,9 +3,12 @@ package org.ftc7244.robotcontroller.autonamous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.ftc7244.robotcontroller.autonamous.drive.DriveController;
+import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
 import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
+import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
-import org.ftc7244.robotcontroller.sensor.vuforia.CameraSystem;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,28 +17,40 @@ import java.util.concurrent.TimeUnit;
 public abstract class AutonomousProcedure extends LinearOpMode {
 
     protected Robot robot;
-    protected CameraSystem vuforia;
     protected UltrasonicSystem ultrasonic;
+    protected GyroscopeProvider gyroscope;
     private ExecutorService threadManager;
+
+    protected DriveController driveController;
+    private Orientation orientation;
+
+    private long lastTime;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        lastTime = 0;
+
         robot = new Robot(this);
         robot.init();
         robot.initServos();
         threadManager = Executors.newCachedThreadPool();
-        vuforia = new CameraSystem(robot);
+
+        orientation = new Orientation(0, 0, 0);
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
+        gyroscope = new RevIMUProvider();
+
+        driveController = new DriveController(orientation, ultrasonic, gyroscope, robot);
+
         try {
             //init providers
-            vuforia.init(robot);
-
+            gyroscope.init(robot);
             while (!isStarted()){
                 //send sensor calibration updates
                 idle();
             }
             //reorient
-            vuforia.run(threadManager);
+            lastTime = System.nanoTime();
+            driveController.orient(0, 0, 0);
             run();
         }
         catch (Throwable t){
@@ -47,6 +62,10 @@ public abstract class AutonomousProcedure extends LinearOpMode {
             threadManager.shutdownNow();
             threadManager.awaitTermination(100, TimeUnit.MILLISECONDS);
         }
+    }
+
+    public long getAutonamousDuriation(){
+        return System.nanoTime()-lastTime;
     }
 
     protected abstract void run();
