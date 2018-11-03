@@ -3,7 +3,7 @@ package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 /**
  * "Only a sith deals in absolutes" - Obiwan Kenobi
  *
- * This class will hold information pertaining to the best known absolute orientation of the center of the robot at any given point in time.
+ * This class will hold information pertaining to the best known absolute orientation of the back center of the robot at any given point in time.
  *
  * X: Positive towards red allience side
  * Y: Positive Towards back end of field (From audience perspective)
@@ -14,7 +14,7 @@ package org.ftc7244.robotcontroller.autonamous.drive.orientation;
  * Translation units are in inches, and rotation units are in radians
  *
  * X and Y axes are 0 at field center
- * Rotation axis is 0 when terminal side is parallel with back wall and facing towards red
+ * Rotation is 0 when terminal side is parallel with back wall and facing towards red
  *
  * We are sith
  */

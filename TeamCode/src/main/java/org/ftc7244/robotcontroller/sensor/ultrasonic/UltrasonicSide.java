@@ -11,11 +11,21 @@ public class UltrasonicSide {
     }
 
     public double getError(){
-        return (us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/usDistance;
+        if(us1.getUltrasonicLevel()==us1.getMode().getCap()||us2.getUltrasonicLevel()==us2.getMode().getCap()){
+            return Double.POSITIVE_INFINITY;
+        }
+        return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/usDistance);
     }
 
     public void setMode(SickUltrasonic.Mode mode) {
         us1.setMode(mode);
         us2.setMode(mode);
+    }
+
+    public double getAverage() {
+        if(us1.getUltrasonicLevel()==us1.getMode().getCap()||us2.getUltrasonicLevel()==us2.getMode().getCap()){
+            return Double.POSITIVE_INFINITY;
+        }
+        return (us1.getUltrasonicLevel()+us2.getUltrasonicLevel())/2;
     }
 }

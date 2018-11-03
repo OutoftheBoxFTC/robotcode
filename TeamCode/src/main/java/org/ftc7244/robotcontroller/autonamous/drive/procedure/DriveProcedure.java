@@ -48,6 +48,15 @@ public class DriveProcedure {
         this.controlSystem = controlSystem;
     }
 
+    public DriveProcedure(double r, double d, double speed, DriveTerminator rotationalTerminator, DriveTerminator translationalTerminator, ControlSystem controlSystem, Orientation orientation){
+        this.speed = speed;
+        this.distanceTarget = d;
+        this.rotationTarget = r+orientation.getR();
+        this.rotationalTerminator = rotationalTerminator;
+        this.translationalTerminator = translationalTerminator;
+        this.controlSystem = controlSystem;
+    }
+
     public double getRotationTarget() {
         return rotationTarget;
     }
@@ -72,8 +81,9 @@ public class DriveProcedure {
         return controlSystem;
     }
 
-    public class DriveProcedureBuilder{
+    public static class DriveProcedureBuilder{
         private double x , y, speed;
+
         private Orientation orientation;
         private DriveTerminator rotationalTerminator, translationalTerminator;
         private ControlSystem controlSystem;
@@ -89,12 +99,18 @@ public class DriveProcedure {
             controlSystem = new PIDControl(0, 0, 0, true);
         }
 
-        public void setControlSystem(ControlSystem controlSystem) {
+        public DriveProcedureBuilder setControlSystem(ControlSystem controlSystem) {
             this.controlSystem = controlSystem;
+            return this;
         }
 
         public DriveProcedure getDriveProcedure() {
             return new DriveProcedure(x, y, speed, orientation, rotationalTerminator, translationalTerminator, controlSystem);
+        }
+
+        public DriveProcedureBuilder setSpeed(double speed) {
+            this.speed = speed;
+            return this;
         }
     }
 }
