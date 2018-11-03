@@ -1,6 +1,6 @@
 package org.ftc7244.robotcontroller.autonamous.control;
 
-public abstract class RotationalControlSystem {
+public abstract class ControlSystem {
 
     /**
      *

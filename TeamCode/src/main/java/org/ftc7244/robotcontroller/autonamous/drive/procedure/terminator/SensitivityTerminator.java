@@ -1,34 +1,30 @@
-package org.ftc7244.robotcontroller.autonamous.drive.terminator;
+package org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator;
 
-import com.qualcomm.robotcore.util.RobotLog;
-
-import org.ftc7244.robotcontroller.autonamous.drive.DriveProcedure;
+import org.ftc7244.robotcontroller.autonamous.drive.DriveController;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 
 /**
  * Once the control loop has reached a certain level of accuracy the sensitivity terminator will trigger
  * after a time period is passed to prevent early termination of the object passes the target value
  * and over compensated
  */
-public class SensitivityTerminator extends DriveProcedureTerminator {
+public class SensitivityTerminator extends DriveTerminator {
 
-    private long timestamp, successDuration;
-    private double maximumError, target, oldTime;
-    private DriveProcedure context;
+    private final long successDuration;
+    private final double maximumError;
+
+    private long timestamp;
 
     /**
      * Requires the control system context to know if the values are in the target value and if they are within
      * a maximum amount of error kill the control loop.
      *
-     * @param context         the Drive Procedure being used in the ${@link org.ftc7244.robotcontroller.autonamous.control.DriveController}
-     * @param target          the target value of the rotation
      * @param maximumError    the absolute value of error the control system can have
      * @param successDuration how long after the target value must the target value retain before terminating
      */
-    public SensitivityTerminator(DriveProcedure context, double target, double maximumError, long successDuration) {
-        this.target = target;
+    public SensitivityTerminator(double maximumError, long successDuration) {
         this.maximumError = maximumError;
         this.successDuration = successDuration;
-        this.context = context;
         this.timestamp = -1;
     }
 
@@ -36,7 +32,6 @@ public class SensitivityTerminator extends DriveProcedureTerminator {
     public boolean shouldTerminate(double error) {
         if (timestamp == -1 && Math.abs(error) < maximumError) {
             timestamp = System.currentTimeMillis();
-            oldTime = System.currentTimeMillis();
         }
 
         else if (Math.abs(error) > maximumError) timestamp = -1;

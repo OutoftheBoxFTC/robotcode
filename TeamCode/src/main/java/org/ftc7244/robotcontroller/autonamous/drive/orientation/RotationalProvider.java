@@ -1,11 +1,11 @@
-package org.ftc7244.robotcontroller.autonamous.control;
+package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 
-import org.ftc7244.robotcontroller.autonamous.drive.DriveProcedure;
-import org.ftc7244.robotcontroller.autonamous.drive.Orientation;
+import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
-public class RotationProvider {
+public class RotationalProvider {
     private GyroscopeProvider gyroscope;
     private UltrasonicSystem ultrasonic;
     private DriveProcedure currentDriveProcedure;
@@ -20,7 +20,7 @@ public class RotationProvider {
     private Wall wall;
 
 
-    public RotationProvider(UltrasonicSystem ultrasonic, GyroscopeProvider gyroscope, Orientation orientation){
+    public RotationalProvider(UltrasonicSystem ultrasonic, GyroscopeProvider gyroscope, Orientation orientation){
         this.ultrasonic = ultrasonic;
         this.gyroscope = gyroscope;
         this.orientation = orientation;
@@ -30,19 +30,27 @@ public class RotationProvider {
 
     /**
      * It is assumed that this method is called whenever rotation is subject to change (I.E. During Drive/Rotation Procedures)
-     * @return the error between the current rotation and the target rotation in the desired direction of travel.
+     * @return the error between the current rotation and the target rotation in the shortest direction of rotation.
      */
     public double getRotationalError(){
         double rotationTarget = currentDriveProcedure.getRotationTarget(),
-                rotation = retrieveAbsoluteRotation(),
-                error = Math.abs(rotationTarget-rotation);
-        return error > Math.PI ? Math.PI*2-error:error;
+                rotation = retrieveAbsoluteRotation();
+        if(rotationTarget > rotation){
+            if(rotationTarget-rotation>Math.PI){
+                return rotation-(rotationTarget-Math.PI*2);
+            }
+            return rotation-rotationTarget;
+        }
+        if(rotation-rotationTarget>Math.PI){
+            return rotationTarget+Math.PI*2-rotation;
+        }
+        return rotation-rotationTarget;
     }
 
     public double retrieveAbsoluteRotation(){
         double ultrasonicValue = retrieveUltrasonicValue();
         if(ultrasonicValue != Double.POSITIVE_INFINITY){
-            gyroscopeOffset = gyroscope.getRotation(GyroscopeProvider.Axis.YAW)-ultrasonicValue;
+            orientGyro(ultrasonicValue);
         }
         double rotation = retrieveGyroscopeReading();
         orientation.setR(rotation);
@@ -77,6 +85,11 @@ public class RotationProvider {
 
     public void setWall(Wall wall) {
         this.wall = wall;
+    }
+
+    public void orientGyro(double r) {
+        r %= Math.PI*2;
+        gyroscopeOffset = gyroscope.getRotation(GyroscopeProvider.Axis.YAW)-r;
     }
 
     public enum Wall{

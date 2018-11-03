@@ -8,6 +8,7 @@ import org.ftc7244.robotcontroller.sensor.vuforia.CameraSystem;
 
 @TeleOp(name = "Vuforia Camera System Test")
 @Disabled
+@Deprecated
 public class WebcamSystemTest extends AutonomousProcedure {
 
     @Override

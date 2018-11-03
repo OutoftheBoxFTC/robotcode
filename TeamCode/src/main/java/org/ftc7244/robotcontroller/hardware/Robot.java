@@ -1,6 +1,9 @@
 package org.ftc7244.robotcontroller.hardware;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -8,7 +11,9 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
     private WebcamName w1, w2;
-    private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS, test;
+    private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
+    private DcMotor leftDrive, rightDrive;
+    private BNO055IMU imu;
 
     public Robot(LinearOpMode opMode) {
         super(opMode, 1);
@@ -25,7 +30,11 @@ public class Robot extends Hardware {
         leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
-        test = new SickUltrasonic(getOrNull(map.analogInput, "testUltrasonic"));
+        imu = getOrNull(map, BNO055IMU.class, "imu");
+
+        leftDrive = getOrNull(map, DcMotor.class, "leftDrive");
+        rightDrive = getOrNull(map, DcMotor.class, "rightDrive");
+        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
@@ -42,7 +51,8 @@ public class Robot extends Hardware {
 
     @Override
     public void drive(double leftPower, double rightPower) {
-
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
     }
 
     @Override
@@ -57,7 +67,7 @@ public class Robot extends Hardware {
 
     @Override
     public int getDriveEncoderAverage() {
-        return 0;
+        return (leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
     }
 
     @Override
@@ -89,7 +99,7 @@ public class Robot extends Hardware {
         return trailingRightUS;
     }
 
-    public SickUltrasonic getTestUS() {
-        return test;
+    public BNO055IMU getIMU() {
+        return imu;
     }
 }
