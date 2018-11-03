@@ -8,7 +8,7 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 public class MainTeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         robot.init();
         robot.initServos();
         waitForStart();
