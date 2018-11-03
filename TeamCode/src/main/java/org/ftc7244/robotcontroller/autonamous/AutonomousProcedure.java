@@ -45,7 +45,7 @@ public abstract class AutonomousProcedure extends LinearOpMode {
             //init providers
             gyroscope.init(robot);
             while (!isStarted()){
-                //send sensor calibration updates
+                //cyclically calibrate
                 idle();
             }
             //reorient
