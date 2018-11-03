@@ -9,16 +9,20 @@ public class TranslationalProvider {
     private DistanceProvider distance;
     private double initialX, initialY;
 
-    public TranslationalProvider(Orientation orientation){
+    public TranslationalProvider(Orientation orientation, DistanceProvider distance){
         this.orientation = orientation;
-    }
-
-    public void orient(double x, double y){
-
+        this.distance = distance;
     }
 
     public void linkDriveProcedure(DriveProcedure procedure){
         this.procedure = procedure;
+    }
+
+    public void applyDriveProcedure(){
+        if(this.procedure!=null) {
+            orientation.setX(initialX + Math.cos(this.procedure.getRotationTarget()) * distance.getEncoderAverage());
+            orientation.setY(initialY + Math.sin(this.procedure.getRotationTarget()) * distance.getEncoderAverage());
+        }
         initialX = orientation.getX();
         initialY = orientation.getY();
     }

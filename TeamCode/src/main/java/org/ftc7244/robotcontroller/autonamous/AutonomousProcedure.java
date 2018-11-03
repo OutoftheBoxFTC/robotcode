@@ -22,7 +22,7 @@ public abstract class AutonomousProcedure extends LinearOpMode {
     private ExecutorService threadManager;
 
     protected DriveController driveController;
-    private Orientation orientation;
+    protected Orientation orientation;
 
     private long lastTime;
 
