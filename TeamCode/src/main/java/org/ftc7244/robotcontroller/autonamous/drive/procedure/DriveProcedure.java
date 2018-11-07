@@ -96,7 +96,7 @@ public class DriveProcedure {
             this.x = x;
             this.y = y;
             //TODO determine PID constants
-            controlSystem = new PIDControl(0, 0, 0, true);
+            controlSystem = new PIDControl(1, 0, 0, true);
         }
 
         public DriveProcedureBuilder setControlSystem(ControlSystem controlSystem) {

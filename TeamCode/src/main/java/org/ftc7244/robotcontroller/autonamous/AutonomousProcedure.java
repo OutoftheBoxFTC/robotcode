@@ -20,7 +20,6 @@ public abstract class AutonomousProcedure extends LinearOpMode {
     protected UltrasonicSystem ultrasonic;
     protected GyroscopeProvider gyroscope;
     private ExecutorService threadManager;
-
     protected DriveController driveController;
     protected Orientation orientation;
 
