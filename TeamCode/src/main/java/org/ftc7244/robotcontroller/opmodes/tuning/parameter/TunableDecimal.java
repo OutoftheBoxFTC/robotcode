@@ -15,6 +15,11 @@ public class TunableDecimal {
     private int digit;
 
     public TunableDecimal(double value, String name){
+        setValue(value);
+        this.name = name;
+    }
+
+    public void setValue(double value){
         String integer = ((int)value) + "",
                 decimal = (value%1)+"";
         this.integer = new ArrayList<>();
@@ -23,11 +28,9 @@ public class TunableDecimal {
         for (int i = 0; i < integer.length(); i++) {
             this.integer.add(Integer.parseInt(integer.substring(i, i+1)));
         }
-        for (int i = 0; i < decimal.length(); i++) {
+        for (int i = 2; i < decimal.length(); i++) {
             this.decimal.add(Integer.parseInt(decimal.substring(i, i+1)));
         }
-
-        this.name = name;
         digit = 0;
     }
 
@@ -71,7 +74,7 @@ public class TunableDecimal {
     }
 
     private int stringIndex(int digit){
-        return integer.size()-digit+(digit<0?-1:1);
+        return integer.size()-digit+(digit<0?2:1);
     }
 
     public double getValue(){
@@ -97,8 +100,8 @@ public class TunableDecimal {
             value.append(decimal.get(i));
         }
         int stringIndex = stringIndex(digit);
+        value.insert(stringIndex-2, "|");
         value.insert(stringIndex, "|");
-        value.insert(stringIndex+2, "|");
         return value.toString();
     }
 
