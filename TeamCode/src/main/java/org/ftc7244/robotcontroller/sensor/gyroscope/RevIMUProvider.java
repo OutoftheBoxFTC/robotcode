@@ -14,9 +14,9 @@ public class RevIMUProvider extends GyroscopeProvider{
         Orientation orientation = imu.getAngularOrientation();
         switch (axis){
             case PITCH:
-                return orientation.firstAngle;
-            case YAW:
                 return orientation.secondAngle;
+            case YAW:
+                return orientation.firstAngle;
             case ROLL:
                 return orientation.thirdAngle;
         }
@@ -26,7 +26,7 @@ public class RevIMUProvider extends GyroscopeProvider{
     @Override
     public void init(Robot robot) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu = robot.getIMU();
