@@ -10,13 +10,16 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
+    private static final double COUNTS_PER_INCH = 21.3904244;
+
+
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
     private DcMotor leftDrive, rightDrive;
     private BNO055IMU imu;
 
     public Robot(LinearOpMode opMode) {
-        super(opMode, 1);
+        super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
     }
 

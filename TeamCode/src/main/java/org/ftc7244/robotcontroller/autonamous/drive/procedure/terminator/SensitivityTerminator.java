@@ -1,8 +1,5 @@
 package org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator;
 
-import org.ftc7244.robotcontroller.autonamous.drive.DriveController;
-import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
-
 /**
  * Once the control loop has reached a certain level of accuracy the sensitivity terminator will trigger
  * after a time period is passed to prevent early termination of the object passes the target value
