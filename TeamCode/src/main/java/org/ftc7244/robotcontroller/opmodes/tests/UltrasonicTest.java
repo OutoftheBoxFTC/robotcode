@@ -18,7 +18,7 @@ public class UltrasonicTest extends AutonomousProcedure {
         data.add((double) 0);
         long lastTime = System.nanoTime();
         while (opModeIsActive()) {
-            double val = robot.getLeadingLeftUS().getUltrasonicLevel();
+            double val = robot.getTrailingLeftUS().getUltrasonicLevel();
             if(val != data.get(data.size()-1)){
                 long now = System.nanoTime();
                 timeData.add((double) (now-lastTime));

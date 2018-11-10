@@ -24,6 +24,7 @@ public class RotationalProvider {
         this.gyroscope = gyroscope;
         this.orientation = orientation;
         gyroscopeOffset = -orientation.getR();
+        usingUltrasonic = false;
     }
 
     /**
@@ -48,9 +49,11 @@ public class RotationalProvider {
     }
 
     public double retrieveAbsoluteRotation(){
-        double ultrasonicValue = ultrasonic.getAbsoluteRotation();
-        if(usingUltrasonic&&ultrasonicValue != Double.POSITIVE_INFINITY){
-            orientGyro(ultrasonicValue);
+        if(usingUltrasonic){
+            double ultrasonicValue = ultrasonic.getAbsoluteRotation();
+            if(ultrasonicValue != Double.POSITIVE_INFINITY) {
+                orientGyro(ultrasonicValue);
+            }
         }
         double rotation = retrieveGyroscopeReading();
         orientation.setR(rotation);

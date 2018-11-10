@@ -9,6 +9,7 @@ public class EncoderAverageCounter extends AutonomousProcedure {
         driveController.orient(0, 0, 0);
         while (opModeIsActive()){
             telemetry.addData("Ticks", robot.getDriveEncoderAverage());
+            telemetry.addData("Inches", robot.getDriveEncoderAverage()/robot.getCountsPerInch());
             telemetry.update();
         }
     }

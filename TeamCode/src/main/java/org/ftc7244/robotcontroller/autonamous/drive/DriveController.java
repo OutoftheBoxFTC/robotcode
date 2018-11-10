@@ -34,7 +34,9 @@ public class DriveController {
         translation.linkDriveProcedure(procedure);
         double rotationError = rotation.getRotationalError();
 
-        while (robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError)){
+        while ((robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError))){
+            robot.getOpMode().telemetry.addData("Error", rotationError);
+            robot.getOpMode().telemetry.update();
             rotationError = rotation.getRotationalError();
             double rotation = procedure.getControlSystem().correction(rotationError);
             robot.drive(rotation, -rotation);
@@ -56,5 +58,9 @@ public class DriveController {
         orientation.setY(y);
         orientation.setR(r);
         rotation.orientGyro(r);
+    }
+
+    public RotationalProvider getRotation() {
+        return rotation;
     }
 }
