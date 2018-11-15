@@ -14,6 +14,8 @@ public class DriveController {
     private RotationalProvider rotation;
     private DistanceProvider distance;
     private TranslationalProvider translation;
+    private Direction direction;
+
     private Robot robot;
 
     public DriveController(Orientation orientation, UltrasonicSystem ultrasonic, GyroscopeProvider gyroscope, Robot robot){
@@ -22,6 +24,7 @@ public class DriveController {
         rotation = new RotationalProvider(ultrasonic, gyroscope, orientation);
         distance = new DistanceProvider(robot);
         translation = new TranslationalProvider(orientation, distance);
+        direction = Direction.FOREWARD;
     }
 
     public Orientation getOrientation() {
@@ -35,22 +38,31 @@ public class DriveController {
         double rotationError = rotation.getRotationalError();
 
         while ((robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError))){
-            robot.getOpMode().telemetry.addData("Error", rotationError);
-            robot.getOpMode().telemetry.update();
             rotationError = rotation.getRotationalError();
             double rotation = procedure.getControlSystem().correction(rotationError);
             robot.drive(rotation, -rotation);
         }
+        distance.orient(0);
+        double distanceTarget = procedure.getDistanceTarget()*direction.multiplier,
+                translationalError = (distanceTarget-distance.getEncoderAverage());
 
-        double translationalError = procedure.getDistanceTarget()-distance.getEncoderAverage();
-        while (robot.getOpMode().opModeIsActive() && !procedure.getTranslationalTerminator().shouldTerminate(translationalError)){
+        while (robot.getOpMode().opModeIsActive() && !procedure.getTranslationalTerminator().shouldTerminate(translationalError*direction.multiplier)){
             rotationError = rotation.getRotationalError();
             double rotation = procedure.getControlSystem().correction(rotationError),
                     power = procedure.getSpeed();
-            robot.drive(rotation+power, -rotation+power);
+            robot.getOpMode().telemetry.addData("power", power* direction.multiplier);
+            robot.getOpMode().telemetry.addData("error", direction.multiplier*translationalError);
+            robot.getOpMode().telemetry.update();
+            robot.drive(rotation+power*direction.multiplier, -rotation+power*direction.multiplier);
+            translationalError = (distanceTarget-distance.getEncoderAverage());
         }
+        robot.drive(0, 0);
         //TODO perform this dynamically based on image recognition or ultrasonic sensor input
         translation.applyDriveProcedure();
+    }
+
+    public void setDirection(Direction direction){
+        this.direction = direction;
     }
 
     public void orient(double x, double y, double r) {
@@ -62,5 +74,20 @@ public class DriveController {
 
     public RotationalProvider getRotation() {
         return rotation;
+    }
+
+    public enum Direction{
+        FOREWARD(1, 0),
+        REVERSE(-1, Math.PI);
+        private int multiplier;
+        private double angle;
+        Direction(int multiplier, double angle) {
+            this.multiplier = multiplier;
+            this.angle = angle;
+        }
+
+        public double getAngleOffset() {
+            return angle;
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 
 
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
+import org.ftc7244.robotcontroller.hardware.Robot;
 
 public class TranslationalProvider {
     private Orientation orientation;

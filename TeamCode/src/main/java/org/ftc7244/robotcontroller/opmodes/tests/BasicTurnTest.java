@@ -14,10 +14,11 @@ public class BasicTurnTest extends AutonomousProcedure {
     @Override
     protected void run() {
         driveController.orient(0, 0, 0);
-        DriveProcedure procedure = new DriveProcedure(Math.PI/2, 0, 0,
+        DriveProcedure procedure = new DriveProcedure(Math.PI/2, 24, 0.5,
                 new SensitivityTerminator(Math.PI/90, 10),
                 new RangeTerminator(0, Double.NEGATIVE_INFINITY),
                 new ConstantControl(), orientation);
         driveController.drive(procedure);
+        sleep(1000);
     }
 }

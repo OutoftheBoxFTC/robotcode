@@ -10,6 +10,8 @@ public abstract class GyroscopeProvider implements Initializable{
         return getReading(axis)%(Math.PI*2);
     }
 
+    public abstract boolean isCalibrated();
+
     public enum Axis{
         PITCH(0),
         YAW(1),

@@ -11,10 +11,10 @@ public class DistanceProvider {
     }
 
     public double getEncoderAverage(){
-        return robot.getDriveEncoderAverage()-encoderOffset;
+        return (robot.getDriveEncoderAverage()-encoderOffset)/robot.getCountsPerInch();
     }
 
     public void orient(double distance){
-        encoderOffset = robot.getDriveEncoderAverage()-distance;
+        encoderOffset = (robot.getDriveEncoderAverage()/robot.getCountsPerInch()-distance)*robot.getCountsPerInch();
     }
 }

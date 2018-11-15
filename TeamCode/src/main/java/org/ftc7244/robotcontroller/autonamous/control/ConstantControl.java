@@ -5,7 +5,7 @@ public class ConstantControl extends ControlSystem {
 
     @Override
     public double correction(double error) {
-        return 0.2*(error<0?-1:1);
+        return 0.3*(error<0?1:-1);
     }
 
     @Override

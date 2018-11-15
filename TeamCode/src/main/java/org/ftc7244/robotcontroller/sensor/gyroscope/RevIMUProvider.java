@@ -24,11 +24,15 @@ public class RevIMUProvider extends GyroscopeProvider{
     }
 
     @Override
+    public boolean isCalibrated() {
+        return imu.isGyroCalibrated();
+    }
+
+    @Override
     public void init(Robot robot) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu = robot.getIMU();
         imu.initialize(parameters);
     }

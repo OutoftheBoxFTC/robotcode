@@ -1,6 +1,7 @@
 package org.ftc7244.robotcontroller.autonamous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.ftc7244.robotcontroller.autonamous.drive.DriveController;
@@ -25,6 +26,8 @@ public abstract class AutonomousProcedure extends LinearOpMode {
     protected DriveController driveController;
     protected Orientation orientation;
 
+    private PixycamProvider pixycam;
+
     private long lastTime;
 
     @Override
@@ -33,20 +36,24 @@ public abstract class AutonomousProcedure extends LinearOpMode {
 
         robot = new Robot(this);
         robot.init();
+        robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
         threadManager = Executors.newCachedThreadPool();
 
         orientation = new Orientation(0, 0, 0);
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         gyroscope = new RevIMUProvider();
+        //TODO initialize pixycam
 
         driveController = new DriveController(orientation, ultrasonic, gyroscope, robot);
-
         try {
             //init providers
             gyroscope.init(robot);
             while (!isStarted()){
                 //cyclically calibrate
+                telemetry.addData("Calibrated", gyroscope.isCalibrated()?"Y":"N");
+                telemetry.update();
                 idle();
             }
             //reorient

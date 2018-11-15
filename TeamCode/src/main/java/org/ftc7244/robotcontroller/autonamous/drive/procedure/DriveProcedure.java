@@ -41,7 +41,7 @@ public class DriveProcedure {
                 s = o/h,
                 r = Math.asin(s);
         rotationTarget = a<0?2*Math.PI-r:r;
-        distanceTarget = s;
+        distanceTarget = h;
         this.speed = speed;
         this.rotationalTerminator = rotationalTerminator;
         this.translationalTerminator = translationalTerminator;
@@ -66,7 +66,7 @@ public class DriveProcedure {
     }
 
     public double getSpeed() {
-        return speed;
+        return -speed;
     }
 
     public DriveTerminator getRotationalTerminator() {

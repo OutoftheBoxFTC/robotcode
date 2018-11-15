@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
-    private static final double COUNTS_PER_INCH = 21.3904244;
+    private static final double COUNTS_PER_INCH = 39.5138889;
 
 
     private WebcamName w1, w2;
@@ -65,17 +66,25 @@ public class Robot extends Hardware {
 
     @Override
     public void resetDriveMotors() {
-
+        resetMotors(leftDrive, rightDrive);
     }
 
     @Override
     public int getDriveEncoderAverage() {
-        return (leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
+        return -(leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
     }
 
     @Override
     public void resetDriveEncoders() {
 
+    }
+
+    public DcMotor getLeftDrive() {
+        return leftDrive;
+    }
+
+    public DcMotor getRightDrive() {
+        return rightDrive;
     }
 
     public WebcamName getW1() {
