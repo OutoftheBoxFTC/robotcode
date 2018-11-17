@@ -24,7 +24,7 @@ public class DriveController {
         rotation = new RotationalProvider(ultrasonic, gyroscope, orientation);
         distance = new DistanceProvider(robot);
         translation = new TranslationalProvider(orientation, distance);
-        direction = Direction.FOREWARD;
+        direction = Direction.FOREWORD;
     }
 
     public Orientation getOrientation() {
@@ -35,10 +35,14 @@ public class DriveController {
     public void drive(DriveProcedure procedure){
         rotation.linkDriveProcedure(procedure);
         translation.linkDriveProcedure(procedure);
-        double rotationError = rotation.getRotationalError();
+        double rotationError = rotation.getRotationalError(direction.angle);
 
         while ((robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError))){
-            rotationError = rotation.getRotationalError();
+            rotationError = rotation.getRotationalError(direction.angle);
+            robot.getOpMode().telemetry.addData("Error", Math.toDegrees(rotationError));
+            robot.getOpMode().telemetry.addData("Target", Math.toDegrees(procedure.getRotationTarget()));
+            robot.getOpMode().telemetry.addData("Current", Math.toDegrees(orientation.getR()));
+            robot.getOpMode().telemetry.update();
             double rotation = procedure.getControlSystem().correction(rotationError);
             robot.drive(rotation, -rotation);
         }
@@ -47,7 +51,7 @@ public class DriveController {
                 translationalError = (distanceTarget-distance.getEncoderAverage());
 
         while (robot.getOpMode().opModeIsActive() && !procedure.getTranslationalTerminator().shouldTerminate(translationalError*direction.multiplier)){
-            rotationError = rotation.getRotationalError();
+            rotationError = rotation.getRotationalError(direction.angle);
             double rotation = procedure.getControlSystem().correction(rotationError),
                     power = procedure.getSpeed();
             robot.getOpMode().telemetry.addData("power", power* direction.multiplier);
@@ -77,7 +81,7 @@ public class DriveController {
     }
 
     public enum Direction{
-        FOREWARD(1, 0),
+        FOREWORD(1, 0),
         REVERSE(-1, Math.PI);
         private int multiplier;
         private double angle;

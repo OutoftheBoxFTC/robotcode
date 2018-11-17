@@ -1,6 +1,5 @@
 package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 
-import org.ftc7244.robotcontroller.autonamous.drive.DriveController;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
@@ -31,9 +30,10 @@ public class RotationalProvider {
     /**
      * It is assumed that this method is called whenever rotation is subject to change (I.E. During Drive/Rotation Procedures)
      * @return the error between the current rotation and the target rotation in the shortest direction of rotation.
+     * @param angleOffset the robot travel direction
      */
-    public double getRotationalError(){
-        double rotationTarget = currentDriveProcedure.getRotationTarget(),
+    public double getRotationalError(double angleOffset){
+        double rotationTarget = (currentDriveProcedure.getRotationTarget()+angleOffset)%(Math.PI*2),
                 currentRotation = retrieveAbsoluteRotation();
 
 

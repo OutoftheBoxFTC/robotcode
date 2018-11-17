@@ -35,12 +35,12 @@ public class DriveProcedure {
     private ControlSystem controlSystem;
 
     private DriveProcedure(double x, double y, double speed, Orientation orientation, DriveTerminator rotationalTerminator, DriveTerminator translationalTerminator, ControlSystem controlSystem){
-        double o = orientation.getY()-y,
-                a = orientation.getX()-x,
+        double o = y-orientation.getY(),
+                a = x-orientation.getX(),
                 h = Math.sqrt(a*a+o*o),
                 s = o/h,
                 r = Math.asin(s);
-        rotationTarget = a<0?2*Math.PI-r:r;
+        rotationTarget = (a<0?(r>0?Math.PI-r:-Math.PI-r):r)%(Math.PI*2);
         distanceTarget = h;
         this.speed = speed;
         this.rotationalTerminator = rotationalTerminator;
