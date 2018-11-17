@@ -30,12 +30,10 @@ public class RotationalProvider {
     /**
      * It is assumed that this method is called whenever rotation is subject to change (I.E. During Drive/Rotation Procedures)
      * @return the error between the current rotation and the target rotation in the shortest direction of rotation.
-     * @param angleOffset the robot travel direction
      */
-    public double getRotationalError(double angleOffset){
-        double rotationTarget = (currentDriveProcedure.getRotationTarget()+angleOffset)%(Math.PI*2),
+    public double getRotationalError(){
+        double rotationTarget = (currentDriveProcedure.getRotationTarget())%(Math.PI*2),
                 currentRotation = retrieveAbsoluteRotation();
-
 
         if(rotationTarget > currentRotation){
             if(rotationTarget-currentRotation>Math.PI){

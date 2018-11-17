@@ -14,7 +14,6 @@ public class DriveController {
     private RotationalProvider rotation;
     private DistanceProvider distance;
     private TranslationalProvider translation;
-    private Direction direction;
 
     private Robot robot;
 
@@ -24,7 +23,6 @@ public class DriveController {
         rotation = new RotationalProvider(ultrasonic, gyroscope, orientation);
         distance = new DistanceProvider(robot);
         translation = new TranslationalProvider(orientation, distance);
-        direction = Direction.FOREWORD;
     }
 
     public Orientation getOrientation() {
@@ -35,38 +33,39 @@ public class DriveController {
     public void drive(DriveProcedure procedure){
         rotation.linkDriveProcedure(procedure);
         translation.linkDriveProcedure(procedure);
-        double rotationError = rotation.getRotationalError(direction.angle);
+        double rotationError = rotation.getRotationalError();
 
         while ((robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError))){
-            rotationError = rotation.getRotationalError(direction.angle);
+            rotationError = rotation.getRotationalError();
+
             robot.getOpMode().telemetry.addData("Error", Math.toDegrees(rotationError));
             robot.getOpMode().telemetry.addData("Target", Math.toDegrees(procedure.getRotationTarget()));
             robot.getOpMode().telemetry.addData("Current", Math.toDegrees(orientation.getR()));
+            robot.getOpMode().telemetry.addData("X, Y", orientation.getX() + ", " + orientation.getY());
             robot.getOpMode().telemetry.update();
+
             double rotation = procedure.getControlSystem().correction(rotationError);
             robot.drive(rotation, -rotation);
         }
         distance.orient(0);
-        double distanceTarget = procedure.getDistanceTarget()*direction.multiplier,
+        double distanceTarget = procedure.getDistanceTarget(),
                 translationalError = (distanceTarget-distance.getEncoderAverage());
 
-        while (robot.getOpMode().opModeIsActive() && !procedure.getTranslationalTerminator().shouldTerminate(translationalError*direction.multiplier)){
-            rotationError = rotation.getRotationalError(direction.angle);
+        while (robot.getOpMode().opModeIsActive() && !procedure.getTranslationalTerminator().shouldTerminate(translationalError)){
+            rotationError = rotation.getRotationalError();
             double rotation = procedure.getControlSystem().correction(rotationError),
                     power = procedure.getSpeed();
-            robot.getOpMode().telemetry.addData("power", power* direction.multiplier);
-            robot.getOpMode().telemetry.addData("error", direction.multiplier*translationalError);
+
+            robot.getOpMode().telemetry.addData("power", power);
+            robot.getOpMode().telemetry.addData("error", translationalError);
             robot.getOpMode().telemetry.update();
-            robot.drive(rotation+power*direction.multiplier, -rotation+power*direction.multiplier);
+
+            robot.drive(rotation+power, -rotation+power);
             translationalError = (distanceTarget-distance.getEncoderAverage());
         }
         robot.drive(0, 0);
         //TODO perform this dynamically based on image recognition or ultrasonic sensor input
         translation.applyDriveProcedure();
-    }
-
-    public void setDirection(Direction direction){
-        this.direction = direction;
     }
 
     public void orient(double x, double y, double r) {
@@ -78,20 +77,5 @@ public class DriveController {
 
     public RotationalProvider getRotation() {
         return rotation;
-    }
-
-    public enum Direction{
-        FOREWORD(1, 0),
-        REVERSE(-1, Math.PI);
-        private int multiplier;
-        private double angle;
-        Direction(int multiplier, double angle) {
-            this.multiplier = multiplier;
-            this.angle = angle;
-        }
-
-        public double getAngleOffset() {
-            return angle;
-        }
     }
 }

@@ -1,12 +1,15 @@
 package org.ftc7244.robotcontroller.autonamous.drive.procedure;
 
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.control.ControlSystem;
 import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.DriveTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
+import org.ftc7244.robotcontroller.hardware.Robot;
 
 /**
  * PLANS FOR THIS CLASS
@@ -34,15 +37,19 @@ public class DriveProcedure {
 
     private ControlSystem controlSystem;
 
-    private DriveProcedure(double x, double y, double speed, Orientation orientation, DriveTerminator rotationalTerminator, DriveTerminator translationalTerminator, ControlSystem controlSystem){
+    private DriveProcedure(double x, double y, double speed, Direction direction, Orientation orientation, DriveTerminator rotationalTerminator, DriveTerminator translationalTerminator, ControlSystem controlSystem){
         double o = y-orientation.getY(),
                 a = x-orientation.getX(),
                 h = Math.sqrt(a*a+o*o),
                 s = o/h,
                 r = Math.asin(s);
-        rotationTarget = (a<0?(r>0?Math.PI-r:-Math.PI-r):r)%(Math.PI*2);
-        distanceTarget = h;
-        this.speed = speed;
+
+        r=(a<0?(Math.PI-r):r)%(Math.PI*2);
+        r = (r+direction.angle);
+        r = r<0?(r+Math.PI*2):r>Math.PI*2?(r-Math.PI*2):r;
+        rotationTarget = r;
+        distanceTarget = h*direction.direction;
+        this.speed = speed*direction.direction;
         this.rotationalTerminator = rotationalTerminator;
         this.translationalTerminator = translationalTerminator;
         this.controlSystem = controlSystem;
@@ -87,14 +94,16 @@ public class DriveProcedure {
         private Orientation orientation;
         private DriveTerminator rotationalTerminator, translationalTerminator;
         private ControlSystem controlSystem;
+        private Direction direction;
 
         public DriveProcedureBuilder(Orientation orientation, double x, double y){
             this.orientation = orientation;
             rotationalTerminator = new SensitivityTerminator(Math.toRadians(1), 2);
-            translationalTerminator = new RangeTerminator(Double.NEGATIVE_INFINITY, 0);
+            translationalTerminator = new RangeTerminator(-1, 1);
             speed = 1;
             this.x = x;
             this.y = y;
+            direction = Direction.FOREWARD;
             //TODO determine PID constants
             controlSystem = new PIDControl(0, 0, 0, true);
         }
@@ -105,12 +114,36 @@ public class DriveProcedure {
         }
 
         public DriveProcedure getDriveProcedure() {
-            return new DriveProcedure(x, y, speed, orientation, rotationalTerminator, translationalTerminator, controlSystem);
+            return new DriveProcedure(x, y, speed, direction, orientation, rotationalTerminator, translationalTerminator, controlSystem);
         }
 
         public DriveProcedureBuilder setSpeed(double speed) {
             this.speed = speed;
             return this;
+        }
+
+        public DriveProcedureBuilder setDirection(Direction direction) {
+            this.direction = direction;
+            return this;
+        }
+    }
+
+    public enum Direction{
+        FOREWARD(1, 0),
+        REVERSE(-1, Math.PI);
+        private int direction;
+        private double angle;
+        Direction(int direction, double angle) {
+            this.direction = direction;
+            this.angle = angle;
+        }
+
+        public double getAngle() {
+            return angle;
+        }
+
+        public int getDirection() {
+            return direction;
         }
     }
 }
