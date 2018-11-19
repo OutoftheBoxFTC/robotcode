@@ -3,10 +3,14 @@ package org.ftc7244.robotcontroller.hardware;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
+import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
@@ -15,9 +19,10 @@ public class Robot extends Hardware {
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
-    private DcMotor leftDrive, rightDrive;
+    private DcMotorEx leftDrive, rightDrive;
+    private DcMotor intake;
     private BNO055IMU imu;
-
+    private I2cDeviceSynch goldI2c, silverI2c;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -34,15 +39,37 @@ public class Robot extends Hardware {
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
         imu = getOrNull(map, BNO055IMU.class, "imu");
-
-        leftDrive = getOrNull(map, DcMotor.class, "leftDrive");
-        rightDrive = getOrNull(map, DcMotor.class, "rightDrive");
+        intake = getOrNull(map, DcMotor.class, "intake");
+        leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");
+        rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        goldI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
+        silverI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
     }
 
     @Override
     public void initServos() {
 
+    }
+
+    public void intake(double power){
+        intake.setPower(power);
+    }
+
+    public void intake(double power, PixycamProvider pixyGold, PixycamProvider pixySilver){
+        if(pixyGold.getWidth() < 200 && pixySilver.getWidth() < 200){
+            intake.setPower(power);
+        }else{
+            intake.setPower(0);
+        }
+    }
+
+    public void intake(double power, PixycamProvider pixy){
+        if(pixy.getWidth() < 250){
+            intake.setPower(1);
+        }else{
+            intake.setPower(0);
+        }
     }
 
     @Override
@@ -60,12 +87,40 @@ public class Robot extends Hardware {
 
     @Override
     public void driveToInch(double power, double inches) {
+        resetDriveEncoders();
+        leftDrive.setPower(power);
+        rightDrive.setPower(power);
+        if(power > 0) {
+            while (getDriveEncoderAverage() <= inches * countsPerInch) {}
+        }else{
+            while (getDriveEncoderAverage() >= inches * countsPerInch) {}
+        }
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+    }
 
+    public void rotate(GyroscopeProvider gyro, double target){
+        double error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
+        if(error > 0){
+            while(error > 0.5){
+                drive(0.5, -0.5);
+                error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
+            }
+        }
+        if(error < 0){
+            while (error < 0.5){
+                drive(0.5, -0.5);
+                error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
+            }
+        }
     }
 
     @Override
     public void resetDriveMotors() {
-
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
@@ -105,4 +160,11 @@ public class Robot extends Hardware {
     public BNO055IMU getIMU() {
         return imu;
     }
+
+    public DcMotorEx getLeftDrive(){ return leftDrive; }
+
+    public DcMotorEx getRightDrive(){ return rightDrive; }
+
+    public I2cDeviceSynch getGoldI2c(){ return goldI2c; }
+    public I2cDeviceSynch getSilverI2c(){ return silverI2c; }
 }
