@@ -22,15 +22,16 @@ public class CraterAuto extends AutonomousProcedure {
             default:
                 break;
         }
+        driveController.getRotation().getRotationalError();
         robot.intake(-1);
-        robot.driveToInch(1, 20.5);
+        robot.driveToInch(0.3, 20.5);
         sleep(500);
         robot.intake(0);
-        robot.driveToInch(-1, -20.5);
+        robot.driveToInch(-0.3, -20.5);
         sleep(500);
         robot.rotate(gyroscope, -40);
         sleep(500);
-        robot.driveToInch(1, 55);
+        robot.driveToInch(0.3, 55);
         sleep(1000);
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

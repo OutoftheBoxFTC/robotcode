@@ -87,45 +87,66 @@ public class Robot extends Hardware {
 
     @Override
     public void driveToInch(double power, double inches) {
-        resetDriveEncoders();
-        leftDrive.setPower(power);
-        rightDrive.setPower(power);
+        double target = getDriveEncoderAverage() + (inches * countsPerInch);
+        leftDrive.setPower(-1 * power);
+        rightDrive.setPower(-1 * power);
         if(power > 0) {
-            while (getDriveEncoderAverage() <= inches * countsPerInch) {}
+            while (getDriveEncoderAverage() <= target) {
+                opMode.telemetry.addData("encoder", getDriveEncoderAverage());
+                opMode.telemetry.update();
+            }
         }else{
-            while (getDriveEncoderAverage() >= inches * countsPerInch) {}
+            while (getDriveEncoderAverage() >= target) {
+                opMode.telemetry.addData("encoder", getDriveEncoderAverage());
+                opMode.telemetry.update();
+            }
         }
         leftDrive.setPower(0);
         rightDrive.setPower(0);
     }
 
-    public void rotate(GyroscopeProvider gyro, double target){
-        double error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
-        if(error > 0){
-            while(error > 0.5){
-                drive(0.5, -0.5);
-                error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
+    public double getRotationError(double target, GyroscopeProvider gyro){
+        double rotationTarget = target;
+        double currentRotation = gyro.getRotation(GyroscopeProvider.Axis.YAW);
+
+        if(rotationTarget > currentRotation){
+            if(rotationTarget-currentRotation>Math.PI){
+                return currentRotation-(rotationTarget-Math.PI*2);
             }
+            return currentRotation-rotationTarget;
         }
-        if(error < 0){
-            while (error < 0.5){
-                drive(0.5, -0.5);
-                error = target - gyro.getRotation(GyroscopeProvider.Axis.YAW);
-            }
+        if(currentRotation-rotationTarget>Math.PI){
+            return rotationTarget+Math.PI*2-currentRotation;
+        }
+        return currentRotation-rotationTarget;
+    }
+
+    public void rotate(GyroscopeProvider gyro, double target){
+        double error = getRotationError(target, gyro);
+        while(Math.abs(error) > 0.5){
+            error = getRotationError(target, gyro);
+            opMode.telemetry.addData("Gyro", Math.toDegrees(gyro.getRotation(GyroscopeProvider.Axis.YAW)));
+            opMode.telemetry.update();
+            drive(-error, error);
         }
     }
 
     @Override
     public void resetDriveMotors() {
-        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        try {
+            sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public int getDriveEncoderAverage() {
-        return (leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
+        return ((leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2) * -1;
     }
 
     @Override
