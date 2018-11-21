@@ -33,7 +33,6 @@ public class Robot extends Hardware {
     @Override
     public void init() {
         HardwareMap map = opMode.hardwareMap;
-
         w1 = getOrNull(map, WebcamName.class, "w1");
         w2 = getOrNull(map, WebcamName.class, "w2");
         leadingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingLeftUS"));
