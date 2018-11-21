@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
@@ -20,9 +21,10 @@ public class Robot extends Hardware {
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
     private DcMotorEx leftDrive, rightDrive;
-    private DcMotor intake;
+    private DcMotor intake, raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c;
+    private Servo latch;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -42,9 +44,12 @@ public class Robot extends Hardware {
         intake = getOrNull(map, DcMotor.class, "intake");
         leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");
         rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
+        raisingArm1 = getOrNull(map, DcMotor.class, "arm1");
+        raisingArm2 = getOrNull(map, DcMotor.class, "arm2");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         goldI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         silverI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
+        latch = getOrNull(map, Servo.class, "latch");
     }
 
     @Override
@@ -105,32 +110,6 @@ public class Robot extends Hardware {
         rightDrive.setPower(0);
     }
 
-    public double getRotationError(double target, GyroscopeProvider gyro){
-        double rotationTarget = target;
-        double currentRotation = gyro.getRotation(GyroscopeProvider.Axis.YAW);
-
-        if(rotationTarget > currentRotation){
-            if(rotationTarget-currentRotation>Math.PI){
-                return currentRotation-(rotationTarget-Math.PI*2);
-            }
-            return currentRotation-rotationTarget;
-        }
-        if(currentRotation-rotationTarget>Math.PI){
-            return rotationTarget+Math.PI*2-currentRotation;
-        }
-        return currentRotation-rotationTarget;
-    }
-
-    public void rotate(GyroscopeProvider gyro, double target){
-        double error = getRotationError(target, gyro);
-        while(Math.abs(error) > 0.5){
-            error = getRotationError(target, gyro);
-            opMode.telemetry.addData("Gyro", Math.toDegrees(gyro.getRotation(GyroscopeProvider.Axis.YAW)));
-            opMode.telemetry.update();
-            drive(-error, error);
-        }
-    }
-
     @Override
     public void resetDriveMotors() {
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -188,4 +167,10 @@ public class Robot extends Hardware {
 
     public I2cDeviceSynch getGoldI2c(){ return goldI2c; }
     public I2cDeviceSynch getSilverI2c(){ return silverI2c; }
+
+    public DcMotor getIntake(){return intake;}
+    public DcMotor getRaisingArm1(){return raisingArm1;}
+    public DcMotor getRaisingArm2(){return raisingArm2;}
+
+    public Servo getLatch(){return latch;}
 }

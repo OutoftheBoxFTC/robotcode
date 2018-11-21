@@ -25,10 +25,11 @@ public class MainTeleOp extends LinearOpMode {
      * Operator Controls:
      * Left Trigger: Intake, stopping when it gets two of the same color
      * Right Trigger: Outtake
-     * Left Bumper: Intake, stopping when it gets two silver
-     * Right Bumber: Intake, stopping when it gets two gold
+     * Left Bumper: Intake
+     * A: Closes hanging latch
+     * B: Opens hanging latch
      */
-    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, rightBumper;
+    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, Abutton, Bbutton;
     @Override
     public void runOpMode() throws InterruptedException {
         gyro = new RevIMUProvider();
@@ -39,23 +40,22 @@ public class MainTeleOp extends LinearOpMode {
         silverPixy = new PixycamProvider(PixycamProvider.Mineral.SILVER, robot.getSilverI2c());
         intakeTrigger = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
         outtakeTrigger = new Button(gamepad2, ButtonType.RIGHT_TRIGGER);
-        flipButton = new Button(gamepad1, ButtonType.RIGHT_TRIGGER);
-        slowButton = new Button(gamepad1, ButtonType.LEFT_TRIGGER);
-        leftBumper = new Button(gamepad1, ButtonType.LEFT_BUMPER);
-        rightBumper = new Button(gamepad1, ButtonType.RIGHT_BUMPER);
+        flipButton = new Button(gamepad2, ButtonType.RIGHT_TRIGGER);
+        slowButton = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
+        leftBumper = new Button(gamepad2, ButtonType.LEFT_BUMPER);
+        Abutton = new Button(gamepad2, ButtonType.A);
+        Bbutton = new Button(gamepad2, ButtonType.B);
         waitForStart();
         while(opModeIsActive()) {
             robot.drive(gamepad1.left_stick_y * modifier, gamepad1.right_stick_y * modifier); //Uses the left and right sticks to drive the robot
             if (intakeTrigger.isPressed()) { //If the left trigger is pressed
                 robot.intake(1, goldPixy, silverPixy); //Intake
             } else if (leftBumper.isPressed()) {
-                robot.intake(1, silverPixy);
-            }else if(rightBumper.isPressed()){
-                robot.intake(1, goldPixy);
+                robot.intake(1);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-0.5); //Outtake
             }else{
-                robot.intake(0); //Else stop the intake
+                robot.intake(0);
             }
             if(slowButton.isPressed()){ //If the slow button is pressed
                 modifier = 0.5; //Set the modifier to 0.5
@@ -68,8 +68,13 @@ public class MainTeleOp extends LinearOpMode {
             }else{//else set the modifier to 1
                 modifier = 1;
             }
-            telemetry.addData("gyro", gyro.getRotation(GyroscopeProvider.Axis.YAW));
-            telemetry.update();
+            robot.getRaisingArm1().setPower(gamepad2.left_stick_y);
+            robot.getRaisingArm2().setPower(gamepad2.left_stick_y);
+            if(Abutton.isPressed()){
+                robot.getLatch().setPosition(0.9);
+            }else if(Bbutton.isPressed()){
+                robot.getLatch().setPosition(0.1);
+            }
         }
     }
 }
