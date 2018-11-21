@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
  * This class is a provider for the PixyCam, returning various data from the pixy cam
  */
 public class PixycamProvider {
-    Mineral mineral;
-    I2cDeviceSynch pixy;
-    byte[] pixyData;
+    private Mineral mineral;
+    private I2cDeviceSynch pixy;
+    private byte[] pixyData;
 
     /**
      * Initializer, used to set the pixycam and which mineral it is detecting
