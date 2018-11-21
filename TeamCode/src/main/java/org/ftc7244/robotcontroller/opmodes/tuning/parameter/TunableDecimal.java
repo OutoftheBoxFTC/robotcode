@@ -1,6 +1,11 @@
 package org.ftc7244.robotcontroller.opmodes.tuning.parameter;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.ftc7244.robotcontroller.hardware.Robot;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**This mapping is a sample. It can theoretically go infinitely in either direction from the decimal point
  *
@@ -78,19 +83,10 @@ public class TunableDecimal {
     }
 
     public double getValue(){
-        StringBuilder value = new StringBuilder();
-        for (int i = 0; i < integer.size(); i++) {
-            value.append(integer.get(i));
-        }
-        value.append(".");
-        for (int i = 0; i < decimal.size(); i++) {
-            value.append(decimal.get(i));
-        }
-        return Integer.parseInt(value.toString());
+        return Double.parseDouble(toString());
     }
 
-    @Override
-    public String toString() {
+    public String toDisplayString() {
         StringBuilder value = new StringBuilder();
         for (int i = 0; i < integer.size(); i++) {
             value.append(integer.get(i));
@@ -105,6 +101,18 @@ public class TunableDecimal {
         return value.toString();
     }
 
+    public String toString(){
+        StringBuilder value = new StringBuilder();
+        for (int i = 0; i < integer.size(); i++) {
+            value.append(integer.get(i));
+        }
+        value.append(".");
+        for (int i = 0; i < decimal.size(); i++) {
+            value.append(decimal.get(i));
+        }
+        return value.toString();
+    }
+
     public String getName() {
         return name;
     }
@@ -112,5 +120,23 @@ public class TunableDecimal {
     public int getSelectedDigit(){
         int index = index(digit);
         return digit < 0 ? decimal.get(index) : integer.get(index);
+    }
+
+    public void setValue(String number) {
+        RobotLog.d(number);
+        String[] split = number.split("\\.");
+        RobotLog.d(Arrays.deepToString(split));
+        String integer = split[0],
+                decimal = "0."+split[1];
+        this.integer = new ArrayList<>();
+        this.decimal = new ArrayList<>();
+
+        for (int i = 0; i < integer.length(); i++) {
+            this.integer.add(Integer.parseInt(integer.substring(i, i+1)));
+        }
+        for (int i = 2; i < decimal.length(); i++) {
+            this.decimal.add(Integer.parseInt(decimal.substring(i, i+1)));
+        }
+        digit = 0;
     }
 }

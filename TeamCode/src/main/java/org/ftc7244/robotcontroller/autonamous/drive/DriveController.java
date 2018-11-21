@@ -41,12 +41,13 @@ public class DriveController {
             robot.getOpMode().telemetry.addData("Error", Math.toDegrees(rotationError));
             robot.getOpMode().telemetry.addData("Target", Math.toDegrees(procedure.getRotationTarget()));
             robot.getOpMode().telemetry.addData("Current", Math.toDegrees(orientation.getR()));
-            robot.getOpMode().telemetry.addData("X, Y", orientation.getX() + ", " + orientation.getY());
-            robot.getOpMode().telemetry.update();
 
             double rotation = procedure.getControlSystem().correction(rotationError);
+            robot.getOpMode().telemetry.addData("Correction", rotation);
+            robot.getOpMode().telemetry.update();
             robot.drive(rotation, -rotation);
         }
+        robot.drive(0, 0);
         distance.orient(0);
         double distanceTarget = procedure.getDistanceTarget(),
                 translationalError = (distanceTarget-distance.getEncoderAverage());

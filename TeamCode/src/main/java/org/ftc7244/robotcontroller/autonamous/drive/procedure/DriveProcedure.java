@@ -1,15 +1,16 @@
 package org.ftc7244.robotcontroller.autonamous.drive.procedure;
 
 
-import com.qualcomm.robotcore.util.RobotLog;
+import android.content.Context;
 
-import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.control.ControlSystem;
+import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.DriveTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
-import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 
 /**
  * PLANS FOR THIS CLASS
@@ -96,16 +97,17 @@ public class DriveProcedure {
         private ControlSystem controlSystem;
         private Direction direction;
 
-        public DriveProcedureBuilder(Orientation orientation, double x, double y){
+        public DriveProcedureBuilder(Orientation orientation, double x, double y, Context context){
             this.orientation = orientation;
-            rotationalTerminator = new SensitivityTerminator(Math.toRadians(1), 2);
+            rotationalTerminator = new ConditionalTerminator(new TimeTerminator((long) 15e8), new SensitivityTerminator(Math.toRadians(0.5), 100));
             translationalTerminator = new RangeTerminator(-1, 1);
             speed = 1;
             this.x = x;
             this.y = y;
-            direction = Direction.FOREWARD;
+            direction = Direction.FOREWORD;
             //TODO determine PID constants
-            controlSystem = new PIDControl(0, 0, 0, true);
+
+            controlSystem = new PIDControl(Math.toRadians(15), true, "default_pid", context);
         }
 
         public DriveProcedureBuilder setControlSystem(ControlSystem controlSystem) {
@@ -129,7 +131,7 @@ public class DriveProcedure {
     }
 
     public enum Direction{
-        FOREWARD(1, 0),
+        FOREWORD(1, 0),
         REVERSE(-1, Math.PI);
         private int direction;
         private double angle;

@@ -1,15 +1,10 @@
 package org.ftc7244.robotcontroller.opmodes.tuning;
 
-import android.os.Environment;
-
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.tuning.parameter.TunableDecimal;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class ControlSystemTuner extends AutonomousProcedure {
 
@@ -17,6 +12,12 @@ public abstract class ControlSystemTuner extends AutonomousProcedure {
 
     private Button aButton, bButton, dUp, dDown, dLeft, dRight;
 
+    /**
+     * D up/down: increase/decrease digit
+     * D left/right: scroll through numbers
+     * A: advance/run
+     * B: save
+     */
     @Override
     protected void run() {
         aButton = new Button(gamepad1, ButtonType.A);
@@ -30,24 +31,32 @@ public abstract class ControlSystemTuner extends AutonomousProcedure {
         int currentParameter = 0;
 
         String filePath = getFilePath();
-        String lines = FileSystem.loadFromFile(filePath, hardwareMap.appContext);
-        if(lines==null){
-            lines = "";
-            FileSystem.saveToFile(lines, filePath, hardwareMap.appContext);
+        String raw = FileSystem.loadFromFile(filePath, hardwareMap.appContext);
+        if(raw==null){
+            formatFile(filePath);
         }
         else {
-            String[] numbers = lines.split(",");
-            for (int i = 0; i < parameters.length; i++) {
-                parameters[i].setValue(Double.parseDouble(numbers[i]));
+            String[] numbers = raw.split(",");
+            if(numbers.length == parameters.length) {
+                for (int i = 0; i < parameters.length; i++) {
+                    try {
+                        parameters[i].setValue(numbers[i]);
+                    }
+                    catch (NumberFormatException e){
+                        e.getStackTrace();
+                    }
+                }
+            }
+            else {
+                formatFile(filePath);
             }
         }
-
         while (opModeIsActive()) {
             while (opModeIsActive() && currentParameter < parameters.length) {
                 if(bButton.isUpdated() && bButton.isPressed()){
                     StringBuilder save = new StringBuilder();
                     for(TunableDecimal param : parameters){
-                        save.append(param).append(",");
+                        save.append(param.toString()).append(",");
                     }
                     FileSystem.saveToFile(save.toString(), filePath, hardwareMap.appContext);
                 }
@@ -65,7 +74,7 @@ public abstract class ControlSystemTuner extends AutonomousProcedure {
                     parameters[currentParameter].advanceDigit(false);
                 }
                 telemetry.addData("", parameters[currentParameter].getName());
-                telemetry.addData("", parameters[currentParameter].toString());
+                telemetry.addData("", parameters[currentParameter].toDisplayString());
                 telemetry.addData("", parameters[currentParameter].getSelectedDigit());
                 telemetry.update();
                 if (aButton.isUpdated() && aButton.isPressed()) {
@@ -74,12 +83,21 @@ public abstract class ControlSystemTuner extends AutonomousProcedure {
             }
             currentParameter = 0;
 
-            /*double[] parameters = new double[this.parameters.length];
+            double[] parameters = new double[this.parameters.length];
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = this.parameters[i].getValue();
             }
-            driveController.drive(getDriveProcedure(parameters));*/
+            driveController.orient(0, 0, 0);
+            driveController.drive(getDriveProcedure(parameters));
         }
+    }
+
+    private void formatFile(String filePath){
+        StringBuilder lines = new StringBuilder();
+        for(TunableDecimal decimal : parameters){
+            lines.append(decimal.toString()).append(",");
+        }
+        FileSystem.saveToFile(lines.toString(), filePath, hardwareMap.appContext);
     }
 
     protected abstract TunableDecimal[] getParameters();

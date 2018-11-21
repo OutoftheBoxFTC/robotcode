@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 import org.ftc7244.robotcontroller.opmodes.tuning.parameter.TunableDecimal;
 
 @TeleOp(name = "PID Controller Tuner")
@@ -20,9 +22,10 @@ public class PIDControllerTuner extends ControlSystemTuner {
 
     @Override
     protected DriveProcedure getDriveProcedure(double[] parameters) {
-        return new DriveProcedure(orientation.getR()+Math.PI/2, 0, 0,
-                new SensitivityTerminator(Math.toRadians(2), 10), new RangeTerminator(0, Double.POSITIVE_INFINITY),
-                new PIDControl(parameters[0], parameters[1], parameters[2], true), orientation);
+        return new DriveProcedure(Math.PI/2, 0, 0,
+                new ConditionalTerminator(new TimeTerminator((long) 6e9), new SensitivityTerminator(Math.toRadians(0.5), 100))
+                ,new RangeTerminator(-1, 1),
+                new PIDControl(parameters[0], parameters[1], parameters[2], Math.toRadians(15), true), orientation);
     }
 
     @Override

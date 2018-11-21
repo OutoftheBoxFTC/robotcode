@@ -14,16 +14,18 @@ import java.util.Scanner;
 
 public class FileSystem {
 
-    public static void saveToFile(String data, String path, Context context){
+    public static boolean saveToFile(String data, String path, Context context){
         File file = new File(context.getFilesDir(), path);
         try {
             FileWriter writer = new FileWriter(file);
-            writer.write(data);
+            writer.append(data);
+            writer.flush();
             writer.close();
         }
         catch (IOException e){
-            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public static String loadFromFile(String path, Context context){
