@@ -1,4 +1,4 @@
-package org.ftc7244.robotcontroller.opmodes.autonomous;
+package org.ftc7244.robotcontroller.opmodes.old_autonomous;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;

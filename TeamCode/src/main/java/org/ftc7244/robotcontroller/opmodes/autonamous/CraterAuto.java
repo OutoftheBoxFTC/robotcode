@@ -4,6 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
+import org.ftc7244.robotcontroller.autonamous.control.ConstantControl;
+import org.ftc7244.robotcontroller.autonamous.control.ControlSystem;
+import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
+import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.DriveTerminator;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 
 @Autonomous(name = "Crater Auto")
 public class CraterAuto extends AutonomousProcedure {
@@ -14,26 +22,39 @@ public class CraterAuto extends AutonomousProcedure {
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         switch(mineral){
             case 1:
-                //robot.rotate(gyroscope, -23);
+                rotate(23, 0.75);
                 break;
             case 2:
-                //robot.rotate(gyroscope, 35);
+                rotate(-35, 0.75);
                 break;
             default:
                 break;
         }
-        driveController.getRotation().getRotationalError();
         robot.intake(-1);
         robot.driveToInch(0.3, 20.5);
         sleep(500);
         robot.intake(0);
-        robot.driveToInch(-0.3, -20.5);
+        robot.driveToInch(-0.3, -10.5);
         sleep(500);
-        //robot.rotate(gyroscope, -40);
+        rotate(45, 0.5);
         sleep(500);
-        robot.driveToInch(0.3, 55);
-        sleep(1000);
+        robot.driveToInch(0.3, 40);
+        sleep(500);
+        rotate(-45, 0.75);
+        sleep(500);
+        robot.driveToInch(-0.75, -60);
+        //drop off team marker
+        robot.driveToInch(0.75, 84);
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+
+    private void rotate(double target, double speed){
+        driveController.orient(0, 0, 0);
+        DriveProcedure procedure = new DriveProcedure(Math.toRadians(target), 0, speed,
+                new SensitivityTerminator(Math.PI/90, 100),
+                new RangeTerminator(0, Double.NEGATIVE_INFINITY),
+                new ConstantControl(), orientation);
+        driveController.drive(procedure);
     }
 }

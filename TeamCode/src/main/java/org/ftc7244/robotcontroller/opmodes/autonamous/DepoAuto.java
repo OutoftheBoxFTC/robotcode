@@ -12,10 +12,10 @@ public class DepoAuto extends AutonomousProcedure {
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         switch(mineral){
             case 1:
-                robot.rotate(gyroscope, -23);
+                //robot.rotate(gyroscope, -23);
                 break;
             case 2:
-                robot.rotate(gyroscope, 35);
+                //robot.rotate(gyroscope, 35);
                 break;
             default:
                 break;
@@ -26,7 +26,7 @@ public class DepoAuto extends AutonomousProcedure {
         robot.intake(0);
         robot.driveToInch(-1, -20.5);
         sleep(500);
-        robot.rotate(gyroscope, -40);
+        //robot.rotate(gyroscope, -40);
         sleep(500);
         robot.driveToInch(1, 55);
         sleep(1000);
