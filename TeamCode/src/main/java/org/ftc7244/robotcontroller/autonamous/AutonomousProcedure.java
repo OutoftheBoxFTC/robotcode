@@ -22,7 +22,6 @@ public abstract class AutonomousProcedure extends LinearOpMode {
     protected UltrasonicSystem ultrasonic;
     protected GyroscopeProvider gyroscope;
     private ExecutorService threadManager;
-
     protected DriveController driveController;
     protected Orientation orientation;
 
@@ -61,8 +60,10 @@ public abstract class AutonomousProcedure extends LinearOpMode {
             run();
         }
         catch (Throwable t){
-            t.printStackTrace();
             RobotLog.e(t.getMessage());
+            telemetry.addData("ERROR", t.getMessage());
+            telemetry.update();
+            t.printStackTrace();
         }
         finally {
             //stop sensor providers

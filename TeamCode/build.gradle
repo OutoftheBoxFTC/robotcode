@@ -17,4 +17,6 @@ android {
     }
 }
 dependencies {
+    implementation project(':DogeCV')
+    implementation project(':openCVLibrary3')
 }
