@@ -5,7 +5,6 @@ import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 
 public class Depot extends AutonomousProcedure {
-    PixycamSample pixy = new PixycamSample();
     PixycamSample.Sample sample = null;
     @Override
     protected void run() {

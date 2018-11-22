@@ -9,9 +9,14 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 public class UltrasonicSystemTest extends AutonomousProcedure {
     @Override
     protected void run() {
-        while (opModeIsActive()) {
+        double target = 500 + robot.getDriveEncoderAverage();
+        double error = 0;
+        ultrasonic.setWall(UltrasonicSystem.Wall.BLUE);
+        while (opModeIsActive() && robot.getDriveEncoderAverage() < target) {
             telemetry.addData("Error", ultrasonic.getRotationalOffset(UltrasonicSystem.Side.LEFT));
             telemetry.update();
+            error = ultrasonic.getRotationalOffset(UltrasonicSystem.Side.LEFT);
+            robot.drive(0.3 - error, 0.3 + error);
         }
     }
 }

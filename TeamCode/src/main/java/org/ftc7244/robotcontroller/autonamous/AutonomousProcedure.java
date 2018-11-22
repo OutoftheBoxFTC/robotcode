@@ -9,6 +9,7 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
+import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
 import java.util.concurrent.ExecutorService;
@@ -43,6 +44,7 @@ public abstract class AutonomousProcedure extends LinearOpMode {
 
         try {
             //init providers
+            ultrasonic.start(SickUltrasonic.Mode.CENTIMETERS);
             gyroscope.init(robot);
             while (!isStarted()){
                 //cyclically calibrate

@@ -5,8 +5,8 @@ public class UltrasonicSystem {
     private Wall wall;
 
     public UltrasonicSystem(SickUltrasonic leftLeading, SickUltrasonic leftTrailing, SickUltrasonic rightLeading, SickUltrasonic rightTrailing){
-        left = new UltrasonicSide(rightLeading, rightTrailing, Side.RIGHT.distance);
-        right = new UltrasonicSide(leftTrailing, leftLeading, Side.LEFT.distance);
+        right = new UltrasonicSide(rightLeading, rightTrailing, Side.RIGHT.distance);
+        left = new UltrasonicSide(leftTrailing, leftLeading, Side.LEFT.distance);
         wall = null;
 
     }

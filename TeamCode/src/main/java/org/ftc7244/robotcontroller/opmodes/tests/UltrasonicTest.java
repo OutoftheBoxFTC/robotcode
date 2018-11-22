@@ -1,11 +1,12 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 
 import java.util.ArrayList;
-
+@Disabled
 @TeleOp(name = "Ultrasonic Test", group = "Debug")
 public class UltrasonicTest extends AutonomousProcedure {
     private static final double LENGTH = 20;

@@ -9,24 +9,35 @@ import static org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample.Sample.RI
 public class PixycamSample {
     PixycamProvider pixy;
     I2cDeviceSynch pixyI2c;
+    Boolean pixyExists = false;
     public PixycamSample(I2cDeviceSynch pixy){
         pixyI2c = pixy;
     }
 
     public void start(){
-        pixy = new PixycamProvider(PixycamProvider.Mineral.GOLD, pixyI2c);
-        pixy.start();
+        if(pixy == null){
+            pixyExists = false;
+        }else{
+            pixyExists = true;
+        }
+        if(pixyExists) {
+            pixy = new PixycamProvider(PixycamProvider.Mineral.GOLD, pixyI2c);
+            pixy.start();
+        }
     }
 
     public Sample getSample(){
-        pixy.update();
-        if(pixy.getX() < 110){
-            return LEFT;
-        }else if(pixy.getX() > 140){
-            return RIGHT;
-        }else{
-            return CENTER;
+        if(pixyExists) {
+            pixy.update();
+            if (pixy.getX() < 110) {
+                return LEFT;
+            } else if (pixy.getX() > 140) {
+                return RIGHT;
+            } else {
+                return CENTER;
+            }
         }
+        return null;
     }
     public enum Sample{
         LEFT,

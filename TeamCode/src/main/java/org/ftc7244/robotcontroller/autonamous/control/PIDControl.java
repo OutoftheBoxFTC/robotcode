@@ -5,14 +5,15 @@ public class PIDControl extends ControlSystem {
     private final double kp, ki, kd;
     private final boolean integralReset;
 
-    private double proportional, integral;
+    private double proportional, integral, integralRange;
     private long lastTime;
 
-    public PIDControl(double kp, double ki, double kd, boolean integralReset){
+    public PIDControl(double kp, double ki, double kd, double integralRange, boolean integralReset){
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
         this.integralReset = integralReset;
+        this.integralRange = integralRange;
     }
 
     @Override
@@ -20,19 +21,21 @@ public class PIDControl extends ControlSystem {
         long now = System.nanoTime(),
                 dt = now-lastTime;
         double derivative = (error - proportional)/dt;
+        derivative = (Double.isNaN(derivative) || Double.isInfinite(derivative) ? 0 : derivative);
         if(lastTime==0){
             dt = 0;
             derivative = 0;
         }
         lastTime = now;
-        if(integralReset && proportional/error < 0){
+        if(integralReset && proportional/error < 0 || Math.abs(error) >= integralRange){
             integral = 0;
         }
-        integral += error *dt;
+        integral += error*dt;
         proportional = error;
-        return error *kp + integral*ki + derivative*kd;
-
+        return -(error *kp + integral*ki + derivative*kd);
     }
+
+
 
     @Override
     public void reset() {

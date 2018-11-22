@@ -22,7 +22,7 @@ public class PIDControllerTuner extends ControlSystemTuner {
     protected DriveProcedure getDriveProcedure(double[] parameters) {
         return new DriveProcedure(orientation.getR()+Math.PI/2, 0, 0,
                 new SensitivityTerminator(Math.toRadians(2), 10), new RangeTerminator(0, Double.POSITIVE_INFINITY),
-                new PIDControl(parameters[0], parameters[1], parameters[2], true), orientation);
+                new PIDControl(parameters[0], parameters[1], parameters[2], Math.toRadians(15), true), orientation);
     }
 
     @Override
