@@ -13,7 +13,7 @@ public class RotationalProvider {
 
     private Orientation orientation;
 
-    private boolean usingUltrasonic;
+    private UltrasonicUsage ultrasonicUsage;
 
     /**
      * The wall which the active ultrasonic system side will face
@@ -24,7 +24,7 @@ public class RotationalProvider {
         this.gyroscope = gyroscope;
         this.orientation = orientation;
         gyroscopeOffset = -orientation.getR();
-        usingUltrasonic = false;
+        ultrasonicUsage = UltrasonicUsage.NEITHER;
     }
 
     /**
@@ -48,12 +48,23 @@ public class RotationalProvider {
     }
 
     public double retrieveAbsoluteRotation(){
-        if(usingUltrasonic){
-            double ultrasonicValue = ultrasonic.getAbsoluteRotation();
+        if(!ultrasonicUsage.equals(UltrasonicUsage.NEITHER)) {
+            double ultrasonicValue;
+            if (ultrasonicUsage.equals(UltrasonicUsage.EITHER)) {
+                ultrasonicValue = ultrasonic.getRotationFrom(UltrasonicSystem.Side.LEFT);
+                if(ultrasonicValue == Double.POSITIVE_INFINITY){
+                    ultrasonicValue = ultrasonic.getRotationFrom(UltrasonicSystem.Side.RIGHT);
+                }
+            } else if (ultrasonicUsage.equals(UltrasonicUsage.RIGHT)) {
+                ultrasonicValue = ultrasonic.getRotationFrom(UltrasonicSystem.Side.RIGHT);
+            } else {
+                ultrasonicValue = ultrasonic.getRotationFrom(UltrasonicSystem.Side.LEFT);
+            }
             if(ultrasonicValue != Double.POSITIVE_INFINITY) {
                 orientGyro(ultrasonicValue);
             }
         }
+
         double rotation = retrieveGyroscopeReading();
         orientation.setR(rotation);
         return rotation;
@@ -73,11 +84,18 @@ public class RotationalProvider {
         gyroscopeOffset = gyroscope.getRotation(GyroscopeProvider.Axis.YAW)-r;
     }
 
-    public boolean isUsingUltrasonic() {
-        return usingUltrasonic;
+    public UltrasonicUsage getUltrasonicUsage() {
+        return ultrasonicUsage;
     }
 
-    public void setUsingUltrasonic(boolean usingUltrasonic) {
-        this.usingUltrasonic = usingUltrasonic;
+    public void setUltrasonicUsage(UltrasonicUsage ultrasonicUsage) {
+        this.ultrasonicUsage = ultrasonicUsage;
+    }
+
+    public enum UltrasonicUsage{
+        LEFT,
+        RIGHT,
+        EITHER,
+        NEITHER
     }
 }

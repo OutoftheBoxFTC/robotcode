@@ -20,14 +20,19 @@ public class UltrasonicSystem {
      * @param side the side of the robot being referenced
      * @return the rotational offset from the wall detected by that side
      */
-    public double getRotationalOffset(Side side){
+    public double getRotationFrom(Side side){
+        double value;
         if(side == Side.LEFT){
-            return left.getError();
+            value = left.getError()+side.rotation;
         }else if(side == Side.RIGHT){
-            return right.getError();
+            value = right.getError()+side.rotation;
         }else{
             return Double.POSITIVE_INFINITY;
         }
+        if(wall != null){
+            value += wall.getRotation() + side.getRotation();
+        }
+        return value%(Math.PI*2);
     }
 
     /**
@@ -36,19 +41,13 @@ public class UltrasonicSystem {
      * @return the absolute rotation given the wall being detected
      */
     public double getAbsoluteRotation(){
-        double ultrasonicValue = getRotationalOffset(Side.RIGHT);
-        Side side = Side.RIGHT;
+        double ultrasonicValue = getRotationFrom(Side.RIGHT);
         if(ultrasonicValue == Double.POSITIVE_INFINITY){
-            side = Side.LEFT;
-            ultrasonicValue = getRotationalOffset(Side.LEFT);
+            ultrasonicValue = getRotationFrom(Side.LEFT);
             if(ultrasonicValue == Double.POSITIVE_INFINITY)
                 return Double.POSITIVE_INFINITY;
         }
-
-        if(wall != null){
-            ultrasonicValue += wall.getRotation()+side.getRotation();
-        }
-        return ultrasonicValue%(Math.PI*2);
+        return ultrasonicValue;
     }
 
     public double getUltrasonicAverage(Side side){

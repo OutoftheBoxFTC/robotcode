@@ -2,7 +2,6 @@ package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 
 
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
-import org.ftc7244.robotcontroller.hardware.Robot;
 
 public class TranslationalProvider {
     private Orientation orientation;
@@ -17,6 +16,8 @@ public class TranslationalProvider {
 
     public void linkDriveProcedure(DriveProcedure procedure){
         this.procedure = procedure;
+        initialX = orientation.getX();
+        initialY = orientation.getY();
     }
 
     public void applyDriveProcedure(){
@@ -24,7 +25,5 @@ public class TranslationalProvider {
             orientation.setX(initialX + Math.cos(this.procedure.getRotationTarget()) * distance.getEncoderAverage());
             orientation.setY(initialY + Math.sin(this.procedure.getRotationTarget()) * distance.getEncoderAverage());
         }
-        initialX = orientation.getX();
-        initialY = orientation.getY();
     }
 }

@@ -57,10 +57,11 @@ public class DriveController {
             double rotation = procedure.getControlSystem().correction(rotationError),
                     power = procedure.getSpeed();
 
-            robot.getOpMode().telemetry.addData("power", power);
+            robot.getOpMode().telemetry.addData("current", distance.getEncoderAverage());
+            robot.getOpMode().telemetry.addData("target", distanceTarget);
             robot.getOpMode().telemetry.addData("error", translationalError);
+            robot.getOpMode().telemetry.addData("orientation", "(" + orientation.getX() + ", " + orientation.getY() + ")");
             robot.getOpMode().telemetry.update();
-
             robot.drive(rotation+power, -rotation+power);
             translationalError = (distanceTarget-distance.getEncoderAverage());
         }

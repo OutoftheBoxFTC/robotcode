@@ -58,7 +58,6 @@ public abstract class AutonomousProcedure extends LinearOpMode {
             }
             //reorient
             lastTime = System.nanoTime();
-            driveController.orient(0, 0, 0);
             run();
         }
         catch (Throwable t){
