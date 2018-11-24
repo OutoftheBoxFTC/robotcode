@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
@@ -54,6 +53,12 @@ public class Robot extends Hardware {
     @Override
     public void initServos() {
 
+    }
+
+    public void moveArm(double power){
+        power = -power;
+        raisingArm1.setPower(power);
+        raisingArm2.setPower(power);
     }
 
     public void intake(double power){
