@@ -62,7 +62,7 @@ public class MainTeleOp extends LinearOpMode {
             if(slowButton.isPressed()){ //If the slow button is pressed
                 modifier = 0.5; //Set the modifier to 0.5
             }
-            if(robot.getLeftDrive().getVelocity(AngleUnit.RADIANS) > 10 && robot.getRightDrive().getVelocity(AngleUnit.RADIANS) > 10){ //If both wheels are going full speed backwards
+            if(robot.getLeftDrive().getVelocity(AngleUnit.RADIANS) > 8 && robot.getRightDrive().getVelocity(AngleUnit.RADIANS) > 8){ //If both wheels are going full speed backwards
                 if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards
                     modifier = -0.2; //Set the modifier to 0.2
                     slowingDown = true;
@@ -70,13 +70,16 @@ public class MainTeleOp extends LinearOpMode {
             }else{//else set the modifier to 1
                 modifier = 1;
             }
-            robot.getRaisingArm1().setPower(gamepad2.left_stick_y);
-            robot.getRaisingArm2().setPower(gamepad2.left_stick_y);
+            robot.getRaisingArm1().setPower(gamepad2.left_stick_y * -1);
+            robot.getRaisingArm2().setPower(gamepad2.left_stick_y * -1);
             if(Bbutton.isPressed()){
-                robot.getLatch().setPosition(0.7);
+                robot.getLatch().setPosition(0.1);
             }else{
                 robot.getLatch().setPosition(0.7);
             }
+            telemetry.addData("Arm Power", Math.abs(gamepad2.left_stick_y));
+            telemetry.addData("Velocity", robot.getLeftDrive().getVelocity(AngleUnit.RADIANS));
+            telemetry.update();
         }
     }
 }
