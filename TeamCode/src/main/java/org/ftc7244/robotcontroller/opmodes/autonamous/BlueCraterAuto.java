@@ -1,6 +1,7 @@
 package org.ftc7244.robotcontroller.opmodes.autonamous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 import org.ftc7244.robotcontroller.autonamous.control.ConstantControl;
@@ -8,6 +9,7 @@ import org.ftc7244.robotcontroller.autonamous.drive.orientation.RotationalProvid
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 
 @Autonomous(name = "Blue Crater Auto")
+@Disabled
 public class BlueCraterAuto extends AutonomousProcedure {
     @Override
     protected void run() {

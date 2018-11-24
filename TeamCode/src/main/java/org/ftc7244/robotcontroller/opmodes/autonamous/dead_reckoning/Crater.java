@@ -1,5 +1,9 @@
 package org.ftc7244.robotcontroller.opmodes.autonamous.dead_reckoning;
 
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "Crater Autonomous")
 public class Crater extends DeadReckoningBase {
 
     @Override
