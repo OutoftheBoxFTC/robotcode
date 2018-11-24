@@ -27,7 +27,7 @@ public class PixycamProvider {
     public void update(){
         pixy.engage();
         if(mineral == Mineral.GOLD) {
-            pixyData = pixy.read(0xc1ae, 17);
+            pixyData = pixy.read(0x51, 17);
         }else if(mineral == Mineral.SILVER){
             pixyData = pixy.read(0x52, 5);
         }
@@ -48,7 +48,7 @@ public class PixycamProvider {
         return 0xff & pixyData[0];
     }
     public int getX(){
-        return 0xff & pixyData[7];
+        return 0xff & pixyData[1];
     }
     public int getY(){
         return 0xff & pixyData[2];

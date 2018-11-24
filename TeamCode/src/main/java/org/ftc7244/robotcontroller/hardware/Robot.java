@@ -1,6 +1,7 @@
 package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,8 +23,9 @@ public class Robot extends Hardware {
     private DcMotorEx leftDrive, rightDrive;
     private DcMotor intake, raisingArm1, raisingArm2;
     private BNO055IMU imu;
-    private I2cDeviceSynch goldI2c, silverI2c;
+    private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch;
+    private RevBlinkinLedDriver blinkin;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -47,7 +49,9 @@ public class Robot extends Hardware {
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         goldI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         silverI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
+        sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         latch = getOrNull(map, Servo.class, "latch");
+        blinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin");
     }
 
     @Override
@@ -177,4 +181,12 @@ public class Robot extends Hardware {
     public DcMotor getRaisingArm2(){return raisingArm2;}
 
     public Servo getLatch(){return latch;}
+
+    public RevBlinkinLedDriver getBlinkin() {
+        return blinkin;
+    }
+
+    public I2cDeviceSynch getSampleI2c() {
+        return sampleI2c;
+    }
 }
