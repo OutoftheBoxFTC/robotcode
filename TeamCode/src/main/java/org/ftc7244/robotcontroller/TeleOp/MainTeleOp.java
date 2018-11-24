@@ -77,9 +77,6 @@ public class MainTeleOp extends LinearOpMode {
             }else{
                 robot.getLatch().setPosition(0.7);
             }
-            telemetry.addData("Arm Power", Math.abs(gamepad2.left_stick_y));
-            telemetry.addData("Velocity", robot.getLeftDrive().getVelocity(AngleUnit.RADIANS));
-            telemetry.update();
         }
     }
 }
