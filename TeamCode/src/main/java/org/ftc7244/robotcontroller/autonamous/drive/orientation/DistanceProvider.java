@@ -11,7 +11,7 @@ public class DistanceProvider {
     }
 
     public double getEncoderAverage(){
-        return (robot.getDriveEncoderAverage()-encoderOffset)/robot.getCountsPerInch();
+        return -(robot.getDriveEncoderAverage()-encoderOffset)/robot.getCountsPerInch();
     }
 
     public void orient(double distance){
