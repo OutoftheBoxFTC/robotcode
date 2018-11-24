@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
+import org.ftc7244.robotcontroller.opmodes.input.PressButton;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
@@ -29,7 +30,8 @@ public class MainTeleOp extends LinearOpMode {
      * A: Closes hanging latch
      * B: Opens hanging latch
      */
-    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, Abutton, Bbutton;
+    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, Abutton;
+    PressButton Bbutton;
     @Override
     public void runOpMode() throws InterruptedException {
         gyro = new RevIMUProvider();
@@ -44,12 +46,12 @@ public class MainTeleOp extends LinearOpMode {
         slowButton = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
         leftBumper = new Button(gamepad2, ButtonType.LEFT_BUMPER);
         Abutton = new Button(gamepad2, ButtonType.A);
-        Bbutton = new Button(gamepad2, ButtonType.B);
+        Bbutton = new PressButton(gamepad2, ButtonType.B);
         waitForStart();
         while(opModeIsActive()) {
             robot.drive(gamepad1.left_stick_y * modifier, gamepad1.right_stick_y * modifier); //Uses the left and right sticks to drive the robot
             if (intakeTrigger.isPressed()) { //If the left trigger is pressed
-                robot.intake(1, goldPixy, silverPixy); //Intake
+                //robot.intake(1, goldPixy, silverPixy); //Intake
             } else if (leftBumper.isPressed()) {
                 robot.intake(1);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
@@ -70,10 +72,10 @@ public class MainTeleOp extends LinearOpMode {
             }
             robot.getRaisingArm1().setPower(gamepad2.left_stick_y);
             robot.getRaisingArm2().setPower(gamepad2.left_stick_y);
-            if(Abutton.isPressed()){
-                robot.getLatch().setPosition(0.9);
-            }else if(Bbutton.isPressed()){
-                robot.getLatch().setPosition(0.1);
+            if(Bbutton.isPressed()){
+                robot.getLatch().setPosition(0.7);
+            }else{
+                robot.getLatch().setPosition(0.7);
             }
         }
     }
