@@ -8,18 +8,17 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 @TeleOp
 public class PixyCamTests extends OpMode {
-    PixycamProvider pixy;
-    I2cDeviceSynch pixyI2c;
+    I2cDeviceSynch pixy;
     @Override
     public void init() {
-        pixyI2c = hardwareMap.i2cDeviceSynch.get("pixy");
-        pixy = new PixycamProvider(PixycamProvider.Mineral.GOLD, pixyI2c);
-        pixy.start();
+        pixy = hardwareMap.i2cDeviceSynch.get("pixy");
+        pixy.engage();
     }
 
     @Override
     public void loop() {
-        pixy.update();
-        telemetry.addData("Num Objects Seen", pixy.getX());
+        telemetry.addData("Heartbeat", pixy.getHeartbeatInterval());
+        telemetry.addData("Data Dump", pixy.read8(0x54));
+        telemetry.update();
     }
 }

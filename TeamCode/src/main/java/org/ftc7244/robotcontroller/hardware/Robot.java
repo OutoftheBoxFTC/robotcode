@@ -52,8 +52,7 @@ public class Robot extends Hardware {
     }
 
     @Override
-    public void initServos() {
-
+    public void initServos(){
     }
 
     public void intake(double power){

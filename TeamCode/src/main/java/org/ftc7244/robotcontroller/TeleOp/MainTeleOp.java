@@ -71,9 +71,11 @@ public class MainTeleOp extends LinearOpMode {
             robot.getRaisingArm1().setPower(gamepad2.left_stick_y);
             robot.getRaisingArm2().setPower(gamepad2.left_stick_y);
             if(Abutton.isPressed()){
-                robot.getLatch().setPosition(0.9);
-            }else if(Bbutton.isPressed()){
-                robot.getLatch().setPosition(0.1);
+                robot.getLatch().setPosition(0.7);
+            }else if(Bbutton.isPressed()) {
+                robot.getLatch().setPosition(0.3);
+            }else{
+                robot.getLatch().setPosition(0.5);
             }
         }
     }
