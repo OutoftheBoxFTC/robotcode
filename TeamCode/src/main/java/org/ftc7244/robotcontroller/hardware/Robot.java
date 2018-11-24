@@ -57,6 +57,12 @@ public class Robot extends Hardware {
 
     }
 
+    public void moveArm(double power){
+        power = -power;
+        raisingArm1.setPower(power);
+        raisingArm2.setPower(power);
+    }
+
     public void intake(double power){
         intake.setPower(power);
     }

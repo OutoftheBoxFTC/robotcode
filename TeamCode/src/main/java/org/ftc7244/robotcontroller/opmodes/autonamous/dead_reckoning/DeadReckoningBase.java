@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axis.PITCH;
+
 public abstract class DeadReckoningBase extends LinearOpMode {
     private PIDControl control;
 
@@ -57,10 +59,14 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 //cyclically calibrate
                 telemetry.addData("Calibrated", gyro.isCalibrated()?"Y":"N");
                 telemetry.update();
+                //Set the sample to what the pixy sample sees
                 sample = pixycamSample.run();
+                //Keep the robot hanging
+                robot.moveArm(0.31);
                 idle();
             }
             //reorient
+            unhang();
             run();
         }
         catch (Throwable t){
@@ -156,5 +162,20 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             return rotationTarget + Math.PI * 2 - currentRotation;
         }
         return currentRotation - rotationTarget;
+    }
+
+    public void unhang(){
+        double offset = gyro.getRotation(PITCH);
+        while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH) - offset) > Math.toRadians(25)) {
+            robot.moveArm(0.1);
+        }
+        robot.moveArm(0);
+        sleep(1000);
+        robot.getLatch().setPosition(0.7);
+        sleep(1000);
+        robot.moveArm(1);
+        sleep(1000);
+        robot.moveArm(0);
+        sleep(1000);
     }
 }
