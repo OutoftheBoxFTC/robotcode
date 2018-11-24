@@ -39,10 +39,10 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         gyro = new RevIMUProvider();
-        samplePixyProvider = new PixycamProvider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
-        pixycamSample = new PixycamSample(samplePixyProvider);
         robot = new Robot(this);
         robot.init();
+        samplePixyProvider = new PixycamProvider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
+        pixycamSample = new PixycamSample(samplePixyProvider);
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
