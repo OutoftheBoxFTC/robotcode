@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.dead_reckoning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -26,13 +27,14 @@ import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axi
 public abstract class DeadReckoningBase extends LinearOpMode {
     private PIDControl control;
 
-    private GyroscopeProvider gyro;
+    protected GyroscopeProvider gyro;
     protected UltrasonicSystem ultrasonic;
     protected Robot robot;
     private ExecutorService threadManager;
     private PixycamProvider samplePixyProvider;
     private PixycamSample pixycamSample;
     protected PixycamSample.SampleTransform sample;
+    private boolean gyroCalibrated;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -62,7 +64,13 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 //Set the sample to what the pixy sample sees
                 sample = pixycamSample.run();
                 //Keep the robot hanging
-                robot.moveArm(0.31);
+                if(gyro.isCalibrated()){
+                    gyro.offsetAxisTo(GyroscopeProvider.Axis.YAW, 0);
+                    gyro.offsetAxisTo(GyroscopeProvider.Axis.PITCH, 0);
+                    while (!isStarted()) {
+                        robot.moveArm(0.31);
+                    }
+                }
                 idle();
             }
             //reorient
@@ -115,14 +123,14 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         double error = getRotationalError(0, -getError(us1, us2, distance));
         PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.5), 100), new TimeTerminator(3000));
-        while (true){
+        while (opModeIsActive()&&!terminator.shouldTerminate(error)){
             double correction = control.correction(error);
-            //robot.drive(correction, -correction);
+            robot.drive(correction, -correction);
             telemetry.addData("error", error);
             telemetry.update();
             error = getRotationalError(0, -getError(us1, us2, distance));
         }
-        //robot.drive(0, 0);
+        robot.drive(0, 0);
 
     }
 
@@ -165,8 +173,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void unhang(){
-        double offset = gyro.getRotation(PITCH);
-        while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH) - offset) > Math.toRadians(25)) {
+        while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(25)) {
             robot.moveArm(0.1);
         }
         robot.moveArm(0);
