@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.dead_reckoning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -22,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axis.PITCH;
-import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axis.YAW;
 
 public abstract class DeadReckoningBase extends LinearOpMode {
     private PIDControl control;
@@ -34,19 +34,15 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     private PixycamProvider samplePixyProvider;
     private PixycamSample pixycamSample;
     protected PixycamSample.SampleTransform sample;
-    private boolean hangInInit;
-
-    public DeadReckoningBase(boolean hangInInit){
-        this.hangInInit = hangInInit;
-    }
+    private boolean gyroCalibrated;
 
     @Override
     public void runOpMode() throws InterruptedException {
         gyro = new RevIMUProvider();
         robot = new Robot(this);
+        robot.init();
         samplePixyProvider = new PixycamProvider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
         pixycamSample = new PixycamSample(samplePixyProvider);
-        robot.init();
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
@@ -59,30 +55,26 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         try {
             //init providers
             gyro.init(robot);
-            //samplePixyProvider.start();
-            //pixycamSample.start();
+            samplePixyProvider.start();
+            pixycamSample.start();
             while (!isStarted()){
                 //cyclically calibrate
                 telemetry.addData("Calibrated", gyro.isCalibrated()?"Y":"N");
                 telemetry.update();
                 //Set the sample to what the pixy sample sees
-                //sample = pixycamSample.run();
+                sample = pixycamSample.run();
                 //Keep the robot hanging
                 if(gyro.isCalibrated()){
                     gyro.offsetAxisTo(GyroscopeProvider.Axis.YAW, 0);
                     gyro.offsetAxisTo(GyroscopeProvider.Axis.PITCH, 0);
-                    while (!isStarted()){
-                        telemetry.addData("Reading", gyro.getRotation(YAW));
+                    while (!isStarted()) {
+                        robot.moveArm(0.31);
                     }
-                    //while (!isStarted() && hangInInit) {
-                    //    robot.moveArm(0.31);
-                    //}
                 }
                 idle();
             }
             //reorient
-            if(hangInInit)
-                unhang();
+            unhang();
             run();
         }
         catch (Throwable t){
@@ -100,8 +92,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     protected abstract void run();
 
     public void rotateGyro(double rotation){
-        rotation = (Math.toRadians(rotation));
-        rotation = rotation<0?rotation+Math.PI*2:rotation;
+        rotation = Math.toRadians(rotation);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.5), 100), new TimeTerminator((long) 1.5e9));
         double gyroOffset = gyro.getRotation(GyroscopeProvider.Axis.YAW),
         error = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
