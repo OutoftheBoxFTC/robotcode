@@ -2,11 +2,16 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.dead_reckoning;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 
 @Autonomous(name = "Crater Autonomous")
 public class Crater extends DeadReckoningBase {
+
+    public Crater() {
+        super(false);
+    }
 
     @Override
     protected void run() {
@@ -20,7 +25,9 @@ public class Crater extends DeadReckoningBase {
                 rotation = 23;
                 break;
         }
-        rotateGyro(rotation+Math.toDegrees(gyro.getRotation(GyroscopeProvider.Axis.YAW)));
+        robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rotateGyro(rotation-Math.toDegrees(gyro.getRotation(GyroscopeProvider.Axis.YAW)));
         robot.intake(-1);
         drive(22, 0.5);
         sleep(200);
@@ -30,7 +37,14 @@ public class Crater extends DeadReckoningBase {
         drive(40, 0.5);
         rotateGyro(-90);
         parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
-        drive(90, -0.5);
-        drive(130, 0.5);
+        drive(20, -0.5);
+        rotateGyro(-15);
+        drive(5, -0.5);
+        sleep(1000);
+        rotateGyro(5);
+        //parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        drive(20, 0.5);
+        rotateGyro(7);
+        drive(30, 0.5);
     }
 }

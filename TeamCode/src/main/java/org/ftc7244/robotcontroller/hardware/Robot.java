@@ -49,7 +49,7 @@ public class Robot extends Hardware {
         intake = getOrNull(map.dcMotor, "intake");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map, Servo.class, "latch");
-        sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
+        //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
     }
 
     @Override
