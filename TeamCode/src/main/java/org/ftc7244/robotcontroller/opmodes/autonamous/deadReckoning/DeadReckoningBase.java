@@ -36,7 +36,6 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     protected PixycamSample.SampleTransform sample;
     private boolean gyroCalibrated, hanging;
     private long startTime;
-
     public DeadReckoningBase(boolean hanging){
         this.hanging = hanging;
     }
@@ -193,7 +192,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.moveArm(0);
         sleep(1000);
         robot.getLatch().setPosition(0.7);
-        sleep(1000);
+        sleep(1500);
         robot.moveArm(1);
         sleep(1000);
         robot.moveArm(0);

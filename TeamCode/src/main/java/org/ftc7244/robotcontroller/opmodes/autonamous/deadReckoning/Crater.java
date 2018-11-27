@@ -10,12 +10,13 @@ import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 public class Crater extends DeadReckoningBase {
 
     public Crater() {
-        super (false);
+        super (true);
     }
 
     @Override
     protected void run() {
         int pixyCase = 1;
+        double currentRot = gyro.getRotation(GyroscopeProvider.Axis.YAW);
         double rotation = 0;
         switch (pixyCase){
             case 0:
@@ -33,7 +34,7 @@ public class Crater extends DeadReckoningBase {
         sleep(200);
         robot.intake(0);
         drive(20, -0.5);
-        rotateGyro(45-rotation);
+        rotateGyro(45 - rotation - currentRot);
         drive(45, 0.5);
         rotateGyro(-90);
         parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
