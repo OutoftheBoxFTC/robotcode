@@ -11,15 +11,18 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.ftc7244.robotcontroller.sensor.Initializable;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public abstract class Hardware {
     protected LinearOpMode opMode;
     protected double countsPerInch;
+    private ArrayList<String> errorMessages;
 
     public Hardware(LinearOpMode opMode, double countsPerInch) {
         this.opMode = opMode;
         this.countsPerInch = countsPerInch;
+        errorMessages = new ArrayList<>();
     }
 
     /**
@@ -49,7 +52,7 @@ public abstract class Hardware {
             }
             return item.getValue();
         }
-        opMode.telemetry.addLine("ERROR: " + name + " not found!");
+        errorMessages.add(name + " not found!");
         RobotLog.e("ERROR: " + name + " not found!");
         return null;
     }
@@ -61,10 +64,16 @@ public abstract class Hardware {
             return map.get(type, name);
         }
         catch (IllegalArgumentException e){
-            opMode.telemetry.addLine("ERROR: " + name + " not found!");
+            errorMessages.add(name + " not found!");
             RobotLog.e("ERROR: " + name + " not found!");
         }
         return null;
+    }
+
+    public void logErrors(){
+        for(String error : errorMessages){
+            opMode.telemetry.addData("Config Error", error);
+        }
     }
 
 

@@ -7,7 +7,7 @@ public class PixycamSample {
         this.pixy = pixy;
     }
 
-    public boolean start(){
+    public boolean start() {
         pixy.start();
         return pixy.isEngaged();
     }

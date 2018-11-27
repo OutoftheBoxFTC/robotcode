@@ -40,8 +40,11 @@ public class Robot extends Hardware {
         leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
+        raisingArm1 = getOrNull(map.dcMotor, "arm1");
+        raisingArm2 = getOrNull(map.dcMotor, "arm2");
         goldI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         silverI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
+        sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         imu = getOrNull(map, BNO055IMU.class, "imu");
 
         leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");

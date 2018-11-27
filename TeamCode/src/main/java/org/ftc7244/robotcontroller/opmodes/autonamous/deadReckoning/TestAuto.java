@@ -1,8 +1,8 @@
-package org.ftc7244.robotcontroller.opmodes.autonamous.dead_reckoning;
+package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous
+@Autonomous(name = "Test Auto")
 public class TestAuto extends DeadReckoningBase {
 
     public TestAuto() {
