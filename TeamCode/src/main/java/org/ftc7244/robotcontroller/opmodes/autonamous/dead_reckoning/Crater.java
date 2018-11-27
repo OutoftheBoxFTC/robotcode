@@ -10,7 +10,7 @@ import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 public class Crater extends DeadReckoningBase {
 
     public Crater() {
-        super(false);
+        super (true);
     }
 
     @Override
@@ -40,11 +40,28 @@ public class Crater extends DeadReckoningBase {
         drive(20, -0.5);
         rotateGyro(-15);
         drive(5, -0.5);
-        sleep(1000);
+
+        //Arm Dumping
+        dumpArm();
+
+
         rotateGyro(5);
         //parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
         drive(20, 0.5);
         rotateGyro(7);
         drive(30, 0.5);
+    }
+
+    private void dumpArm(){
+        robot.moveArm(-1);
+        sleep(1000);
+        robot.getLid().setPosition(0.8);
+        sleep(500);
+        robot.moveArm(0);
+        sleep(500);
+        robot.moveArm(1);
+        robot.getLid().setPosition(0);
+        sleep(1000);
+        robot.moveArm(0);
     }
 }

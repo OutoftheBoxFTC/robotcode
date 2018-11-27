@@ -4,6 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous
 public class TestAuto extends DeadReckoningBase {
+
+    public TestAuto() {
+        super(false);
+    }
+
     @Override
     protected void run() {
         drive(22, 0.5);

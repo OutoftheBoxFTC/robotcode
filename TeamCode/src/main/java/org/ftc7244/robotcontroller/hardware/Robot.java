@@ -23,7 +23,7 @@ public class Robot extends Hardware {
     private DcMotor intake, raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
-    private Servo latch;
+    private Servo latch, lid;
 
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
@@ -48,7 +48,8 @@ public class Robot extends Hardware {
         rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
         intake = getOrNull(map.dcMotor, "intake");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        latch = getOrNull(map, Servo.class, "latch");
+        latch = getOrNull(map.servo, "latch");
+        lid = getOrNull(map.servo, "lid");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
     }
 
@@ -189,5 +190,9 @@ public class Robot extends Hardware {
 
     public I2cDeviceSynch getSampleI2c() {
         return sampleI2c;
+    }
+
+    public Servo getLid() {
+        return lid;
     }
 }

@@ -34,7 +34,11 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     private PixycamProvider samplePixyProvider;
     private PixycamSample pixycamSample;
     protected PixycamSample.SampleTransform sample;
-    private boolean gyroCalibrated;
+    private boolean gyroCalibrated, hanging;
+
+    public DeadReckoningBase(boolean hanging){
+        this.hanging = hanging;
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,14 +71,15 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 if(gyro.isCalibrated()){
                     gyro.offsetAxisTo(GyroscopeProvider.Axis.YAW, 0);
                     gyro.offsetAxisTo(GyroscopeProvider.Axis.PITCH, 0);
-                    while (!isStarted()) {
+                    while (!isStarted() && hanging) {
                         robot.moveArm(0.31);
                     }
                 }
                 idle();
             }
             //reorient
-            unhang();
+            if(hanging)
+                unhang();
             run();
         }
         catch (Throwable t){
