@@ -1,16 +1,11 @@
 package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
-import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
-
-@Autonomous(name = "Crater")
-public class Crater extends DeadReckoningBase {
-
-    public Crater() {
+@Autonomous
+public class Depot extends DeadReckoningBase {
+    public Depot() {
         super (true);
     }
 
@@ -34,31 +29,31 @@ public class Crater extends DeadReckoningBase {
         drive(5, -0.5);
         robot.intake(0);
         robot.moveArm(0);
-        rotateGyro(-90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        rotateGyro(90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
             default:
-                drive(55, -0.5);
+                drive(48, 0.5);
                 break;
             case RIGHT:
-                drive(56, -0.5);
+                drive(49, 0.5);
                 break;
             case LEFT:
-                drive(54, -0.5);
+                drive(47, 0.5);
         }
         rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
-        drive(30, -0.5);
-        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        drive(55, -0.5);
+        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
         dumpArm();
         switch (sample){
             case LEFT:
                 drive(55, 0.8);
                 break;
             case RIGHT:
-                drive(50, 0.8);
+                drive(55, 0.8);
                 break;
             case CENTER:
-                drive(50, 0.8);
+                drive(55, 0.8);
                 break;
         }
     }

@@ -15,9 +15,9 @@ public class PixycamSample {
     public SampleTransform run(){
         pixy.update();
         if(pixy.getX() < 62){
-            return SampleTransform.RIGHT;
-        }else if(pixy.getX() > 189){
             return SampleTransform.LEFT;
+        }else if(pixy.getX() > 189){
+            return SampleTransform.RIGHT;
         }else{
             return SampleTransform.CENTER;
         }

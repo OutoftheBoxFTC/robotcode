@@ -10,7 +10,7 @@ public class UltrasonicSystemTest extends AutonomousProcedure {
     @Override
     protected void run() {
         while (opModeIsActive()) {
-            telemetry.addData("Error", ultrasonic.getRotationalOffset(UltrasonicSystem.Side.LEFT));
+            telemetry.addData("Error", ultrasonic.getRotationalOffset(UltrasonicSystem.Side.RIGHT));
             telemetry.update();
         }
     }
