@@ -66,11 +66,11 @@ public class Crater extends DeadReckoningBase {
     private void dumpArm(){
         robot.moveArm(-1);
         sleep(1000);
-        robot.getLid().setPosition(0.8);
+        robot.getLid().setPosition(.1);
         robot.moveArm(0);
         sleep(500);
         robot.moveArm(1);
-        robot.getLid().setPosition(0);
+        robot.getLid().setPosition(.8);
         sleep(750);
         robot.moveArm(0);
     }

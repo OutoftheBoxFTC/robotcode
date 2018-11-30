@@ -58,7 +58,7 @@ public class Robot extends Hardware {
 
     @Override
     public void initServos() {
-        getLid().setPosition(0.1);
+        getLid().setPosition(0.8);
     }
 
     public void moveArm(double power){

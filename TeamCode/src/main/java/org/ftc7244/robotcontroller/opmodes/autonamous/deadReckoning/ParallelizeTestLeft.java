@@ -2,10 +2,10 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Parallelize Test")
-public class ParallelizeTest extends DeadReckoningBase {
+@Autonomous(name = "Left Parallelize Test")
+public class ParallelizeTestLeft extends DeadReckoningBase {
 
-    public ParallelizeTest() {
+    public ParallelizeTestLeft() {
         super(false);
     }
 
