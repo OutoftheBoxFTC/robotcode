@@ -53,7 +53,7 @@ public class MainTeleOp extends LinearOpMode {
             if(modifier != 0.2) {
                 robot.drive(gamepad1.left_stick_y, gamepad1.right_stick_y); //Uses the left and right sticks to drive the robot
             }else{
-                robot.drive(Math.abs(modifier * gamepad1.left_stick_y), Math.abs(modifier) * gamepad1.right_stick_y);
+                robot.drive(Math.abs(modifier * gamepad1.left_stick_y), Math.abs(modifier * gamepad1.right_stick_y));
             }
             if (intakeTrigger.isPressed()) {
                 armMod = 0.15;
@@ -61,8 +61,6 @@ public class MainTeleOp extends LinearOpMode {
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
             }else{
-                if(Math.abs(gamepad2.left_stick_y) < 0.2)
-                    robot.moveArm(0);
                 robot.intake(0);
             }
             if(robot.getLeftDrive().getVelocity(AngleUnit.RADIANS) > 6 && robot.getRightDrive().getVelocity(AngleUnit.RADIANS) > 6){ //If both wheels are going full speed backwards
