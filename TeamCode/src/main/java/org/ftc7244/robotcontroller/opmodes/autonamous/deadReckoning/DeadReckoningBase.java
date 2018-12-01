@@ -11,8 +11,9 @@ import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTe
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
+import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedRevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
-import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
@@ -21,13 +22,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axis.PITCH;
-import static org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider.Axis.YAW;
+import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider.Axis.PITCH;
+import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider.Axis.YAW;
 
 public abstract class DeadReckoningBase extends LinearOpMode {
     private PIDControl control;
 
-    protected GyroscopeProvider gyro;
+    //protected GyroscopeProvider gyro;
+    protected ExtendedGyroscopeProvider gyro;
     protected UltrasonicSystem ultrasonic;
     protected Robot robot;
     private ExecutorService threadManager;
@@ -42,7 +44,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        gyro = new RevIMUProvider();
+        gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);
         robot.init();
         samplePixyProvider = new PixycamProvider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
@@ -70,8 +72,8 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 sample = pixycamSample.run();
                 //Keep the robot hanging
                 if(gyro.isCalibrated()){
-                    gyro.offsetAxisTo(GyroscopeProvider.Axis.YAW, 0);
-                    gyro.offsetAxisTo(GyroscopeProvider.Axis.PITCH, 0);
+                    gyro.offsetAxisTo(YAW, 0);
+                    gyro.offsetAxisTo(PITCH, 0);
                     while (!isStarted() && hanging) {
                         robot.moveArm(0.31);
                         sample = pixycamSample.run();
@@ -108,14 +110,14 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
         rotation = Math.toRadians(rotation);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.0872665), 100), new TimeTerminator((long) 3e9));
-        double gyroOffset = gyro.getRotation(GyroscopeProvider.Axis.YAW),
-        error = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
-        double target = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+        double gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
+        error = getRotationalError(rotation, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+        double target = getRotationalError(rotation, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
         while (opModeIsActive()&&!terminator.shouldTerminate(error)){
             telemetry.addData("Error", Math.toDegrees(error));
             telemetry.addData("Target", Math.toDegrees(target));
             telemetry.update();
-            error = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+            error = getRotationalError(rotation, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
             double correction = control.correction(error);
             robot.drive(correction, -correction);
         }
@@ -125,11 +127,11 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         rotation = Math.toRadians(rotation);
         PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.5), 100), new TimeTerminator((long) timeout));
-        double gyroOffset = gyro.getRotation(GyroscopeProvider.Axis.YAW),
-                error = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+        double gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
+                error = getRotationalError(rotation, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
 
         while (opModeIsActive()&&!terminator.shouldTerminate(error)){
-            error = getRotationalError(rotation, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+            error = getRotationalError(rotation, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
             double correction = control.correction(error);
             robot.drive(correction, -correction);
         }
@@ -162,8 +164,8 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 encoderOffset = robot.getDriveEncoderAverage(),
                 distanceTarget = inches*robot.getCountsPerInch()*direction,
                 distanceError = -(distanceTarget-(robot.getDriveEncoderAverage()-encoderOffset)),
-                gyroOffset = gyro.getRotation(GyroscopeProvider.Axis.YAW),
-                rotationError = getRotationalError(0, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+                gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
+                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
 
         while (opModeIsActive() && !terminator.shouldTerminate(distanceError)){
             double correction = control.correction(rotationError);
@@ -171,7 +173,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             telemetry.addData("rotational error", rotationError);
             telemetry.addData("distance error", distanceError);
             telemetry.update();
-            rotationError = getRotationalError(0, gyro.getRotation(GyroscopeProvider.Axis.YAW)-gyroOffset);
+            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
             distanceError = -(distanceTarget-(robot.getDriveEncoderAverage()-encoderOffset));
         }
         robot.drive(0, 0);
@@ -203,6 +205,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(1500);
         robot.moveArm(1);
         sleep(1000);
+        robot.getLatch().setPosition(0.2);
         robot.moveArm(0);
         sleep(1000);
     }
