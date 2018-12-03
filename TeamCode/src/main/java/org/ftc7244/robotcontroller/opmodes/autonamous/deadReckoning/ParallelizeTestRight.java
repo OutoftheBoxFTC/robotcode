@@ -3,7 +3,7 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "Right Parallelize Test")
-public class ParallelizeTestRight extends DeadReckoningBase {
+public class ParallelizeTestRight extends DooDooButt {
 
     public ParallelizeTestRight() {
         super(false);

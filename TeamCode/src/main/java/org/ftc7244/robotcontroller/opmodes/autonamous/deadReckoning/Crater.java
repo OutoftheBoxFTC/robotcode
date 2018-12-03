@@ -37,7 +37,7 @@ public class Crater extends DeadReckoningBase {
         rotateGyro(-90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
             case CENTER:
-                drive(55, -0.5);
+                drive(56, -0.5);
                 break;
             case RIGHT:
                 drive(61, -0.5);
@@ -61,7 +61,7 @@ public class Crater extends DeadReckoningBase {
                 drive(50, 0.8);
                 break;
             case CENTER:
-                drive(50, 0.8);
+                drive(51, 0.8);
                 break;
         }
     }

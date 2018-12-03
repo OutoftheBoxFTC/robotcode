@@ -25,9 +25,9 @@ public class Depot extends DeadReckoningBase {
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
         robot.intake(1);
-        drive(25, 0.5);
+        drive(26, 0.5);
         sleep(200);
-        drive(6, -0.5);
+        drive(7, -0.5);
         robot.intake(0);
         robot.moveArm(0);
         rotateGyro(82 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
@@ -36,17 +36,17 @@ public class Depot extends DeadReckoningBase {
                 drive(41, 0.5);
                 break;
             case RIGHT:
-                drive(42, 0.5);
+                drive(40, 0.5);
                 break;
             case LEFT:
-                drive(41, 0.5);
+                drive(39, 0.5);
                 break;
             default:
                 drive( 40, 0.5);
         }
-        rotateGyro(56, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        rotateGyro(58, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         //parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
-        drive(51, -0.5);
+        drive(49, -0.5);
         parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
         dumpArm();
         switch (sample){
