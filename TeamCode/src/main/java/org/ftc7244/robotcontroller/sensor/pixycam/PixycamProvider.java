@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.sensor.pixycam;
 
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
+
 /**
  * This class is a provider for the PixyCam, returning various data from the pixy cam
  */
