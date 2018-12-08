@@ -3,10 +3,11 @@ package org.ftc7244.robotcontroller.opmodes.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
-import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
-import org.ftc7244.robotcontroller.sensor.pixycam.SampleProvider;
+import java.nio.ByteBuffer;
+
 @TeleOp
 /*
 Bytes    16-bit word    Description
@@ -21,6 +22,8 @@ Bytes    16-bit word    Description
         */
 public class PixyCamTests extends OpMode {
     I2cDeviceSynch pixy;
+    I2cDevice pixyI2c;
+    byte[][] bytes = new byte[12][];
     @Override
     public void init() {
         pixy = hardwareMap.i2cDeviceSynch.get("pixy");
@@ -28,11 +31,12 @@ public class PixyCamTests extends OpMode {
         I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow (1, 26, I2cDeviceSynch.ReadMode.REPEAT);
         pixy.setReadWindow(readWindow);
         pixy.engage();
+
     }
 
     @Override
     public void loop() {
-/*        telemetry.addData("Byte 0", pixy.read8(0));
+        telemetry.addData("Byte 0", pixy.read8(0));
         telemetry.addData("Byte 1", pixy.read8(1));
         telemetry.addData("Byte 2", pixy.read8(2));
         telemetry.addData("Byte 3", pixy.read8(3));
@@ -46,12 +50,31 @@ public class PixyCamTests extends OpMode {
         telemetry.addData("Byte 11", pixy.read8(11));
         telemetry.addData("Byte 12", pixy.read8(12));
         telemetry.addData("Byte 13", pixy.read8(13));
-*/      telemetry.addData("X", twoBytesToInt(pixy.read8(6), pixy.read8(7)));
-        telemetry.addData("Y", twoBytesToInt(pixy.read8(8), pixy.read8(9)));
+
+        for(int i = 0; i < bytes.length; i ++) {
+            bytes[i] = pixy.read(i, 13);
+        }
+        for(int i = 0; i < bytes.length; i ++){
+            telemetry.addLine(bytes[i][0] + " " + bytes[i][1] + " " + bytes[i][2] + " " + bytes[i][3] + " " + bytes[i][4] + " " + bytes[i][5] + " " + bytes[i][6] + " " + bytes[i][7] + " " + bytes[i][8] + " " + bytes[i][9] + " " + bytes[i][10] + " " + bytes[i][11] + " " + bytes[i][12]);
+        }
+        telemetry.addData("X", bytesToShort(pixy.read8(7), pixy.read8(6)));
+        telemetry.addData("Y", bytesToShort(pixy.read8(9), pixy.read8(8)));
         telemetry.update();
     }
 
-    private static int twoBytesToInt(byte b1, byte b2) {
-        return ((b2 << 8) | (b1 & 0xFF));
+    private short bytesToShort(byte a, byte b) {
+        short sh = (short)a;
+        sh <<= 8;
+        short ret = (short)(sh | b);
+        return ret;
+    }
+
+    private short endianToShort(){
+        ByteBuffer bb = ByteBuffer.wrap(byteArray);
+        bb.order( ByteOrder.LITTLE_ENDIAN);
+        while( bb.hasRemaining()) {
+            short v = bb.getShort();
+            /* Do something with v... */
+        }
     }
 }
