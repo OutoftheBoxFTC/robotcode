@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp
 /*
@@ -24,6 +27,9 @@ public class PixyCamTests extends OpMode {
     I2cDeviceSynch pixy;
     I2cDevice pixyI2c;
     byte[][] bytes = new byte[12][];
+    byte[] data = new byte[12];
+    List<Short> shorts;
+    boolean showData = false;
     @Override
     public void init() {
         pixy = hardwareMap.i2cDeviceSynch.get("pixy");
@@ -36,7 +42,7 @@ public class PixyCamTests extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Byte 0", pixy.read8(0));
+/*        telemetry.addData("Byte 0", pixy.read8(0));
         telemetry.addData("Byte 1", pixy.read8(1));
         telemetry.addData("Byte 2", pixy.read8(2));
         telemetry.addData("Byte 3", pixy.read8(3));
@@ -50,15 +56,21 @@ public class PixyCamTests extends OpMode {
         telemetry.addData("Byte 11", pixy.read8(11));
         telemetry.addData("Byte 12", pixy.read8(12));
         telemetry.addData("Byte 13", pixy.read8(13));
-
+*/      data = pixy.read(0, 26);
+        //for(int i = 0; i < data.length; i ++){
+        //    data[i] = pixy.read8(i);
+        //}
         for(int i = 0; i < bytes.length; i ++) {
             bytes[i] = pixy.read(i, 13);
         }
-        for(int i = 0; i < bytes.length; i ++){
-            telemetry.addLine(bytes[i][0] + " " + bytes[i][1] + " " + bytes[i][2] + " " + bytes[i][3] + " " + bytes[i][4] + " " + bytes[i][5] + " " + bytes[i][6] + " " + bytes[i][7] + " " + bytes[i][8] + " " + bytes[i][9] + " " + bytes[i][10] + " " + bytes[i][11] + " " + bytes[i][12]);
+        //for(int i = 0; i < bytes.length; i ++){
+        //    telemetry.addLine(bytes[i][0] + " " + bytes[i][1] + " " + bytes[i][2] + " " + bytes[i][3] + " " + bytes[i][4] + " " + bytes[i][5] + " " + bytes[i][6] + " " + bytes[i][7] + " " + bytes[i][8] + " " + bytes[i][9] + " " + bytes[i][10] + " " + bytes[i][11] + " " + bytes[i][12]);
+        //}
+        shorts = endianToShort(data);
+        for(int i = 0; i < shorts.size(); i ++){
+            telemetry.addData("Short " + i, shorts.get(i));
         }
-        telemetry.addData("X", bytesToShort(pixy.read8(7), pixy.read8(6)));
-        telemetry.addData("Y", bytesToShort(pixy.read8(9), pixy.read8(8)));
+        if()
         telemetry.update();
     }
 
@@ -69,12 +81,13 @@ public class PixyCamTests extends OpMode {
         return ret;
     }
 
-    private short endianToShort(){
+    private List<Short> endianToShort(byte[] byteArray){
+        List<Short> shorts = new ArrayList<Short>();
         ByteBuffer bb = ByteBuffer.wrap(byteArray);
         bb.order( ByteOrder.LITTLE_ENDIAN);
         while( bb.hasRemaining()) {
-            short v = bb.getShort();
-            /* Do something with v... */
+            shorts.add(bb.getShort());
         }
+        return shorts;
     }
 }
