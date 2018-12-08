@@ -3,16 +3,21 @@ package org.ftc7244.robotcontroller.opmodes.tests;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
+import org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning.DeadReckoningBase;
+import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 
 @TeleOp(name = "Gyroscope Test")
-public class GyroscopeTest extends AutonomousProcedure {
+public class GyroscopeTest extends DeadReckoningBase {
+
+    public GyroscopeTest() {
+        super(false);
+    }
 
     @Override
     protected void run() {
-        driveController.orient(0, 0, 0);
         while (opModeIsActive()){
-            telemetry.addData("Reading", gyroscope.getRotation(GyroscopeProvider.Axis.YAW));
+            telemetry.addData("Reading", gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW));
             telemetry.update();
         }
     }

@@ -5,8 +5,8 @@ public class UltrasonicSystem {
     private Wall wall;
 
     public UltrasonicSystem(SickUltrasonic leftLeading, SickUltrasonic leftTrailing, SickUltrasonic rightLeading, SickUltrasonic rightTrailing){
-        left = new UltrasonicSide(rightLeading, rightTrailing, Side.RIGHT.distance);
-        right = new UltrasonicSide(leftTrailing, leftLeading, Side.LEFT.distance);
+        left = new UltrasonicSide(leftLeading, leftTrailing, Side.RIGHT.distance);
+        right = new UltrasonicSide(rightTrailing, rightLeading, Side.LEFT.distance);
         wall = null;
 
     }
@@ -52,7 +52,7 @@ public class UltrasonicSystem {
     }
 
     public double getUltrasonicAverage(Side side){
-        if (side== Side.LEFT){
+        if (side==Side.LEFT){
             return left.getAverage();
         } else if (side == Side.RIGHT){
             return right.getAverage();
@@ -69,8 +69,8 @@ public class UltrasonicSystem {
     }
 
     public enum Side {
-        LEFT(0, 1),
-        RIGHT(Math.PI, 1);
+        LEFT(0, 13.25),
+        RIGHT(Math.PI, 13.25);
         private double rotation, distance;
 
         Side(double rotation, double distance){
@@ -85,6 +85,14 @@ public class UltrasonicSystem {
         public double getDistance() {
             return distance;
         }
+    }
+
+    public UltrasonicSide getLeft() {
+        return left;
+    }
+
+    public UltrasonicSide getRight() {
+        return right;
     }
 
     public enum Wall{

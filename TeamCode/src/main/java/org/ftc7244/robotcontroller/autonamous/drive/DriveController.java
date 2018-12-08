@@ -1,8 +1,8 @@
 package org.ftc7244.robotcontroller.autonamous.drive;
 
 import org.ftc7244.robotcontroller.autonamous.drive.orientation.DistanceProvider;
-import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
 import org.ftc7244.robotcontroller.autonamous.drive.orientation.RotationalProvider;
+import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
 import org.ftc7244.robotcontroller.autonamous.drive.orientation.TranslationalProvider;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.hardware.Robot;
@@ -35,7 +35,7 @@ public class DriveController {
         translation.linkDriveProcedure(procedure);
         double rotationError = rotation.getRotationalError();
 
-        while ((robot.getOpMode().opModeIsActive() && !procedure.getRotationalTerminator().shouldTerminate(rotationError))){
+        while ((robot.getOpMode().opModeIsActive()&&!procedure.getRotationalTerminator().shouldTerminate(rotationError))){
             rotationError = rotation.getRotationalError();
 
             robot.getOpMode().telemetry.addData("Error", Math.toDegrees(rotationError));
@@ -58,7 +58,10 @@ public class DriveController {
                     power = procedure.getSpeed();
 
             robot.getOpMode().telemetry.addData("power", power);
+            robot.getOpMode().telemetry.addData("current", distance.getEncoderAverage());
+            robot.getOpMode().telemetry.addData("target", distanceTarget);
             robot.getOpMode().telemetry.addData("error", translationalError);
+            robot.getOpMode().telemetry.addData("rotational error", rotationError);
             robot.getOpMode().telemetry.update();
 
             robot.drive(rotation+power, -rotation+power);

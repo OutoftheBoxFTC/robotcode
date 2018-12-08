@@ -26,7 +26,7 @@ public abstract class AutonomousProcedure extends LinearOpMode {
     protected DriveController driveController;
     protected Orientation orientation;
 
-    private PixycamProvider pixycam;
+    //private PixycamProvider pixycam;
 
     private long lastTime;
 

@@ -2,6 +2,8 @@ package org.ftc7244.robotcontroller.opmodes.tuning.parameter;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.ftc7244.robotcontroller.hardware.Robot;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
