@@ -30,6 +30,7 @@ public class PixyCamTests extends OpMode {
     byte[] data = new byte[12];
     List<Short> shorts;
     boolean showData = false;
+    
     @Override
     public void init() {
         pixy = hardwareMap.i2cDeviceSynch.get("pixy");
@@ -67,10 +68,14 @@ public class PixyCamTests extends OpMode {
         //    telemetry.addLine(bytes[i][0] + " " + bytes[i][1] + " " + bytes[i][2] + " " + bytes[i][3] + " " + bytes[i][4] + " " + bytes[i][5] + " " + bytes[i][6] + " " + bytes[i][7] + " " + bytes[i][8] + " " + bytes[i][9] + " " + bytes[i][10] + " " + bytes[i][11] + " " + bytes[i][12]);
         //}
         shorts = endianToShort(data);
+        showData = true;
         for(int i = 0; i < shorts.size(); i ++){
-            telemetry.addData("Short " + i, shorts.get(i));
+            if(shorts.get(i) == 0){
+                showData = false;
+            }
+            if(showData)
+                telemetry.addData("Short " + i, shorts.get(i));
         }
-        if()
         telemetry.update();
     }
 
