@@ -26,8 +26,8 @@ Bytes    16-bit word    Description
 public class PixyCamTests extends OpMode {
     I2cDeviceSynch pixy;
     I2cDevice pixyI2c;
-    byte[][] bytes = new byte[12][];
     byte[] data = new byte[12];
+    short temp = 0;
     List<Short> shorts;
     boolean showData = false;
     
@@ -38,43 +38,33 @@ public class PixyCamTests extends OpMode {
         I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow (1, 26, I2cDeviceSynch.ReadMode.REPEAT);
         pixy.setReadWindow(readWindow);
         pixy.engage();
-
     }
 
     @Override
     public void loop() {
-/*        telemetry.addData("Byte 0", pixy.read8(0));
-        telemetry.addData("Byte 1", pixy.read8(1));
-        telemetry.addData("Byte 2", pixy.read8(2));
-        telemetry.addData("Byte 3", pixy.read8(3));
-        telemetry.addData("Byte 4", pixy.read8(4));
-        telemetry.addData("Byte 5", pixy.read8(5));
-        telemetry.addData("Byte 6", pixy.read8(6));
-        telemetry.addData("Byte 7", pixy.read8(7));
-        telemetry.addData("Byte 8", pixy.read8(8));
-        telemetry.addData("Byte 9", pixy.read8(9));
-        telemetry.addData("Byte 10", pixy.read8(10));
-        telemetry.addData("Byte 11", pixy.read8(11));
-        telemetry.addData("Byte 12", pixy.read8(12));
-        telemetry.addData("Byte 13", pixy.read8(13));
-*/      data = pixy.read(0, 26);
-        //for(int i = 0; i < data.length; i ++){
-        //    data[i] = pixy.read8(i);
-        //}
-        for(int i = 0; i < bytes.length; i ++) {
-            bytes[i] = pixy.read(i, 13);
-        }
-        //for(int i = 0; i < bytes.length; i ++){
-        //    telemetry.addLine(bytes[i][0] + " " + bytes[i][1] + " " + bytes[i][2] + " " + bytes[i][3] + " " + bytes[i][4] + " " + bytes[i][5] + " " + bytes[i][6] + " " + bytes[i][7] + " " + bytes[i][8] + " " + bytes[i][9] + " " + bytes[i][10] + " " + bytes[i][11] + " " + bytes[i][12]);
-        //}
+        data = pixy.read(0, 26);
         shorts = endianToShort(data);
         showData = true;
-        for(int i = 0; i < shorts.size(); i ++){
-            if(shorts.get(i) == 0){
+/*        for(int i = 0; i < shorts.size(); i ++){
+            if(shorts.get(i) == 0 || shorts.get(i) < 0 || shorts.get(i) > 600){
                 showData = false;
+            }else{
+                temp = shorts.get(i);
             }
             if(showData)
                 telemetry.addData("Short " + i, shorts.get(i));
+        }
+*/
+        if(shorts.get(6) == 0 || shorts.get(6) < 0 || shorts.get(6) > 400){
+
+        }else{
+            temp = shorts.get(6);
+        }
+        telemetry.addData("Width", temp);
+        if(temp < 200){
+            telemetry.addLine("One Gold");
+        }else{
+            telemetry.addLine("Two Gold");
         }
         telemetry.update();
     }
