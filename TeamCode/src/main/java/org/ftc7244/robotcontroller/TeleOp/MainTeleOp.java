@@ -33,6 +33,7 @@ public class MainTeleOp extends LinearOpMode {
      * A: Closes hanging latch
      * B: Opens hanging latch
      */
+
     Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, lidButton, armLockButton;
     PressButton Bbutton;
     @Override
