@@ -79,9 +79,9 @@ public class MainTeleOp extends LinearOpMode {
                 robot.getLatch().setPosition(0.7);
             }
             if(lidButton.isPressed()){
-                robot.getLid().setPosition(0.4);
-            }else{
                 robot.getLid().setPosition(0.78);
+            }else{
+                robot.getLid().setPosition(0.4);
             }
             if(armLockButton.isPressed()){
                 armMod = 0.3;
