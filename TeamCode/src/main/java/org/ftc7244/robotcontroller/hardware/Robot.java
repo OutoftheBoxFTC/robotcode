@@ -54,6 +54,7 @@ public class Robot extends Hardware {
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
+        resetMotors(raisingArm2);
     }
 
     @Override

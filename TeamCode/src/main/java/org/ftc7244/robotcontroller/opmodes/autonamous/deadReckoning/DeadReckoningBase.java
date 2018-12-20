@@ -14,6 +14,7 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedRevIMUProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
+import org.ftc7244.robotcontroller.sensor.pixycam.PixyCam2Provider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
@@ -33,7 +34,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     protected UltrasonicSystem ultrasonic;
     protected Robot robot;
     private ExecutorService threadManager;
-    private PixycamProvider samplePixyProvider;
+    private PixyCam2Provider samplePixyProvider;
     private PixycamSample pixycamSample;
     public PixycamSample.SampleTransform sample;
     private boolean gyroCalibrated, hanging;
@@ -47,7 +48,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);
         robot.init();
-        samplePixyProvider = new PixycamProvider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
+        samplePixyProvider = new PixyCam2Provider(PixycamProvider.Mineral.GOLD, robot.getSampleI2c());
         pixycamSample = new PixycamSample(samplePixyProvider);
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
