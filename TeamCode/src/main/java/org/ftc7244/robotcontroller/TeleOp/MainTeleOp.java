@@ -57,7 +57,6 @@ public class MainTeleOp extends LinearOpMode {
             if (intakeTrigger.isPressed()) {
                 armMod = 0.15;
                 robot.intake(1);
-                armOffset = robot.getRaisingArm1().getCurrentPosition();
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
             }else{
@@ -87,7 +86,7 @@ public class MainTeleOp extends LinearOpMode {
                 armMod = 0;
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
-            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 10 && !raisingArm){
+            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 65 && !raisingArm){
                 robot.getIntakeKicker().setPosition(0.9);
             }else if(!raisingArm){
                 robot.getIntakeKicker().setPosition(0.2);
