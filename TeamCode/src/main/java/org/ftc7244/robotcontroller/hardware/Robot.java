@@ -23,7 +23,7 @@ public class Robot extends Hardware {
     private DcMotor intake, raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
-    private Servo latch, lid;
+    private Servo latch, lid, intakeKicker;
 
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
@@ -54,11 +54,12 @@ public class Robot extends Hardware {
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
+        intakeKicker = getOrNull(map.servo, "intakeKicker");
     }
 
     @Override
     public void initServos() {
-        getLid().setPosition(0.8);
+        getLid().setPosition(.4);
     }
 
     public void moveArm(double power){
@@ -198,4 +199,6 @@ public class Robot extends Hardware {
     public Servo getLid() {
         return lid;
     }
+
+    public Servo getIntakeKicker(){return intakeKicker;}
 }

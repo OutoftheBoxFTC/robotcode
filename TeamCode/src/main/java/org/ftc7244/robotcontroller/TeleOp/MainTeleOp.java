@@ -1,13 +1,10 @@
 package org.ftc7244.robotcontroller.TeleOp;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.R;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
@@ -33,7 +30,7 @@ public class MainTeleOp extends LinearOpMode {
      * A: Closes hanging latch
      * B: Opens hanging latch
      */
-    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, lidButton, armLockButton;
+    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, lidButton, armLockButton, intakeKicker;
     PressButton Bbutton;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,6 +45,8 @@ public class MainTeleOp extends LinearOpMode {
         lidButton = new Button(gamepad2, ButtonType.RIGHT_BUMPER);
         Bbutton = new PressButton(gamepad2, ButtonType.B);
         armLockButton = new PressButton(gamepad2, ButtonType.D_PAD_UP);
+        intakeKicker = new PressButton (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
+        robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
         while(opModeIsActive()) {
             if(modifier != 0.2) {
@@ -85,8 +84,9 @@ public class MainTeleOp extends LinearOpMode {
             }
             if(armLockButton.isPressed()){
                 armMod = 0.3;
-            }else if(!intakeTrigger.isPressed()){
+            }else if(!intakeTrigger.isPressed()) {
                 armMod = 0;
+            }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
         }
     }
