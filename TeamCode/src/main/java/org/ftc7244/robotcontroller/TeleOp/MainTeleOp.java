@@ -16,8 +16,8 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 @TeleOp(name="TeleOp")
 public class MainTeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
-    double timer = 0, modifier = 1, armMod = 1;
-    boolean slowingDown = false;
+    double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0;
+    boolean slowingDown = false, raisingArm = false;
     PixycamProvider goldPixy, silverPixy;
     GyroscopeProvider gyro;
     /**
@@ -45,8 +45,8 @@ public class MainTeleOp extends LinearOpMode {
         lidButton = new Button(gamepad2, ButtonType.RIGHT_BUMPER);
         Bbutton = new PressButton(gamepad2, ButtonType.B);
         armLockButton = new PressButton(gamepad2, ButtonType.D_PAD_UP);
-        intakeKicker = new PressButton (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
-        robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeKicker = new Button (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
+        armOffset = robot.getRaisingArm1().getCurrentPosition();
         waitForStart();
         while(opModeIsActive()) {
             if(modifier != 0.2) {
@@ -70,8 +70,6 @@ public class MainTeleOp extends LinearOpMode {
             }else{//else set the modifier to 1
                 modifier = 1;
             }
-            robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
-            robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
             if(Bbutton.isPressed()){
                 robot.getLatch().setPosition(0.1);
             }else{
@@ -88,6 +86,30 @@ public class MainTeleOp extends LinearOpMode {
                 armMod = 0;
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
+            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 10 && !raisingArm){
+                robot.getIntakeKicker().setPosition(0.8);
+            }else if(!raisingArm){
+                robot.getIntakeKicker().setPosition(0.2);
+            }
+            if(!raisingArm){
+                robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
+                robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
+            }
+            if(intakeKicker.isPressed() && !raisingArm){
+                raisingArm = true;
+                timeTarget = System.currentTimeMillis() + 3000;
+            }
+            if(raisingArm){
+                robot.getIntakeKicker().setPosition(0.2);
+                if(timeTarget < System.currentTimeMillis()){
+                    if(robot.getRaisingArm1().getCurrentPosition() < 200){
+                        robot.getRaisingArm1().setPower(-1);
+                        robot.getRaisingArm2().setPower(-1);
+                    }
+                }
+            }
+            telemetry.addData("Test", robot.getRaisingArm1().getCurrentPosition() - armOffset);
+            telemetry.update();
         }
     }
 }
