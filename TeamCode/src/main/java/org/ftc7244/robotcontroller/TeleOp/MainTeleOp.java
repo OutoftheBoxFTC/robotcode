@@ -57,6 +57,7 @@ public class MainTeleOp extends LinearOpMode {
             if (intakeTrigger.isPressed()) {
                 armMod = 0.15;
                 robot.intake(1);
+                armOffset = robot.getRaisingArm1().getCurrentPosition();
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
             }else{
@@ -87,27 +88,39 @@ public class MainTeleOp extends LinearOpMode {
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
             if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 10 && !raisingArm){
-                robot.getIntakeKicker().setPosition(0.8);
+                robot.getIntakeKicker().setPosition(0.9);
             }else if(!raisingArm){
                 robot.getIntakeKicker().setPosition(0.2);
             }
             if(!raisingArm){
-                robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
-                robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
+                if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 100){
+                    if(gamepad1.right_stick_y < -0.1){
+                        robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
+                        robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
+                    }
+                }else {
+                    robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
+                    robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
+                }
             }
             if(intakeKicker.isPressed() && !raisingArm){
                 raisingArm = true;
-                timeTarget = System.currentTimeMillis() + 3000;
+                timeTarget = System.currentTimeMillis() + 500;
+                armOffset = robot.getRaisingArm1().getCurrentPosition();
             }
             if(raisingArm){
                 robot.getIntakeKicker().setPosition(0.2);
                 if(timeTarget < System.currentTimeMillis()){
-                    if(robot.getRaisingArm1().getCurrentPosition() < 200){
-                        robot.getRaisingArm1().setPower(-1);
-                        robot.getRaisingArm2().setPower(-1);
+                    if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836){
+                        robot.moveArm(-0.5);
+                    }else{
+                        robot.moveArm(0);
+                        raisingArm = false;
                     }
                 }
             }
+            telemetry.addData("Target", timeTarget);
+            telemetry.addData("Time", System.currentTimeMillis());
             telemetry.addData("Test", robot.getRaisingArm1().getCurrentPosition() - armOffset);
             telemetry.update();
         }
