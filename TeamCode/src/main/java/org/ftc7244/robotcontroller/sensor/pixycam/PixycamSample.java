@@ -2,8 +2,8 @@ package org.ftc7244.robotcontroller.sensor.pixycam;
 
 public class PixycamSample {
 
-    PixycamProvider pixy;
-    public PixycamSample(PixycamProvider pixy){
+    Pixycam2Provider pixy;
+    public PixycamSample(Pixycam2Provider pixy){
         this.pixy = pixy;
     }
 
