@@ -24,11 +24,13 @@ public class Depot extends DeadReckoningBase {
         }
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
+        robot.getIntakeKicker().setPosition(0.8);
         robot.intake(1);
         drive(25, 0.5);
         sleep(200);
         drive(6, -0.5);
         robot.intake(0);
+        robot.getIntakeKicker().setPosition(0.2);
         robot.moveArm(0);
         rotateGyro(82 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {

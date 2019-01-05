@@ -21,7 +21,7 @@ public class Pixycam2Provider {
     Pixycam2Provider.Mineral mineral;
     I2cDeviceSynch pixy;
     byte[] data;
-    List<Short> pixyData, updatedData;
+    public List<Short> pixyData;
 
     /**
      * Initializer, used to set the pixycam and which mineral it is detecting
@@ -41,11 +41,6 @@ public class Pixycam2Provider {
         pixy.engage();
         data = pixy.read(0, 26);
         pixyData = endianToShort(data);
-        for(int i = 3; i < pixyData.size(); i ++){
-            if(pixyData.get(i) < 600 && pixyData.get(i) > 0){
-                updatedData.set(i, pixyData.get(i));
-            }
-        }
     }
 
     /**
@@ -60,16 +55,20 @@ public class Pixycam2Provider {
      * @return returns the data, a rounded byte from 0-255
      */
     public int getX(){
-        return pixyData.get(0);
+        if(pixyData.get(4) > 0 && pixyData.get(4) < 400) {
+            return pixyData.get(4);
+        }else{
+            return -1;
+        }
     }
     public int getY(){
-        return pixyData.get(1);
+        return pixyData.get(5);
     }
     public int getWidth(){
-        return pixyData.get(2);
+        return pixyData.get(6);
     }
     public int getHeight(){
-        return pixyData.get(3);
+        return pixyData.get(7);
     }
 
     /**

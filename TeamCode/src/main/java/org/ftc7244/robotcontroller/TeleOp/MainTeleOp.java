@@ -77,7 +77,7 @@ public class MainTeleOp extends LinearOpMode {
             if(Bbutton.isPressed()){
                 robot.getLatch().setPosition(0.7);
             }else{
-                robot.getLatch().setPosition(0.1);
+                robot.getLatch().setPosition(0.2);
             }
             if(lidButton.isPressed()){
                 robot.getLid().setPosition(0.78);
@@ -153,6 +153,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Time", System.currentTimeMillis());
             telemetry.addData("Current Position", robot.getRaisingArm1().getCurrentPosition() - armOffset);
             telemetry.addData("State", !robot.getArmSwitch().getState());
+            telemetry.addData("Controller1", gamepad1.id);
+            telemetry.addData("Controller2", gamepad2.id);
             telemetry.update();
         }
     }

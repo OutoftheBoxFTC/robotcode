@@ -41,7 +41,10 @@ public class PixyCamTests extends OpMode {
     @Override
     public void loop() {
         provider.update();
-        telemetry.addData("X", provider.getX());
+        for(int i = 0; i < provider.pixyData.size(); i ++){
+            telemetry.addData(" " + i, provider.pixyData.get(i));
+        }
+        telemetry.addData("Test", provider.getX());
         telemetry.update();
     }
 

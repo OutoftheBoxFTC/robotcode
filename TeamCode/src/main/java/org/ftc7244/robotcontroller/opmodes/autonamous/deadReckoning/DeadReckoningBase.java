@@ -80,6 +80,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                         sample = pixycamSample.run();
                         telemetry.addData("Gyro", Math.toDegrees(gyro.getRotation(YAW)));
                         telemetry.addData("Pixy", sample);
+                        telemetry.addData("X", samplePixyProvider.getX());
                         robot.logErrors();
                         telemetry.update();
                     }
