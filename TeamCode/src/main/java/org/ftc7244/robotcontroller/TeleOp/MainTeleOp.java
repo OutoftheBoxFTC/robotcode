@@ -17,21 +17,24 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 public class MainTeleOp extends LinearOpMode {
     Robot robot = new Robot(this);
     double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0;
-    boolean slowingDown = false, raisingArm = false;
+    boolean slowingDown = false, raisingArm = false, secondMovement = false;
     PixycamProvider goldPixy, silverPixy;
     GyroscopeProvider gyro;
     /**
      * Driver Controls:
      *
      * Operator Controls:
-     * Left Trigger: Intake, stopping when it gets two of the same color
+     * Left Trigger: Intake
      * Right Trigger: Outtake
      * Left Bumper: Intake
+     * Right Bumper: Lid
      * A: Closes hanging latch
      * B: Opens hanging latch
+     * Y: Closes Intake and Lifts
+     * X: Move down and reset
      */
     Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, lidButton, armLockButton, intakeKicker;
-    PressButton Bbutton;
+    PressButton Bbutton, intakeReset;
     @Override
     public void runOpMode() throws InterruptedException {
         gyro = new RevIMUProvider();
@@ -46,6 +49,7 @@ public class MainTeleOp extends LinearOpMode {
         Bbutton = new PressButton(gamepad2, ButtonType.B);
         armLockButton = new PressButton(gamepad2, ButtonType.D_PAD_UP);
         intakeKicker = new Button (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
+        intakeReset = new PressButton(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         waitForStart();
         while(opModeIsActive()) {
@@ -55,7 +59,7 @@ public class MainTeleOp extends LinearOpMode {
                 robot.drive(Math.abs(modifier * gamepad1.left_stick_y), Math.abs(modifier * gamepad1.right_stick_y));
             }
             if (intakeTrigger.isPressed()) {
-                armMod = 0.15;
+                armMod = 0.3;
                 robot.intake(1);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
@@ -71,13 +75,19 @@ public class MainTeleOp extends LinearOpMode {
                 modifier = 1;
             }
             if(Bbutton.isPressed()){
-                robot.getLatch().setPosition(0.1);
-            }else{
                 robot.getLatch().setPosition(0.7);
+            }else{
+                robot.getLatch().setPosition(0.1);
             }
             if(lidButton.isPressed()){
                 robot.getLid().setPosition(0.78);
+                if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200){
+                    robot.getIntakeKicker().setPosition(0.8);
+                }
             }else{
+                if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){
+                    robot.getIntakeKicker().setPosition(0.2);
+                }
                 robot.getLid().setPosition(0.4);
             }
             if(armLockButton.isPressed()){
@@ -86,12 +96,12 @@ public class MainTeleOp extends LinearOpMode {
                 armMod = 0;
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
-            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 65 && !raisingArm){
-                robot.getIntakeKicker().setPosition(0.9);
-            }else if(!raisingArm){
-                robot.getIntakeKicker().setPosition(0.2);
+            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 60 && !raisingArm){
+                robot.getIntakeKicker().setPosition(0.8);
+            }else if(!raisingArm && !lidButton.isPressed()){
+                //robot.getIntakeKicker().setPosition(0.2);
             }
-            if(!raisingArm){
+            if(!raisingArm && !intakeReset.isPressed()){
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 100){
                     if(gamepad1.right_stick_y < -0.1){
                         robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
@@ -105,22 +115,44 @@ public class MainTeleOp extends LinearOpMode {
             if(intakeKicker.isPressed() && !raisingArm){
                 raisingArm = true;
                 timeTarget = System.currentTimeMillis() + 500;
-                armOffset = robot.getRaisingArm1().getCurrentPosition();
             }
             if(raisingArm){
                 robot.getIntakeKicker().setPosition(0.2);
                 if(timeTarget < System.currentTimeMillis()){
                     if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836){
-                        robot.moveArm(-0.5);
+                        robot.moveArm(-1);
                     }else{
                         robot.moveArm(0);
                         raisingArm = false;
                     }
                 }
             }
+            if(!robot.getArmSwitch().getState()){
+                armOffset = robot.getRaisingArm1().getCurrentPosition();
+            }
+            if(intakeReset.isPressed() && !secondMovement){
+                robot.moveArm(0.75);
+                if(!robot.getArmSwitch().getState()){
+                    secondMovement = true;
+                    armOffset = robot.getRaisingArm1().getCurrentPosition();
+                    robot.moveArm(0);
+                }
+            }
+            if(secondMovement){
+                if(robot.getArmSwitch().getState()){
+                    robot.moveArm(0.1);
+                }else{
+                    armOffset = robot.getRaisingArm1().getCurrentPosition();
+                    secondMovement = false;
+                    robot.moveArm(0);
+                    intakeReset.release();
+                }
+            }
+            telemetry.addData("Pressed", robot.getArmSwitch().getState());
             telemetry.addData("Target", timeTarget);
             telemetry.addData("Time", System.currentTimeMillis());
-            telemetry.addData("Test", robot.getRaisingArm1().getCurrentPosition() - armOffset);
+            telemetry.addData("Current Position", robot.getRaisingArm1().getCurrentPosition() - armOffset);
+            telemetry.addData("State", !robot.getArmSwitch().getState());
             telemetry.update();
         }
     }

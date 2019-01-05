@@ -2,9 +2,11 @@ package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,7 +25,7 @@ public class Robot extends Hardware {
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker;
-
+    private DigitalChannel armSwitch;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -54,6 +56,7 @@ public class Robot extends Hardware {
         lid = getOrNull(map.servo, "lid");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         intakeKicker = getOrNull(map.servo, "intakeKicker");
+        armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
     }
 
     @Override
@@ -200,5 +203,11 @@ public class Robot extends Hardware {
         return lid;
     }
 
-    public Servo getIntakeKicker(){return intakeKicker;}
+    public Servo getIntakeKicker(){
+        return intakeKicker;
+    }
+
+    public DigitalChannel getArmSwitch(){
+        return armSwitch;
+    }
 }
