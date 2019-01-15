@@ -21,7 +21,7 @@ public class Robot extends Hardware {
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
     private DcMotorEx leftDrive, rightDrive;
-    private DcMotor intake, raisingArm1, raisingArm2;
+    private DcMotor intake, raisingArm1, raisingArm2, leftDrive2, rightDrive2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker;
@@ -50,6 +50,8 @@ public class Robot extends Hardware {
 
         leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");
         rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
+        leftDrive2 = getOrNull(map, DcMotor.class, "leftDrive2");
+        rightDrive2 = getOrNull(map, DcMotor.class, "rightDrive2");
         intake = getOrNull(map.dcMotor, "intake");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map.servo, "latch");
@@ -75,22 +77,6 @@ public class Robot extends Hardware {
         intake.setPower(power);
     }
 
-    public void intake(double power, PixycamProvider pixyGold, PixycamProvider pixySilver){
-        if(pixyGold.getWidth() < 200 && pixySilver.getWidth() < 200){
-            intake.setPower(power);
-        }else{
-            intake.setPower(0);
-        }
-    }
-
-    public void intake(double power, PixycamProvider pixy){
-        if(pixy.getWidth() < 250){
-            intake.setPower(1);
-        }else{
-            intake.setPower(0);
-        }
-    }
-
     @Override
     public void drive(double leftPower, double rightPower, long timeMillis) throws InterruptedException {
         drive(leftPower, rightPower);
@@ -100,8 +86,10 @@ public class Robot extends Hardware {
 
     @Override
     public void drive(double leftPower, double rightPower) {
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
+        leftDrive.setPower(-leftPower);
+        leftDrive2.setPower(-leftPower);
+        rightDrive.setPower(-rightPower);
+        rightDrive2.setPower(-rightPower);
     }
 
     @Override
@@ -109,6 +97,8 @@ public class Robot extends Hardware {
         double target = getDriveEncoderAverage() + (inches * countsPerInch);
         leftDrive.setPower(-1 * power);
         rightDrive.setPower(-1 * power);
+        leftDrive2.setPower(-1 * power);
+        rightDrive2.setPower(-1 * power);
         if(power > 0) {
             while (getDriveEncoderAverage() <= target) {
                 opMode.telemetry.addData("encoder", getDriveEncoderAverage());
@@ -122,6 +112,8 @@ public class Robot extends Hardware {
         }
         leftDrive.setPower(0);
         rightDrive.setPower(0);
+        leftDrive2.setPower(0);
+        rightDrive2.setPower(0);
     }
 
     @Override
@@ -209,5 +201,13 @@ public class Robot extends Hardware {
 
     public DigitalChannel getArmSwitch(){
         return armSwitch;
+    }
+
+    public DcMotor getLeftDrive2() {
+        return leftDrive2;
+    }
+
+    public DcMotor getRightDrive2() {
+        return rightDrive2;
     }
 }

@@ -35,13 +35,13 @@ public class Depot extends DeadReckoningBase {
         rotateGyro(82 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
             case CENTER:
-                drive(41, 0.5);
+                drive(40, 0.5);
                 break;
             case RIGHT:
-                drive(42, 0.5);
+                drive(41, 0.5);
                 break;
             case LEFT:
-                drive(41, 0.5);
+                drive(39, 0.5);
                 break;
             default:
                 drive( 40, 0.5);
