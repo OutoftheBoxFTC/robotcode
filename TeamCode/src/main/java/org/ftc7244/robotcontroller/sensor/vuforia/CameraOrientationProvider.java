@@ -16,6 +16,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.internal.camera.CameraImpl;
+import org.firstinspires.ftc.robotcore.internal.camera.CameraManagerImpl;
+import org.firstinspires.ftc.robotcore.internal.camera.CameraManagerInternal;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.RefCountedSwitchableCameraImpl;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.SwitchableCameraImpl;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.SwitchableCameraName;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.RunnableSensorProvider;
 import org.ftc7244.robotcontroller.sensor.VariablyInitializable;
@@ -34,7 +40,7 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
     private Orientation orientation;
     private VectorF translation;
     private HardwareMap hardwareMap;
-    private CameraName cameras;
+    private SwitchableCameraName cameras;
     private SwitchableCamera switchableCamera;
     public CameraOrientationProvider(boolean showCameraFeed, CameraInitializer camera, Robot robot){
         this.showCameraFeed = showCameraFeed;
@@ -44,6 +50,7 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
 
     @Override
     public boolean init() {
+        switchableCamera.setActiveCamera(robot.getW1());
         cameras = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.getW1(), robot.getW2());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         if(showCameraFeed) {
@@ -78,9 +85,11 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
                     translation = orientationMatrix.getTranslation();
                     orientation = Orientation.getOrientation(orientationMatrix, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 }
-                robot.getOpMode().telemetry.addData("Test", switchableCamera.getMembers()[0]);
-                robot.getOpMode().telemetry.update();
             }
+            robot.getOpMode().telemetry.addData("Test", cameras.getMembers()[0]);
+            robot.getOpMode().telemetry.addData("Test2", switchableCamera.getMembers()[0]);
+
+            robot.getOpMode().telemetry.update();
         }
         targets.deactivate();
     }
@@ -91,5 +100,9 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
 
     public VectorF getTranslation(){
         return translation==null?new VectorF(Float.NaN, Float.NaN, Float.NaN):translation;
+    }
+
+    public void switchCamera(){
+
     }
 }
