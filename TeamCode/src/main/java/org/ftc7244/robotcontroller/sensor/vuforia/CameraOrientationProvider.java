@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.SwitchableCamera;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -30,7 +33,9 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
     private OpenGLMatrix orientationMatrix;
     private Orientation orientation;
     private VectorF translation;
-
+    private HardwareMap hardwareMap;
+    private CameraName cameras;
+    private SwitchableCamera switchableCamera;
     public CameraOrientationProvider(boolean showCameraFeed, CameraInitializer camera, Robot robot){
         this.showCameraFeed = showCameraFeed;
         this.camera = camera;
@@ -39,14 +44,16 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
 
     @Override
     public boolean init() {
+        cameras = ClassFactory.getInstance().getCameraManager().nameForSwitchableCamera(robot.getW1(), robot.getW2());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         if(showCameraFeed) {
             parameters.fillCameraMonitorViewParent = true;
-            HardwareMap hardwareMap = robot.getOpMode().hardwareMap;
+            hardwareMap = robot.getOpMode().hardwareMap;
             parameters.cameraMonitorViewIdParent=hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         }
         parameters.vuforiaLicenseKey = VUFORIA_LISCENCE;
         if(camera.init(parameters)){
+            parameters.cameraName = cameras;
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
             vuforia.enableConvertFrameToBitmap();
             targets = vuforia.loadTrackablesFromAsset("RoverRuckus");
@@ -71,6 +78,8 @@ public class CameraOrientationProvider extends RunnableSensorProvider implements
                     translation = orientationMatrix.getTranslation();
                     orientation = Orientation.getOrientation(orientationMatrix, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 }
+                robot.getOpMode().telemetry.addData("Test", switchableCamera.getMembers()[0]);
+                robot.getOpMode().telemetry.update();
             }
         }
         targets.deactivate();

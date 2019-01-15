@@ -15,8 +15,8 @@ public class CameraSystem implements Initializable {
     private Robot robot;
     public CameraSystem(Robot robot){
         phone = new CameraOrientationProvider(true, new PhoneCamInitializer(VuforiaLocalizer.CameraDirection.BACK), robot);
-        w1 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW1()), robot);
-        w2 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW2()), robot);
+        //w1 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW1()), robot);
+        //w2 = new CameraOrientationProvider(false, new WebCamInitializer(robot.getW2()), robot);
         this.robot = robot;
     }
 
@@ -26,14 +26,14 @@ public class CameraSystem implements Initializable {
             phone = null;
             robot.getOpMode().telemetry.addLine("Unable to initialize phone camera");
         }
-        if(!w1.init()) {
-            w1 = null;
-            robot.getOpMode().telemetry.addLine("Unable to initialize webcam 1");
-        }
-        if(!w2.init()) {
-            w2 = null;
-            robot.getOpMode().telemetry.addLine("Unable to initialize webcam 2");
-        }
+        //if(!w1.init()) {
+        //    w1 = null;
+        //    robot.getOpMode().telemetry.addLine("Unable to initialize webcam 1");
+        //}
+        //if(!w2.init()) {
+        //    w2 = null;
+        //    robot.getOpMode().telemetry.addLine("Unable to initialize webcam 2");
+        //}
     }
 
     public void run(ExecutorService threadManager){
