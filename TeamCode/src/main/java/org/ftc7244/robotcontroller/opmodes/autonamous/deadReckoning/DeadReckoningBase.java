@@ -143,7 +143,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     public void parralelize(UltrasonicSensor us1, UltrasonicSensor us2, double distance, double p, double i, double d){
         double error = getRotationalError(0, -getError(us1, us2, distance));
         PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
-        ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.5), 100), new TimeTerminator((long) 3e9));
+        ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.3), 100), new TimeTerminator((long) 3e9));
         while (opModeIsActive()&&!terminator.shouldTerminate(error)){
             double correction = control.correction(error);
             robot.drive(correction, -correction);
