@@ -20,8 +20,8 @@ public class Robot extends Hardware {
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
-    private DcMotorEx leftDrive, rightDrive;
-    private DcMotor intake, raisingArm1, raisingArm2, leftDrive2, rightDrive2;
+    private DcMotorEx leftDrive, rightDrive, leftDrive2, rightDrive2;
+    private DcMotor intake, raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker;
@@ -50,8 +50,8 @@ public class Robot extends Hardware {
 
         leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");
         rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
-        leftDrive2 = getOrNull(map, DcMotor.class, "leftDrive2");
-        rightDrive2 = getOrNull(map, DcMotor.class, "rightDrive2");
+        leftDrive2 = getOrNull(map, DcMotorEx.class, "leftDrive2");
+        rightDrive2 = getOrNull(map, DcMotorEx.class, "rightDrive2");
         intake = getOrNull(map.dcMotor, "intake");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map.servo, "latch");
@@ -117,9 +117,19 @@ public class Robot extends Hardware {
         rightDrive2.setPower(0);
     }
 
+    public void brakeDriveMotors(){
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     @Override
     public void resetDriveMotors() {
-
+        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     @Override
@@ -204,11 +214,11 @@ public class Robot extends Hardware {
         return armSwitch;
     }
 
-    public DcMotor getLeftDrive2() {
+    public DcMotorEx getLeftDrive2() {
         return leftDrive2;
     }
 
-    public DcMotor getRightDrive2() {
+    public DcMotorEx getRightDrive2() {
         return rightDrive2;
     }
 }

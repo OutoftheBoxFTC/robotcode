@@ -15,9 +15,11 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 
 @TeleOp(name="TeleOp")
 public class MainTeleOp extends LinearOpMode {
+    private static final double armDownPressure = 0.3, armHangOffset = 0.3, antiTipTriggerSpeed = 343;
+
     Robot robot = new Robot(this);
     double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0;
-    boolean slowingDown = false, raisingArm = false, secondMovement = false;
+    boolean slowingDown = false, raisingArm = false, test = false;
     PixycamProvider goldPixy, silverPixy;
     GyroscopeProvider gyro;
     /**
@@ -53,26 +55,33 @@ public class MainTeleOp extends LinearOpMode {
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         waitForStart();
         while(opModeIsActive()) {
-            if(modifier != 0.2) {
+            if(!slowingDown) {
                 robot.drive(gamepad1.left_stick_y, gamepad1.right_stick_y); //Uses the left and right sticks to drive the robot
+                robot.resetDriveMotors();
             }else{
-                robot.drive(Math.abs(modifier * gamepad1.left_stick_y), Math.abs(modifier * gamepad1.right_stick_y));
+                robot.drive(Math.abs(gamepad1.left_stick_y) * modifier, Math.abs(gamepad1.right_stick_y) * modifier); //Uses the left and right sticks to drive the robot
+                robot.brakeDriveMotors();
             }
             if (intakeTrigger.isPressed()) {
-                armMod = 0.3;
+                armMod = armDownPressure;
                 robot.intake(1);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
             }else{
                 robot.intake(0);
             }
-            if(robot.getLeftDrive().getVelocity(AngleUnit.RADIANS) > 6 && robot.getRightDrive().getVelocity(AngleUnit.RADIANS) > 6){ //If both wheels are going full speed backwards
-                if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards
-                    modifier = 0.2; //Set the modifier to 0.2
+            if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) < (-1 * antiTipTriggerSpeed) && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) < (-1 * antiTipTriggerSpeed)){ //If both wheels are going full speed backwards
+                if(gamepad1.left_stick_y < 0.5 && gamepad1.right_stick_y < 0.5){ //And both sticks are pushed forwards
+                    modifier = 0.5;
+                    slowingDown = true;
+                }
+            }else if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) > antiTipTriggerSpeed && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) > antiTipTriggerSpeed){
+                if(gamepad1.left_stick_y > -0.5 && gamepad1.right_stick_y > -0.5){
+                    modifier = -0.5;
                     slowingDown = true;
                 }
             }else{//else set the modifier to 1
-                modifier = 1;
+                slowingDown = false;
             }
             if(Bbutton.isPressed()){
                 robot.getLatch().setPosition(0.7);
@@ -91,7 +100,7 @@ public class MainTeleOp extends LinearOpMode {
                 robot.getLid().setPosition(0.4);
             }
             if(armLockButton.isPressed()){
-                armMod = 0.3;
+                armMod = armHangOffset;
             }else if(!intakeTrigger.isPressed()) {
                 armMod = 0;
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
@@ -130,20 +139,11 @@ public class MainTeleOp extends LinearOpMode {
             if(!robot.getArmSwitch().getState()){
                 armOffset = robot.getRaisingArm1().getCurrentPosition();
             }
-            if(intakeReset.isPressed() && !secondMovement){
+            if(intakeReset.isPressed()){
+                robot.getIntakeKicker().setPosition(0.2);
                 robot.moveArm(0.75);
                 if(!robot.getArmSwitch().getState()){
-                    secondMovement = true;
                     armOffset = robot.getRaisingArm1().getCurrentPosition();
-                    robot.moveArm(0);
-                }
-            }
-            if(secondMovement){
-                if(robot.getArmSwitch().getState()){
-                    robot.moveArm(0.1);
-                }else{
-                    armOffset = robot.getRaisingArm1().getCurrentPosition();
-                    secondMovement = false;
                     robot.moveArm(0);
                     intakeReset.release();
                 }
@@ -153,8 +153,14 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Time", System.currentTimeMillis());
             telemetry.addData("Current Position", robot.getRaisingArm1().getCurrentPosition() - armOffset);
             telemetry.addData("State", !robot.getArmSwitch().getState());
-            telemetry.addData("Controller1", gamepad1.id);
-            telemetry.addData("Controller2", gamepad2.id);
+            telemetry.addData("ControllerLeft", gamepad1.left_stick_y);
+            telemetry.addData("ControllerRight", gamepad1.right_stick_y);
+            telemetry.addData("Velocity", robot.getLeftDrive().getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("Testing", test);
+            telemetry.addData("Bool 1", robot.getLeftDrive().getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("Bool 2",  robot.getLeftDrive2().getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("Bool 3", robot.getRightDrive().getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("Bool 4", robot.getRightDrive2().getVelocity(AngleUnit.DEGREES));
             telemetry.update();
         }
     }
