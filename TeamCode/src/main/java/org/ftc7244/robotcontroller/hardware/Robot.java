@@ -117,11 +117,8 @@ public class Robot extends Hardware {
         rightDrive2.setPower(0);
     }
 
-    public void brakeDriveMotors(){
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    public void brakeDriveMotors(double direction){
+        drive(direction, direction);
     }
 
     @Override
@@ -206,7 +203,7 @@ public class Robot extends Hardware {
         return lid;
     }
 
-    public Servo getIntakeKicker(){
+    public Servo getIntakeLatch(){
         return intakeKicker;
     }
 
