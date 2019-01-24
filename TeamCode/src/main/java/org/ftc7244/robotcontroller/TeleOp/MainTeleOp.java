@@ -55,25 +55,19 @@ public class MainTeleOp extends LinearOpMode {
         intakeKicker = new Button (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
         intakeReset = new PressButton(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
-        latchMove = new Runnable() {
-            @Override
-            public void run() {
-                raisingArm = true;
-                robot.getIntakeLatch().setPosition(0.2);
-                sleep(500);
-                while(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836 && opModeIsActive()) {
-                    robot.moveArm(-1);
-                }
+        latchMove = () -> {
+            raisingArm = true;
+            robot.getIntakeLatch().setPosition(0.2);
+            sleep(500);
+            while(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836 && opModeIsActive()) {
+                robot.moveArm(-1);
             }
         };
-        antiTip = new Runnable() {
-            @Override
-            public void run() {
-                sleep(30);
-                modifier = 0;
-                sleep(720);
-                slowingDown = false;
-            }
+        antiTip = () -> {
+            sleep(30);
+            modifier = 0;
+            sleep(720);
+            slowingDown = false;
         };
         waitForStart();
         while(opModeIsActive()) {
@@ -194,5 +188,7 @@ public class MainTeleOp extends LinearOpMode {
         if (intakeKicker.isPressed() && !raisingArm && intakeKickerUpdated) {
             threadManager.submit(latchMove);
         }
+        telemetry.addData("States", intakeReset.isPressed());
+        telemetry.update();
     }
 }
