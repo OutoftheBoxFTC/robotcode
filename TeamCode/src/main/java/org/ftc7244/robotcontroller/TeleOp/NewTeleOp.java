@@ -24,7 +24,7 @@ public class NewTeleOp extends LinearOpMode {
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm;
+    private Runnable latchMove, antiTip, resetArm, armRaise;
     /**
      * Driver Controls:
      *
@@ -38,7 +38,7 @@ public class NewTeleOp extends LinearOpMode {
      * Y: Closes Intake and Lifts
      * X: Move down and reset
      */
-    Button intakeTrigger, outtakeTrigger, slowButton, lidButton, armLockButton, intakeKicker, intakeReset;
+    Button intakeTrigger, outtakeTrigger, slowButton, lidButton, armLockButton, intakeKicker, intakeReset, armUpButton;
     PressButton Bbutton;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,6 +56,7 @@ public class NewTeleOp extends LinearOpMode {
         intakeKicker = new Button (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
+        armUpButton = new Button(gamepad2, ButtonType.A);
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(0.2);
@@ -80,6 +81,16 @@ public class NewTeleOp extends LinearOpMode {
             modifier = 0;
             sleep(720);
             slowingDown = false;
+        };
+        armRaise = () ->{
+            raisingArm = true;
+            robot.getIntakeLatch().setPosition(0.2);
+            sleep(500);
+            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 2000){
+                robot.moveArm((-1 * (2060 - robot.getRaisingArm1().getCurrentPosition())) / 100);
+            }
+            robot.moveArm(0);
+            raisingArm = false;
         };
         waitForStart();
         while(opModeIsActive()) {
@@ -142,7 +153,7 @@ public class NewTeleOp extends LinearOpMode {
             if(intakeReset.isPressed()){
                 threadManager.submit(resetArm);
             }
-            if (!raisingArm && !resetting) {
+            if (!raisingArm && !resetting && !armUpButton.isPressed()) {
                 if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 100) {
                     if (gamepad2.right_stick_y <= 0) {
                         robot.getRaisingArm1().setPower((Math.pow(gamepad2.right_stick_y, 2) + armMod) * -1);
@@ -158,6 +169,9 @@ public class NewTeleOp extends LinearOpMode {
             }
             if(!robot.getArmSwitch().getState() && !raisingArm){
                 robot.getIntakeLatch().setPosition(0.8);
+            }
+            if(armUpButton.isPressed()){
+                threadManager.submit(armRaise);
             }
             telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
             telemetry.addData("RaisingArm2", robot.getRaisingArm2().getPower());
