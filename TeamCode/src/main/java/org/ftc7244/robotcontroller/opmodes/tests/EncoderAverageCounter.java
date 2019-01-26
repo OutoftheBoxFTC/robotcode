@@ -10,7 +10,8 @@ public class EncoderAverageCounter extends AutonomousProcedure {
     @Override
     protected void run() {
         while (opModeIsActive()){
-            telemetry.addData("Test", robot.getDriveEncoderAverage());
+            telemetry.addData("Test", robot.getRaisingArm1().getCurrentPosition());
+            telemetry.addData("Test", robot.getRaisingArm2().getCurrentPosition());
             telemetry.update();
         }
     }

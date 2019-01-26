@@ -1,8 +1,10 @@
 package org.ftc7244.robotcontroller.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
@@ -11,19 +13,18 @@ import org.ftc7244.robotcontroller.opmodes.input.PressButton;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@TeleOp(name="TeleOp")
-public class MainTeleOp extends LinearOpMode {
+@TeleOp(name="NewTeleOp")
+public class NewTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
-    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false;
+    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip;
+    private Runnable latchMove, antiTip, resetArm;
     /**
      * Driver Controls:
      *
@@ -37,8 +38,8 @@ public class MainTeleOp extends LinearOpMode {
      * Y: Closes Intake and Lifts
      * X: Move down and reset
      */
-    Button intakeTrigger, outtakeTrigger, flipButton, slowButton, leftBumper, lidButton, armLockButton, intakeKicker;
-    PressButton Bbutton, intakeReset;
+    Button intakeTrigger, outtakeTrigger, slowButton, lidButton, armLockButton, intakeKicker, intakeReset;
+    PressButton Bbutton;
     @Override
     public void runOpMode() throws InterruptedException {
         threadManager = Executors.newCachedThreadPool();
@@ -53,8 +54,17 @@ public class MainTeleOp extends LinearOpMode {
         Bbutton = new PressButton(gamepad2, ButtonType.B);
         armLockButton = new PressButton(gamepad2, ButtonType.D_PAD_UP);
         intakeKicker = new Button (gamepad2, ButtonType.Y); //New servo made refer to notes below, ask builders about this.
-        intakeReset = new PressButton(gamepad2, ButtonType.X);
+        intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
+        resetArm = () -> {
+            resetting = true;
+            robot.getIntakeLatch().setPosition(0.2);
+            robot.moveArm(0.75);
+            while(opModeIsActive() && robot.getArmSwitch().getState()){}
+            robot.moveArm(0);
+            armOffset = robot.getRaisingArm1().getCurrentPosition();
+            resetting = false;
+        };
         latchMove = () -> {
             raisingArm = true;
             robot.getIntakeLatch().setPosition(0.2);
@@ -62,6 +72,8 @@ public class MainTeleOp extends LinearOpMode {
             while(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836 && opModeIsActive()) {
                 robot.moveArm(-1);
             }
+            robot.moveArm(0);
+            raisingArm = false;
         };
         antiTip = () -> {
             sleep(30);
@@ -78,7 +90,8 @@ public class MainTeleOp extends LinearOpMode {
                 }else{
                     robot.drive(gamepad1.left_stick_y * DRIVE_MODIFIER, gamepad1.right_stick_y * DRIVE_MODIFIER);
                 }
-                antiTipTimeTarget = System.currentTimeMillis() + 750;            }else{
+                antiTipTimeTarget = System.currentTimeMillis() + 750;
+            }else{
                 robot.brakeDriveMotors(modifier);
             }
             if (intakeTrigger.isPressed()) {
@@ -122,72 +135,34 @@ public class MainTeleOp extends LinearOpMode {
                 armMod = ARM_HANG_OFFSET;
             }else if(!intakeTrigger.isPressed()) {
                 armMod = 0;
-            }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
-            }
-            if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 60 && !raisingArm){
-                robot.getIntakeLatch().setPosition(0.8);
-            }else if(!raisingArm && !lidButton.isPressed()){
-                //robot.getIntakeLatch().setPosition(0.2);
-            }
-            if(!raisingArm && !intakeReset.isPressed()){
-                if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 100){
-                    if(gamepad1.right_stick_y < -0.1){
-                        robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
-                        robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
-                    }
-                }else {
-                    robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
-                    robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
-                }
-            }
-            if(intakeKicker.isPressed() && !raisingArm){
-                raisingArm = true;
-                timeTarget = System.currentTimeMillis() + 500;
-            }
-            if(raisingArm){
-                robot.getIntakeLatch().setPosition(0.2);
-                if(timeTarget < System.currentTimeMillis()){
-                    if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 836){
-                        robot.moveArm(-1);
-                    }else{
-                        robot.moveArm(0);
-                        raisingArm = false;
-                    }
-                }
             }
             if(!robot.getArmSwitch().getState()){
                 armOffset = robot.getRaisingArm1().getCurrentPosition();
             }
             if(intakeReset.isPressed()){
-                robot.getIntakeLatch().setPosition(0.2);
-                robot.moveArm(0.75);
-                if(!robot.getArmSwitch().getState()){
-                    armOffset = robot.getRaisingArm1().getCurrentPosition();
-                    robot.moveArm(0);
-                    intakeReset.release();
-                }
+                threadManager.submit(resetArm);
             }
-        }
-        if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 60 && !raisingArm) {
-            robot.getIntakeLatch().setPosition(0.8);
-        } else if (!raisingArm && !lidButton.isPressed()) {
-            //robot.getIntakeLatch().setPosition(0.2);
-        }
-        if (!raisingArm && !intakeReset.isPressed()) {
-            if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 100) {
-                if (gamepad1.right_stick_y < -0.1) {
+            if (!raisingArm && !resetting) {
+                if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 100) {
+                    if (gamepad2.right_stick_y <= 0) {
+                        robot.getRaisingArm1().setPower((Math.pow(gamepad2.right_stick_y, 2) + armMod) * -1);
+                        robot.getRaisingArm2().setPower((Math.pow(gamepad2.right_stick_y, 2) + armMod) * -1);
+                    }
+                } else {
                     robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
                     robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
                 }
-            } else {
-                robot.getRaisingArm1().setPower((gamepad2.right_stick_y + armMod) * -1);
-                robot.getRaisingArm2().setPower((gamepad2.right_stick_y + armMod) * -1);
             }
+            if (intakeKicker.isPressed() && !raisingArm && intakeKickerUpdated) {
+                threadManager.submit(latchMove);
+            }
+            if(!robot.getArmSwitch().getState() && !raisingArm){
+                robot.getIntakeLatch().setPosition(0.8);
+            }
+            telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
+            telemetry.addData("RaisingArm2", robot.getRaisingArm2().getPower());
+            telemetry.addData("ArmMod", armMod);
+            telemetry.update();
         }
-        if (intakeKicker.isPressed() && !raisingArm && intakeKickerUpdated) {
-            threadManager.submit(latchMove);
-        }
-        telemetry.addData("States", intakeReset.isPressed());
-        telemetry.update();
     }
 }
