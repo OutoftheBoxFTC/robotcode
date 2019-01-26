@@ -141,7 +141,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void parralelize(UltrasonicSensor us1, UltrasonicSensor us2, double distance, double p, double i, double d){
-        double error = getRotationalError(0, -getError(us1, us2, distance));
+        double error = getRotationalError(0, -getError(us2, us1, distance));
         PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.3), 100), new TimeTerminator((long) 3e9));
         while (opModeIsActive()&&!terminator.shouldTerminate(error)){
@@ -165,7 +165,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         double direction = speed<0?-1:1,
                 encoderOffset = robot.getDriveEncoderAverage(),
                 distanceTarget = inches*robot.getCountsPerInch()*direction,
-                distanceError = -(distanceTarget-(robot.getDriveEncoderAverage()-encoderOffset)),
+                distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset)),
                 gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
                 rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
 
@@ -176,7 +176,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             telemetry.addData("distance error", distanceError);
             telemetry.update();
             rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
-            distanceError = -(distanceTarget-(robot.getDriveEncoderAverage()-encoderOffset));
+            distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
         }
         robot.drive(0, 0);
     }

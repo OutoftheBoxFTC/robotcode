@@ -16,7 +16,7 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
-    private static final double COUNTS_PER_INCH = 21.8; //39.5138889
+    private static final double COUNTS_PER_INCH = 39.5138889; //39.5138889
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
