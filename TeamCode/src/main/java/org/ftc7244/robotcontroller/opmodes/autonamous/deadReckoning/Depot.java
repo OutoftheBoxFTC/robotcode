@@ -16,14 +16,16 @@ public class Depot extends DeadReckoningBase {
         double rotation = 0;
         switch (sample){
             case LEFT:
-                rotation = 22;
+                rotation = 27;
                 break;
             case RIGHT:
-                rotation = -25;
+                rotation = -27;
                 break;
         }
-        rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
-        robot.moveArm(0.15);
+        rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), .55, 0.000000001, 25000000, (long)2.5e9);
+        robot.moveArm(0.5);
+        while(opModeIsActive() && robot.getArmSwitch().getState());
+        robot.moveArm(0);
         robot.getIntakeLatch().setPosition(0.8);
         robot.intake(1);
         drive(25, 0.5);
@@ -32,24 +34,24 @@ public class Depot extends DeadReckoningBase {
         robot.intake(0);
         robot.getIntakeLatch().setPosition(0.2);
         robot.moveArm(0);
-        rotateGyro(82 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        rotateGyro(82 - rotation, 0.43, 0.0000000019, 19000000, (long) 5e9);
         switch (sample) {
             case CENTER:
-                drive(40, 0.5);
-                break;
-            case RIGHT:
-                drive(41, 0.5);
-                break;
-            case LEFT:
                 drive(39, 0.5);
                 break;
+            case RIGHT:
+                drive(43, 0.5);
+                break;
+            case LEFT:
+                drive(40, 0.5);
+                break;
             default:
-                drive( 40, 0.5);
+                drive( 39, 0.5);
         }
-        rotateGyro(56, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        rotateGyro(56, .55, 0.000000001, 25000000, (long) 5.5e9);
         //parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
         drive(51, -0.5);
-        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 100000000);
         dumpArm();
         switch (sample){
             case LEFT:
@@ -69,7 +71,7 @@ public class Depot extends DeadReckoningBase {
         sleep(1000);
         robot.getLid().setPosition(.8);
         robot.moveArm(0);
-        sleep(500);
+        sleep(1000);
         robot.moveArm(1);
         robot.getLid().setPosition(.1);
         sleep(750);

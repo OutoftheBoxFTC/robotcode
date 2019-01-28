@@ -13,9 +13,7 @@ import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTer
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedRevIMUProvider;
-import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.Pixycam2Provider;
-import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
@@ -39,6 +37,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     public PixycamSample.SampleTransform sample;
     private boolean gyroCalibrated, hanging;
     private long startTime;
+
     public DeadReckoningBase(boolean hanging){
         this.hanging = hanging;
     }
@@ -95,7 +94,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         catch (Throwable t){
             t.printStackTrace();
             RobotLog.e(t.getMessage());
-            telemetry.addData("EXECPTION THROWN", t.getMessage());
+            telemetry.addData("EXCEPTION THROWN", t.getMessage());
             telemetry.update();
             sleep(5000);
         }
@@ -152,10 +151,9 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             error = getRotationalError(0, -getError(us1, us2, distance));
         }
         robot.drive(0, 0);
-
     }
 
-    private double getError(UltrasonicSensor us1, UltrasonicSensor us2, double distance){
+    public double getError(UltrasonicSensor us1, UltrasonicSensor us2, double distance){
         return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/distance);
     }
 
