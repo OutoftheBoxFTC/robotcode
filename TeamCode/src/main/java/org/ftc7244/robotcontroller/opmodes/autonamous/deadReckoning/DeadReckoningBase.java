@@ -52,12 +52,15 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         pixycamSample = new PixycamSample(samplePixyProvider);
         robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.getLeftDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.getRightDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
 
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         threadManager = Executors.newCachedThreadPool();
 
-        control = new PIDControl(Math.toRadians(15), true, "default_pid", hardwareMap.appContext);
+        //control = new PIDControl(Math.toRadians(15), true, "default_pid", hardwareMap.appContext);
+        control = new PIDControl(0.45, 0.0000000025, 19000000, Math.toRadians(15), true);
         startTime = System.nanoTime();
         try {
             //init providers
@@ -195,13 +198,18 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void unhang(){
-        while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(25)) {
-            robot.moveArm(0.05);
+        robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.getRightDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.moveArm(0.05);
+        robot.drive(0.15, 0.15);
+        while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(5)){
+            robot.getLeftDrive().setPower(-0.15);
+            robot.getRightDrive().setPower(-0.15);
+            robot.getLeftDrive2().setPower(robot.getLeftDrive().getPower());
+            robot.getRightDrive2().setPower(robot.getRightDrive().getPower());
         }
+        robot.drive(0, 0);
         robot.moveArm(0);
-        //robot.drive(-0.4, -0.4);
-        //while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(4)){}
-        //robot.drive(0, 0);
         sleep(250);
         robot.getLatch().setPosition(0.7);
         sleep(1500);
@@ -209,6 +217,9 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(1000);
         robot.getLatch().setPosition(0.2);
         robot.moveArm(0);
-        sleep(1000);
+        sleep(2000);
+        robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.getRightDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive(2, 0.5);
     }
 }
