@@ -7,15 +7,14 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedRevIMUProvider;
-import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.Pixycam2Provider;
-import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
@@ -162,8 +161,30 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/distance);
     }
 
-    public void drive(double inches, double speed){
+    public void driveRange(double inches, double speed){
         RangeTerminator terminator = new RangeTerminator(-robot.getCountsPerInch(), robot.getCountsPerInch());
+        speed *= -1;
+        double direction = speed<0?-1:1,
+                encoderOffset = robot.getDriveEncoderAverage(),
+                distanceTarget = inches*robot.getCountsPerInch()*direction,
+                distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset)),
+                gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
+                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+
+        while (opModeIsActive() && !terminator.shouldTerminate(distanceError)){
+            double correction = control.correction(rotationError);
+            robot.drive(speed+correction, speed-correction);
+            telemetry.addData("rotational error", rotationError);
+            telemetry.addData("distance error", distanceError);
+            telemetry.update();
+            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+            distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
+        }
+        robot.drive(0, 0);
+    }
+
+    public void drive(double inches, double speed){
+        InequalityTerminator terminator = new InequalityTerminator();
         speed *= -1;
         double direction = speed<0?-1:1,
                 encoderOffset = robot.getDriveEncoderAverage(),
@@ -220,6 +241,6 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(2000);
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive(2, 0.5);
+        driveRange(2, 0.5);
     }
 }

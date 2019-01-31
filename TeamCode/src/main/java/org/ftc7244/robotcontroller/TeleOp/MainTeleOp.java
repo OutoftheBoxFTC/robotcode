@@ -74,7 +74,7 @@ public class MainTeleOp extends LinearOpMode {
             intakeKickerUpdated = intakeKicker.isUpdated();
             if(!slowingDown) {
                 if(slowButton.isPressed()) {
-                    robot.drive(gamepad1.left_stick_y, gamepad1.right_stick_y); //Uses the left and right sticks to drive the robot
+                    robot.drive(gamepad1.left_stick_y, gamepad1.right_stick_y); //Uses the left and right sticks to driveRange the robot
                 }else{
                     robot.drive(gamepad1.left_stick_y * DRIVE_MODIFIER, gamepad1.right_stick_y * DRIVE_MODIFIER);
                 }
