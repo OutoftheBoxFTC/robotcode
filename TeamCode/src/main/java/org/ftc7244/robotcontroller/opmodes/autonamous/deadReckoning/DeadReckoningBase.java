@@ -21,6 +21,7 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider.Axis.PITCH;
 import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider.Axis.YAW;
@@ -32,18 +33,35 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     protected ExtendedGyroscopeProvider gyro;
     protected UltrasonicSystem ultrasonic;
     protected Robot robot;
-    private ExecutorService threadManager;
+    ExecutorService threadManager;
     private Pixycam2Provider samplePixyProvider;
     private PixycamSample pixycamSample;
     public PixycamSample.SampleTransform sample;
     private boolean gyroCalibrated, hanging;
+    private AtomicBoolean armIsReset;
     private long startTime;
+
     public DeadReckoningBase(boolean hanging){
         this.hanging = hanging;
     }
-
+    private Runnable armReset;
     @Override
     public void runOpMode() throws InterruptedException {
+        armReset = () -> {
+            armIsReset = new AtomicBoolean(false);
+            double timer;
+            robot.moveArm(0.5);
+            while (opModeIsActive() && robot.getArmSwitch().getState()){}
+            robot.moveArm(-0.5);
+            while (opModeIsActive() && !robot.getArmSwitch().getState()){}
+            timer = 100 + System.currentTimeMillis();
+            while (opModeIsActive() && timer > System.currentTimeMillis()){}
+            robot.moveArm(0.05);
+            while (opModeIsActive() && robot.getArmSwitch().getState()){}
+            robot.moveArm(0);
+            armIsReset.set(true);
+
+        };
         gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);
         robot.init();
@@ -93,6 +111,9 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             if(hanging)
                 unhang();
             run();
+            if(armIsReset != null){
+                while (!armIsReset.get());
+            }
         }
         catch (Throwable t){
             t.printStackTrace();
@@ -102,7 +123,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             sleep(5000);
         }
         finally {
-            //stop sensor providers
+            //stop sensor providers and other threads
             threadManager.shutdownNow();
             threadManager.awaitTermination(100, TimeUnit.MILLISECONDS);
         }
@@ -242,5 +263,22 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveRange(2, 0.5);
+    }
+
+    public Runnable getArmReset() {
+        return armReset;
+    }
+
+    public void dumpArm(){
+        robot.moveArm(-1);
+        sleep(1200);
+        robot.moveArm(0);
+        sleep(200);
+        robot.getLid().setPosition(.8);
+        sleep(500);
+        robot.moveArm(1);
+        robot.getLid().setPosition(.1);
+        sleep(950);
+        robot.moveArm(0);
     }
 }
