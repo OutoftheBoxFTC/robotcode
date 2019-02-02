@@ -15,8 +15,9 @@ import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp(name="NewTeleOp")
+@TeleOp(name="TeleOp")
 public class NewTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);
@@ -24,7 +25,7 @@ public class NewTeleOp extends LinearOpMode {
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm, armRaise;
+    private Runnable latchMove, antiTip, resetArm, armRaise, armReset;
     /**
      * Driver Controls:
      *
@@ -57,6 +58,18 @@ public class NewTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
+        armReset = () -> {
+            double timer;
+            robot.moveArm(0.5);
+            while (opModeIsActive() && robot.getArmSwitch().getState()){}
+            robot.moveArm(-0.5);
+            while (opModeIsActive() && !robot.getArmSwitch().getState()){}
+            timer = 100 + System.currentTimeMillis();
+            while (opModeIsActive() && timer > System.currentTimeMillis()){}
+            robot.moveArm(0.05);
+            while (opModeIsActive() && robot.getArmSwitch().getState()){}
+            robot.moveArm(0);
+        };
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(0.2);
@@ -93,6 +106,7 @@ public class NewTeleOp extends LinearOpMode {
             raisingArm = false;
         };
         waitForStart();
+        threadManager.submit(armReset);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             if(!slowingDown) {

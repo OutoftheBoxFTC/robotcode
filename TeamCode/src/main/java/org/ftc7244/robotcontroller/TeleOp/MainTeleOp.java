@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@TeleOp(name="TeleOp")
+//@TeleOp(name="TeleOp")
 public class MainTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);

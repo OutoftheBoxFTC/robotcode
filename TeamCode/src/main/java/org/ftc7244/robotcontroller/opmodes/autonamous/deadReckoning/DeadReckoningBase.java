@@ -60,7 +60,6 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             while (opModeIsActive() && robot.getArmSwitch().getState()){}
             robot.moveArm(0);
             armIsReset.set(true);
-
         };
         gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);
@@ -182,7 +181,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/distance);
     }
 
-    public void driveRange(double inches, double speed){
+/*    public void driveRange(double inches, double speed){
         RangeTerminator terminator = new RangeTerminator(-robot.getCountsPerInch(), robot.getCountsPerInch());
         speed *= -1;
         double direction = speed<0?-1:1,
@@ -203,7 +202,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         }
         robot.drive(0, 0);
     }
-
+*/
     public void drive(double inches, double speed){
         InequalityTerminator terminator = new InequalityTerminator();
         speed *= -1;
@@ -259,10 +258,10 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(1000);
         robot.getLatch().setPosition(0.2);
         robot.moveArm(0);
-        sleep(2000);
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveRange(2, 0.5);
+        sleep(750);
+        //drive(2, 0.5);
     }
 
     public Runnable getArmReset() {

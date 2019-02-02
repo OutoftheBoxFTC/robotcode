@@ -24,45 +24,55 @@ public class Crater extends DeadReckoningBase {
                 break;
         }
         drive(4, 0.1);
-
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
         robot.getIntakeLatch().setPosition(0.8);
         robot.intake(1);
-        driveRange(24, 0.5);
+        drive(24, 0.5);
         sleep(200);
-        driveRange(5, -0.5);
+        drive(5, -0.5);
         robot.intake(0);
         robot.getIntakeLatch().setPosition(0.2);
         robot.moveArm(0);
         rotateGyro(-90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
             case CENTER:
-                driveRange(55, -0.5);
+                drive(55, -0.5);
                 break;
             case RIGHT:
-                driveRange(61, -0.5);
+                drive(61, -0.5);
                 break;
             case LEFT:
-                driveRange(52, -0.5);
+                drive(52, -0.5);
                 break;
             default:
-                driveRange(55, -0.5);
+                drive(55, -0.5);
         }
         rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
-        driveRange(30, -0.5);
-        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
-        dumpArm();
-        switch (sample){
+        switch (sample) {
             case LEFT:
-                driveRange(55, 0.8);
+                drive(30, -0.5);
                 break;
             case RIGHT:
-                driveRange(50, 0.8);
+                drive(34, -0.5);
+                break;
+            default:
+                drive(30, -0.5);
+                break;
+        }
+        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        dumpArm();
+        threadManager.submit(getArmReset());
+        switch (sample){
+            case LEFT:
+                drive(55, 0.8);
+                break;
+            case RIGHT:
+                drive(50, 0.8);
                 break;
             case CENTER:
-                driveRange(50, 0.8);
+                drive(50, 0.8);
                 break;
         }
     }

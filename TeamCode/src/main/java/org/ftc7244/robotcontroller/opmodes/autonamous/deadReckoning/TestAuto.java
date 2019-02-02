@@ -11,7 +11,7 @@ public class TestAuto extends DeadReckoningBase {
 
     @Override
     protected void run() {
-        driveRange(22, 0.5);
+        drive(22, 0.5);
         while (opModeIsActive()){
             telemetry.addData("Sample", sample);
             telemetry.update();
