@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
 @Autonomous(name="Turn45Test")
-public class turn45test extends DeadReckoningBase {
+public class Turn45Test extends DeadReckoningBase {
 
-    public turn45test() {
+    public Turn45Test() {
         super (false);
     }
 

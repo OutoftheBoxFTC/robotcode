@@ -276,7 +276,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.getLid().setPosition(.8);
         sleep(500);
         robot.moveArm(1);
-        robot.getLid().setPosition(.1);
+        robot.getLid().setPosition(.4);
         sleep(950);
         robot.moveArm(0);
     }

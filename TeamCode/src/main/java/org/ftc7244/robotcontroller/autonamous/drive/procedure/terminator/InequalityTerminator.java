@@ -7,6 +7,7 @@ public class InequalityTerminator extends DriveTerminator {
     }
     @Override
     public boolean shouldTerminate(double error) {
+        polarity = polarity==0?polarity:polarity>0?1:-1;
         if(polarity == 0){
             if(error > 0){
                 polarity = 1;
