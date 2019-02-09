@@ -30,16 +30,16 @@ public class DoubleCrater extends DeadReckoningBase {
         drive(24, 0.5);
         sleep(200);
         drive(5, -0.5);
-        robot.intake(0);
-        robot.getIntakeLatch().setPosition(0.2);
         robot.moveArm(0);
         rotateGyro(90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        robot.intake(0);
+        robot.getIntakeLatch().setPosition(0.2);
         switch (sample) {
             case CENTER:
                 drive(40, 0.5);
                 break;
             case RIGHT:
-                drive(61, 0.5);
+                drive(53, 0.5);
                 break;
             case LEFT:
                 drive(36.5, 0.5);
@@ -48,36 +48,45 @@ public class DoubleCrater extends DeadReckoningBase {
                 drive(55, 0.5);
         }
         rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000, (long)2e9);
 
-        double alignment = 24, distance = 12;
+        double alignment = 27.75, distance = 10;
         switch (sample) {
             case LEFT:
-                alignment = 34;
-                distance = 18;
+                alignment = 36;
+                distance = 21;
                 break;
             case RIGHT:
-                alignment = 22;
-                distance = 12;
+                alignment = 6;
+                distance = 2;
                 break;
         }
 
         drive(alignment, 0.5);
         rotateGyro(90, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+        robot.moveArm(0.15);
+        robot.getIntakeLatch().setPosition(0.8);
+        robot.intake(1);
         drive(distance+3, 0.5);
         sleep(200);
-
+        robot.getIntakeLatch().setPosition(0.2);
+        robot.moveArm(0);
         if(sample != null && sample.equals(PixycamSample.SampleTransform.LEFT)){
-            drive(15, -0.5);
-            rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-            drive(4, -0.5);
+            rotateGyro(20, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            drive(10, -0.5);
+            robot.intake(0);
             dumpArm();
-            rotateGyro(-50, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            rotateGyro(-25, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         }
         else {
             drive(distance+6, -0.5);
-            rotateGyro(90, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-            drive(6, -0.5);
+            rotateGyro(97, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            robot.intake(0);
+            if (sample.equals(PixycamSample.SampleTransform.RIGHT)) {
+                drive(26, -0.5);
+            }else{
+                drive(6, -0.5);
+            }
             parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
             dumpArm();
         }

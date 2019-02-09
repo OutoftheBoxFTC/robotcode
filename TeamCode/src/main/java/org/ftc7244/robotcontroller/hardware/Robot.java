@@ -64,7 +64,7 @@ public class Robot extends Hardware {
 
     @Override
     public void initServos() {
-        getLid().setPosition(.4);
+        getLid().setPosition(.8);
         latch.setPosition(0.2);
     }
 

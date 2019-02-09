@@ -177,6 +177,21 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
     }
 
+    public void parralelize(UltrasonicSensor us1, UltrasonicSensor us2, double distance, double p, double i, double d, long time){
+        double error = getRotationalError(0, -getError(us2, us1, distance));
+        PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
+        ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.3), 100), new TimeTerminator(time));
+        while (opModeIsActive()&&!terminator.shouldTerminate(error)){
+            double correction = control.correction(error);
+            robot.drive(correction, -correction);
+            telemetry.addData("error", error);
+            telemetry.update();
+            error = getRotationalError(0, -getError(us1, us2, distance));
+        }
+        robot.drive(0, 0);
+
+    }
+
     private double getError(UltrasonicSensor us1, UltrasonicSensor us2, double distance){
         return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/distance);
     }
@@ -253,14 +268,13 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.moveArm(0);
         sleep(250);
         robot.getLatch().setPosition(0.7);
-        sleep(1500);
-        robot.moveArm(1);
         sleep(1000);
+        robot.moveArm(1);
+        sleep(750);
         robot.getLatch().setPosition(0.2);
         robot.moveArm(0);
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        sleep(750);
         //drive(2, 0.5);
     }
 
@@ -273,10 +287,10 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(1200);
         robot.moveArm(0);
         sleep(200);
-        robot.getLid().setPosition(.8);
+        robot.getLid().setPosition(.4);
         sleep(500);
         robot.moveArm(1);
-        robot.getLid().setPosition(.4);
+        robot.getLid().setPosition(.8);
         sleep(950);
         robot.moveArm(0);
     }
