@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 
-@Autonomous(name = "Double Crater")
+@Autonomous(name = "Double Mineral Crater")
 public class DoubleCrater extends DeadReckoningBase {
     public DoubleCrater() {
         super(true);
@@ -73,10 +73,11 @@ public class DoubleCrater extends DeadReckoningBase {
         robot.moveArm(0);
         if(sample != null && sample.equals(PixycamSample.SampleTransform.LEFT)){
             rotateGyro(20, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-            drive(10, -0.5);
+            drive(6, -0.5);
             robot.intake(0);
             dumpArm();
             rotateGyro(-25, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            drive(59, 0.8);
         }
         else {
             drive(distance+6, -0.5);
@@ -89,8 +90,8 @@ public class DoubleCrater extends DeadReckoningBase {
             }
             parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
             dumpArm();
+            drive(55, 0.8);
         }
         threadManager.submit(getArmReset());
-        drive(55, 0.8);
     }
 }

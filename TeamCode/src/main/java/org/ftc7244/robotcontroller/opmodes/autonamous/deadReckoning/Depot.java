@@ -19,7 +19,7 @@ public class Depot extends DeadReckoningBase {
                 rotation = 22;
                 break;
             case RIGHT:
-                rotation = -25;
+                rotation = -22;
                 break;
         }
         drive(4, .1);
@@ -57,7 +57,7 @@ public class Depot extends DeadReckoningBase {
                 drive(48, -0.5);
                 break;
             case CENTER:
-                drive(53, -0.5);
+                drive(47, -0.5);
                 break;
         }
         parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
@@ -71,7 +71,7 @@ public class Depot extends DeadReckoningBase {
                 drive(62, 0.8);
                 break;
             case CENTER:
-                drive(62, 0.8);
+                drive(56, 0.8);
                 break;
         }
     }
