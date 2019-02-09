@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
@@ -8,6 +9,7 @@ import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.Extende
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 
 @TeleOp(name = "Gyroscope Test")
+@Disabled
 public class GyroscopeTest extends DeadReckoningBase {
 
     public GyroscopeTest() {

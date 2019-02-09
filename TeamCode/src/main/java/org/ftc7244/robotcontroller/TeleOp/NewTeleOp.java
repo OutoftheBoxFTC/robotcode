@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp(name="TeleOp")
 public class NewTeleOp extends LinearOpMode {
-    private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
+    private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5, LID_CLOSED = .9, LID_OPEN = .55;
     private Robot robot = new Robot(this);
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false;
@@ -146,7 +146,7 @@ public class NewTeleOp extends LinearOpMode {
                 robot.getLatch().setPosition(0.2);
             }
             if(lidButton.isPressed()){
-                robot.getLid().setPosition(.4);
+                robot.getLid().setPosition(LID_OPEN);
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200){
                     robot.getIntakeLatch().setPosition(0.8);
                 }
@@ -154,7 +154,7 @@ public class NewTeleOp extends LinearOpMode {
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){
                     robot.getIntakeLatch().setPosition(0.2);
                 }
-                robot.getLid().setPosition(.8);
+                robot.getLid().setPosition(LID_CLOSED);
             }
             if(armLockButton.isPressed()){
                 armMod = ARM_HANG_OFFSET;
