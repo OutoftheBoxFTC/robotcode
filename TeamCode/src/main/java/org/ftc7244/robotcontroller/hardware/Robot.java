@@ -20,8 +20,8 @@ public class Robot extends Hardware {
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
-    private DcMotorEx leftDrive, rightDrive, leftDrive2, rightDrive2;
-    private DcMotor intake, raisingArm1, raisingArm2;
+    private DcMotorEx leftDrive, rightDrive, leftDrive2, rightDrive2, intake;
+    private DcMotor raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker;
@@ -52,7 +52,7 @@ public class Robot extends Hardware {
         rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
         leftDrive2 = getOrNull(map, DcMotorEx.class, "leftDrive2");
         rightDrive2 = getOrNull(map, DcMotorEx.class, "rightDrive2");
-        intake = getOrNull(map.dcMotor, "intake");
+        intake = getOrNull(map, DcMotorEx.class, "intake");
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
@@ -190,6 +190,8 @@ public class Robot extends Hardware {
     public DcMotor getRaisingArm2() {
         return raisingArm2;
     }
+
+    public DcMotorEx getIntake(){return intake;}
 
     public Servo getLatch() {
         return latch;

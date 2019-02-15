@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
@@ -40,11 +41,11 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     private boolean gyroCalibrated, hanging;
     private AtomicBoolean armIsReset;
     private long startTime;
-
+    //Servo on port 3
     public DeadReckoningBase(boolean hanging){
         this.hanging = hanging;
     }
-    private Runnable armReset;
+    private Runnable armReset, intakeSample;
     @Override
     public void runOpMode() throws InterruptedException {
         armReset = () -> {
@@ -60,6 +61,17 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             while (opModeIsActive() && robot.getArmSwitch().getState()){}
             robot.moveArm(0);
             armIsReset.set(true);
+        };
+        intakeSample = () -> {
+            double timer = 0;
+            robot.intake(1);
+            while(robot.getIntake().getPower() > 0.5 && opModeIsActive()){
+                if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 844){
+
+                }else{
+                    timer = System.currentTimeMillis();
+                }
+            }
         };
         gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);

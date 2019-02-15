@@ -22,7 +22,7 @@ public class NewTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
-    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false;
+    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, firstReset = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
     private Runnable latchMove, antiTip, resetArm, armRaise, armReset;
@@ -60,6 +60,7 @@ public class NewTeleOp extends LinearOpMode {
         armUpButton = new Button(gamepad2, ButtonType.A);
         armReset = () -> {
             double timer;
+            firstReset = true;
             robot.moveArm(0.5);
             while (opModeIsActive() && robot.getArmSwitch().getState()){}
             robot.moveArm(-0.5);
@@ -69,12 +70,15 @@ public class NewTeleOp extends LinearOpMode {
             robot.moveArm(0.05);
             while (opModeIsActive() && robot.getArmSwitch().getState()){}
             robot.moveArm(0);
+            firstReset = false;
         };
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(0.2);
             robot.moveArm(0.75);
-            while(opModeIsActive() && robot.getArmSwitch().getState()){}
+            while(opModeIsActive() && robot.getArmSwitch().getState()){
+                robot.getIntakeLatch().setPosition(0.2);
+            }
             robot.moveArm(0);
             armOffset = robot.getRaisingArm1().getCurrentPosition();
             resetting = false;
@@ -167,7 +171,7 @@ public class NewTeleOp extends LinearOpMode {
             if(intakeReset.isPressed()){
                 threadManager.submit(resetArm);
             }
-            if (!raisingArm && !resetting && !armUpButton.isPressed()) {
+            if (!raisingArm && !resetting && !armUpButton.isPressed() && !firstReset) {
                 if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 100) {
                     if (gamepad2.right_stick_y <= 0) {
                         robot.getRaisingArm1().setPower((Math.pow(gamepad2.right_stick_y, 2) + armMod) * -1);
