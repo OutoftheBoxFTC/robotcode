@@ -22,10 +22,10 @@ public class NewTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
-    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, firstReset = false, intakeResetUpdated = false, armUpButtonUpdated = false;
+    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm, armRaise, armReset;
+    private Runnable latchMove, antiTip, resetArm, armRaise;
     /**
      * Driver Controls:
      *
@@ -58,20 +58,6 @@ public class NewTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
-        armReset = () -> {
-            double timer;
-            firstReset = true;
-            robot.moveArm(0.5);
-            while (opModeIsActive() && robot.getArmSwitch().getState()){}
-            robot.moveArm(-0.5);
-            while (opModeIsActive() && !robot.getArmSwitch().getState()){}
-            timer = 100 + System.currentTimeMillis();
-            while (opModeIsActive() && timer > System.currentTimeMillis()){}
-            robot.moveArm(0.05);
-            while (opModeIsActive() && robot.getArmSwitch().getState()){}
-            robot.moveArm(0);
-            firstReset = false;
-        };
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(0.2);
@@ -110,7 +96,6 @@ public class NewTeleOp extends LinearOpMode {
             raisingArm = false;
         };
         waitForStart();
-        threadManager.submit(armReset);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             intakeResetUpdated = intakeReset.isUpdated();
@@ -173,7 +158,7 @@ public class NewTeleOp extends LinearOpMode {
             if(intakeReset.isPressed() && intakeResetUpdated){
                 threadManager.submit(resetArm);
             }
-            if (!raisingArm && !resetting && !armUpButton.isPressed() && !firstReset) {
+            if (!raisingArm && !resetting && !armUpButton.isPressed()) {
                 if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 100) {
                     if (gamepad2.right_stick_y <= 0) {
                         robot.getRaisingArm1().setPower((Math.pow(gamepad2.right_stick_y, 2) + armMod) * -1);

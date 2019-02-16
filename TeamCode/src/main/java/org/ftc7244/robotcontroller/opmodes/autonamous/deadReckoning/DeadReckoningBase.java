@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
-import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 import org.ftc7244.robotcontroller.hardware.Robot;
@@ -98,6 +97,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             gyro.init(robot);
             samplePixyProvider.start();
             pixycamSample.start();
+            samplePixyProvider.setLamps(true, true);
             while (!isStarted()){
                 //cyclically calibrate
                 //Set the sample to what the pixy sample sees
@@ -122,6 +122,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 idle();
             }
             //reorient
+            robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             if(hanging)
                 unhang();
             run();

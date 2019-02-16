@@ -20,7 +20,9 @@ Bytes    16-bit word    Description
 public class Pixycam2Provider {
     Pixycam2Provider.Mineral mineral;
     I2cDeviceSynch pixy;
-    byte[] data;
+    byte[] data = new byte[12];
+    byte[] request = {(byte)0xae, (byte)0xc1, (byte)32, (byte)2, (byte)0xFF, (byte)0xFF};
+    byte[] lampRequest = {(byte)0xae, (byte)0xc1, (byte)22, (byte)2, (byte)1, (byte)1};
     public List<Short> pixyData;
 
     /**
@@ -39,6 +41,7 @@ public class Pixycam2Provider {
      * */
     public void update(){
         pixy.engage();
+        pixy.write(0, request);
         data = pixy.read(0, 26);
         pixyData = endianToShort(data);
     }
@@ -89,6 +92,19 @@ public class Pixycam2Provider {
      */
     public boolean isEngaged(){
         return pixy.isEngaged();
+    }
+
+    public void setLamps(boolean headlights, boolean colorLight){
+        if(headlights){
+            lampRequest[4] = 1;
+        }else{
+            lampRequest[4] = 0;
+        }
+        if(colorLight){
+            lampRequest[5] = 1;
+        }else{
+            lampRequest[5] = 0;
+        }
     }
 
     /**
