@@ -267,6 +267,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         }
         robot.drive(0, 0);
         robot.moveArm(0);
+        samplePixyProvider.setLamps(false, false);
         sleep(250);
         robot.getLatch().setPosition(0.7);
         sleep(1500);
@@ -289,6 +290,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void dumpArm(){
+        samplePixyProvider.setLamps(true, true);
         robot.moveArm(-1);
         sleep(1200);
         robot.moveArm(0);
@@ -299,5 +301,10 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.getLid().setPosition(.4);
         sleep(950);
         robot.moveArm(0);
+        samplePixyProvider.setLamps(false, false);
+    }
+
+    public void burnJeClamelRetrograde(){
+        robot.getJeClamelBurner().setPosition(0);
     }
 }

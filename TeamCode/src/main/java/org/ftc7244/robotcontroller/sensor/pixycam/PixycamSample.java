@@ -26,7 +26,7 @@ public class PixycamSample {
             if (pixy.getX() < 100) {
                 filter[index] = SampleTransform.LEFT;
                 return SampleTransform.LEFT;
-            } else if (pixy.getX() > 250) {
+            } else if (pixy.getX() > 200) {
                 filter[index] = SampleTransform.RIGHT;
             } else {
                 filter[index] = SampleTransform.CENTER;

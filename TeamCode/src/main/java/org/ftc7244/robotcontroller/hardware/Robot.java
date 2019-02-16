@@ -24,7 +24,7 @@ public class Robot extends Hardware {
     private DcMotor raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
-    private Servo latch, lid, intakeKicker;
+    private Servo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
@@ -56,6 +56,7 @@ public class Robot extends Hardware {
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
+        jeClamelBurner = getOrNull(map.servo, "jeClamelBurner");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         intakeKicker = getOrNull(map.servo, "intakeKicker");
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
@@ -64,8 +65,9 @@ public class Robot extends Hardware {
 
     @Override
     public void initServos() {
-        getLid().setPosition(.4);
+        getLid().setPosition(0.8);
         latch.setPosition(0.2);
+        jeClamelBurner.setPosition(1);
     }
 
     public void moveArm(double power){
@@ -219,5 +221,9 @@ public class Robot extends Hardware {
 
     public DcMotorEx getRightDrive2() {
         return rightDrive2;
+    }
+
+    public Servo getJeClamelBurner() {
+        return jeClamelBurner;
     }
 }

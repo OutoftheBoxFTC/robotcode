@@ -71,6 +71,7 @@ public class DoubleCrater extends DeadReckoningBase {
             drive(15, -0.5);
             rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
             drive(4, -0.5);
+            burnJeClamelRetrograde();
             dumpArm();
             rotateGyro(-50, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         }
@@ -79,6 +80,7 @@ public class DoubleCrater extends DeadReckoningBase {
             rotateGyro(90, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
             drive(6, -0.5);
             parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);
+            burnJeClamelRetrograde();
             dumpArm();
         }
         threadManager.submit(getArmReset());
