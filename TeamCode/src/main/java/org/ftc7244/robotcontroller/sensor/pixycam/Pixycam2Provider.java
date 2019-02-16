@@ -55,20 +55,32 @@ public class Pixycam2Provider {
      * @return returns the data, a rounded byte from 0-255
      */
     public int getX(){
-        if(pixyData.get(4) > 0 && pixyData.get(4) < 400) {
+        if(pixyData.get(4) > 0){
             return pixyData.get(4);
         }else{
             return -1;
         }
     }
     public int getY(){
-        return pixyData.get(5);
+        if(pixyData.get(5) > 0){
+            return pixyData.get(5);
+        }else{
+            return -1;
+        }
     }
     public int getWidth(){
-        return pixyData.get(6);
+        if(pixyData.get(6) > 0){
+            return pixyData.get(6);
+        }else{
+            return -1;
+        }
     }
     public int getHeight(){
-        return pixyData.get(7);
+        if(pixyData.get(7) > 0){
+            return pixyData.get(7);
+        }else{
+            return -1;
+        }
     }
 
     /**

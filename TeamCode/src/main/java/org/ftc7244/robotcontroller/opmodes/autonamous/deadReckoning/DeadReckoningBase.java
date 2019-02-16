@@ -65,11 +65,14 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         intakeSample = () -> {
             double timer = 0;
             robot.intake(1);
-            while(robot.getIntake().getPower() > 0.5 && opModeIsActive()){
-                if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 844){
-
-                }else{
-                    timer = System.currentTimeMillis();
+            while((robot.getIntake().getPower() > 0.5 || robot.getIntake().getPower() < -0.5) && opModeIsActive()){
+                if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 844 && timer == -1){
+                    timer = System.currentTimeMillis() + 1000;
+                }else if (robot.getIntake().getVelocity(AngleUnit.RADIANS) > 844){
+                    timer = -1;
+                }
+                if(timer < System.currentTimeMillis() && timer != -1){
+                    robot.intake(-1);
                 }
             }
         };
@@ -278,6 +281,10 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
     public Runnable getArmReset() {
         return armReset;
+    }
+
+    public Runnable getIntakeSample(){
+        return intakeSample;
     }
 
     public void dumpArm(){

@@ -22,7 +22,7 @@ public class NewTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
     private Robot robot = new Robot(this);
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
-    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, firstReset = false;
+    private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, firstReset = false, intakeResetUpdated = false, armUpButtonUpdated = false;
     private GyroscopeProvider gyro;
     private ExecutorService threadManager;
     private Runnable latchMove, antiTip, resetArm, armRaise, armReset;
@@ -113,6 +113,8 @@ public class NewTeleOp extends LinearOpMode {
         threadManager.submit(armReset);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
+            intakeResetUpdated = intakeReset.isUpdated();
+            armUpButtonUpdated = armUpButton.isUpdated();
             if(!slowingDown) {
                 if(slowButton.isPressed()) {
                     robot.drive(gamepad1.left_stick_y, gamepad1.right_stick_y); //Uses the left and right sticks to driveRange the robot
@@ -150,7 +152,7 @@ public class NewTeleOp extends LinearOpMode {
                 robot.getLatch().setPosition(0.2);
             }
             if(lidButton.isPressed()){
-                robot.getLid().setPosition(0.78);
+                robot.getLid().setPosition(0.58);
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200){
                     robot.getIntakeLatch().setPosition(0.8);
                 }
@@ -158,7 +160,7 @@ public class NewTeleOp extends LinearOpMode {
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){
                     robot.getIntakeLatch().setPosition(0.2);
                 }
-                robot.getLid().setPosition(1);
+                robot.getLid().setPosition(0.8);
             }
             if(armLockButton.isPressed()){
                 armMod = ARM_HANG_OFFSET;
@@ -168,7 +170,7 @@ public class NewTeleOp extends LinearOpMode {
             if(!robot.getArmSwitch().getState()){
                 armOffset = robot.getRaisingArm1().getCurrentPosition();
             }
-            if(intakeReset.isPressed()){
+            if(intakeReset.isPressed() && intakeResetUpdated){
                 threadManager.submit(resetArm);
             }
             if (!raisingArm && !resetting && !armUpButton.isPressed() && !firstReset) {
@@ -188,7 +190,7 @@ public class NewTeleOp extends LinearOpMode {
             if(!robot.getArmSwitch().getState() && !raisingArm){
                 robot.getIntakeLatch().setPosition(0.8);
             }
-            if(armUpButton.isPressed()){
+            if(armUpButton.isPressed() && armUpButtonUpdated){
                 threadManager.submit(armRaise);
             }
             telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
