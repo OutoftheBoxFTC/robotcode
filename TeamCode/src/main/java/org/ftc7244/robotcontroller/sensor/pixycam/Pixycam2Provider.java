@@ -96,15 +96,16 @@ public class Pixycam2Provider {
 
     public void setLamps(boolean headlights, boolean colorLight){
         if(headlights){
-            lampRequest[4] = 1;
+            lampRequest[4] = (byte)1;
         }else{
-            lampRequest[4] = 0;
+            lampRequest[4] = (byte)0;
         }
         if(colorLight){
-            lampRequest[5] = 1;
+            lampRequest[5] = (byte)1;
         }else{
-            lampRequest[5] = 0;
+            lampRequest[5] = (byte)0;
         }
+        pixy.write(0, lampRequest);
     }
 
     /**

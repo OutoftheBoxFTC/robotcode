@@ -145,7 +145,7 @@ public class NewTeleOp extends LinearOpMode {
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){
                     robot.getIntakeLatch().setPosition(0.2);
                 }
-                robot.getLid().setPosition(0.8);
+                robot.getLid().setPosition(0.85);
             }
             if(armLockButton.isPressed()){
                 armMod = ARM_HANG_OFFSET;
