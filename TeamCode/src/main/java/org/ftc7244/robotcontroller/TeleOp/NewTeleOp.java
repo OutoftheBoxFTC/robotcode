@@ -98,6 +98,7 @@ public class NewTeleOp extends LinearOpMode {
         };
         waitForStart();
         pixy.start();
+        pixy.setLamps(true, true);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             intakeResetUpdated = intakeReset.isUpdated();
@@ -115,13 +116,13 @@ public class NewTeleOp extends LinearOpMode {
             if (intakeTrigger.isPressed()) {
                 armMod = ARM_DOWN_PRESSURE;
                 robot.intake(1);
-                pixy.setLED(255, 255, 255);
+                pixy.setLamps(true, true);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
-                pixy.setLED(255, 0, 0);
+                pixy.setLamps(false, true);
             }else{
                 robot.intake(0);
-                pixy.setLED(0, 128, 128);
+                pixy.setLamps(false, false);
             }
             if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED) && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED)){ //If both wheels are going full speed backwards
                 if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards
@@ -188,5 +189,6 @@ public class NewTeleOp extends LinearOpMode {
             telemetry.addData("ArmMod", armMod);
             telemetry.update();
         }
+        pixy.setLamps(false, false);
     }
 }
