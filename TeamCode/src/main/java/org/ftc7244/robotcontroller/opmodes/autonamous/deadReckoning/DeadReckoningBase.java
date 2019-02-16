@@ -62,19 +62,19 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             armIsReset.set(true);
         };
         intakeSample = () -> {
-            double timer = 0;
+            //double timer = -1;
             robot.intake(1);
-            while((robot.getIntake().getPower() > 0.5 || robot.getIntake().getPower() < -0.5) && opModeIsActive()){
-                if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 844 && timer == -1){
+            /*while((robot.getIntake().getPower() > 0.5 || robot.getIntake().getPower() < -0.5) && opModeIsActive()){
+                if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 10 && timer == -1){
                     timer = System.currentTimeMillis() + 1000;
-                }else if (robot.getIntake().getVelocity(AngleUnit.RADIANS) > 844){
+                }else if (robot.getIntake().getVelocity(AngleUnit.RADIANS) > 10){
                     timer = -1;
                 }
                 if(timer < System.currentTimeMillis() && timer != -1){
                     robot.intake(-1);
                 }
             }
-        };
+        */};
         gyro = new ExtendedRevIMUProvider();
         robot = new Robot(this);
         robot.init();

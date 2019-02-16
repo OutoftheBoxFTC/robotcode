@@ -4,15 +4,15 @@ public class PixycamSample {
 
     Pixycam2Provider pixy;
     SampleTransform previous;
+    SampleTransform[] filter;
     int index;
-    int left = 0;
-    int right = 0;
-    int center = 0;
-    int max = 0;
-    int target = 11;
     public PixycamSample(Pixycam2Provider pixy){
         this.pixy = pixy;
+        filter = new SampleTransform[10];
         index = 0;
+        for(int i = 0; i < filter.length; i ++){
+            filter[i] = SampleTransform.LEFT;
+        }
     }
 
     public boolean start() {
@@ -23,19 +23,30 @@ public class PixycamSample {
     public SampleTransform run(){
         pixy.update();
         if(pixy.getX() != -1) {
-            index++;
-            if(index == target){
-                index = 0;
-                left = 0;
-                right = 0;
-                center = 0;
-                target = (int)((Math.round(Math.random() * 20)) + 10);
-            }
             if (pixy.getX() < 100) {
-                left ++;
-            } else if (pixy.getX() > 210) {
-                right ++;
+                filter[index] = SampleTransform.LEFT;
+                return SampleTransform.LEFT;
+            } else if (pixy.getX() > 250) {
+                filter[index] = SampleTransform.RIGHT;
             } else {
+                filter[index] = SampleTransform.CENTER;
+            }
+            index++;
+        }
+        if(index == filter.length){
+            index = 0;
+        }
+        return getAverage(filter);
+    }
+
+    public SampleTransform getAverage(SampleTransform[] arr){
+        int left = 0, right = 0, center = 0, max = 0;
+        for(int i = 0; i < arr.length; i ++){
+            if(arr[i] == SampleTransform.LEFT){
+                left ++;
+            }else if(arr[i] == SampleTransform.RIGHT){
+                right ++;
+            }else {
                 center ++;
             }
         }
@@ -49,7 +60,6 @@ public class PixycamSample {
             return SampleTransform.CENTER;
         }
     }
-
 
     public enum SampleTransform{
         LEFT,
