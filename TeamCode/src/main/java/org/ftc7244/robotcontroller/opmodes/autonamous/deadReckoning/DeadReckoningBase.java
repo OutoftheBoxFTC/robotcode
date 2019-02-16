@@ -305,6 +305,6 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void burnJeClamelRetrograde(){
-        robot.getJeClamelBurner().setPosition(0);
+        robot.getJeClamelBurner().setPosition(0.2);
     }
 }

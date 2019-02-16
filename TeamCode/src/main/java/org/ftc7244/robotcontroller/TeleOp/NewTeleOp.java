@@ -12,6 +12,7 @@ import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.input.PressButton;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
+import org.ftc7244.robotcontroller.sensor.pixycam.Pixycam2Provider;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,13 +20,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp(name="TeleOp")
 public class NewTeleOp extends LinearOpMode {
-    private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 343, DRIVE_MODIFIER = 0.5;
-    private Robot robot = new Robot(this);
+    private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5;
+    private Robot robot;
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
-    private GyroscopeProvider gyro;
     private ExecutorService threadManager;
     private Runnable latchMove, antiTip, resetArm, armRaise;
+    Pixycam2Provider pixy;
     /**
      * Driver Controls:
      *
@@ -44,10 +45,10 @@ public class NewTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         threadManager = Executors.newCachedThreadPool();
-        gyro = new RevIMUProvider();
+        robot = new Robot(this);
         robot.init();
         robot.initServos();
-        gyro.init(robot);
+        pixy = new Pixycam2Provider(Pixycam2Provider.Mineral.GOLD, robot.getSampleI2c());
         slowButton = new PressButton(gamepad1, ButtonType.RIGHT_TRIGGER);
         intakeTrigger = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
         outtakeTrigger = new Button(gamepad2, ButtonType.RIGHT_TRIGGER);
@@ -96,6 +97,7 @@ public class NewTeleOp extends LinearOpMode {
             raisingArm = false;
         };
         waitForStart();
+        pixy.start();
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             intakeResetUpdated = intakeReset.isUpdated();
@@ -113,10 +115,13 @@ public class NewTeleOp extends LinearOpMode {
             if (intakeTrigger.isPressed()) {
                 armMod = ARM_DOWN_PRESSURE;
                 robot.intake(1);
+                pixy.setLED(255, 255, 255);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
+                pixy.setLED(255, 0, 0);
             }else{
                 robot.intake(0);
+                pixy.setLED(0, 128, 128);
             }
             if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED) && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED)){ //If both wheels are going full speed backwards
                 if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards

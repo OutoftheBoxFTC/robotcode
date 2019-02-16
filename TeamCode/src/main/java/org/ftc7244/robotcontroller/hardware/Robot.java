@@ -67,7 +67,9 @@ public class Robot extends Hardware {
     public void initServos() {
         getLid().setPosition(0.8);
         latch.setPosition(0.2);
-        jeClamelBurner.setPosition(1);
+        jeClamelBurner.setPosition(0.8);
+        getLid().setPosition(0.85);
+        latch.setPosition(0.2);
     }
 
     public void moveArm(double power){

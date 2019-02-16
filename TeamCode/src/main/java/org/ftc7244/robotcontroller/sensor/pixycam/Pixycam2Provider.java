@@ -23,6 +23,7 @@ public class Pixycam2Provider {
     byte[] data = new byte[12];
     byte[] request = {(byte)0xae, (byte)0xc1, (byte)32, (byte)2, (byte)0xFF, (byte)0xFF};
     byte[] lampRequest = {(byte)0xae, (byte)0xc1, (byte)22, (byte)2, (byte)1, (byte)1};
+    byte[] colorChange = {(byte)0xae, (byte)0xcl, (byte)20, (byte)3, (byte)0, (byte)0, (byte)0};
     public List<Short> pixyData;
 
     /**
@@ -106,6 +107,13 @@ public class Pixycam2Provider {
             lampRequest[5] = (byte)0;
         }
         pixy.write(0, lampRequest);
+    }
+
+    public void setLED(int r, int g, int b){
+        colorChange[4] = (byte)r;
+        colorChange[5] = (byte)g;
+        colorChange[6] = (byte)b;
+        pixy.write(0, colorChange);
     }
 
     /**
