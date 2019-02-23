@@ -110,7 +110,7 @@ public class MainTeleOp extends LinearOpMode {
             if(lidButton.isPressed()){
                 robot.getLid().setPosition(0.78);
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200){
-                    robot.getIntakeLatch().setPosition(0.8);
+                    robot.getIntakeLatch().setPosition(0.9);
                 }
             }else{
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){
@@ -125,7 +125,7 @@ public class MainTeleOp extends LinearOpMode {
             }if(intakeKicker.isPressed()){ //Please get this fixed, for new server put in.
             }
             if(robot.getRaisingArm1().getCurrentPosition() - armOffset < 60 && !raisingArm){
-                robot.getIntakeLatch().setPosition(0.8);
+                robot.getIntakeLatch().setPosition(0.9);
             }else if(!raisingArm && !lidButton.isPressed()){
                 //robot.getIntakeLatch().setPosition(0.2);
             }
@@ -169,7 +169,7 @@ public class MainTeleOp extends LinearOpMode {
             }
         }
         if (robot.getRaisingArm1().getCurrentPosition() - armOffset < 60 && !raisingArm) {
-            robot.getIntakeLatch().setPosition(0.8);
+            robot.getIntakeLatch().setPosition(0.9);
         } else if (!raisingArm && !lidButton.isPressed()) {
             //robot.getIntakeLatch().setPosition(0.2);
         }

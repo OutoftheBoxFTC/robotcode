@@ -3,7 +3,6 @@ package org.ftc7244.robotcontroller.sensor.pixycam;
 public class PixycamSample {
 
     Pixycam2Provider pixy;
-    SampleTransform previous;
     SampleTransform[] filter;
     int index;
     public PixycamSample(Pixycam2Provider pixy){

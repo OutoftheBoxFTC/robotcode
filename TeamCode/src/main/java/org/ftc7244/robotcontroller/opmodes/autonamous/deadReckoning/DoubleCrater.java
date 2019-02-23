@@ -36,16 +36,16 @@ public class DoubleCrater extends DeadReckoningBase {
         rotateGyro(90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
             case CENTER:
-                drive(40, 0.5);
+                drive(38, 0.5);
                 break;
             case RIGHT:
-                drive(61, 0.5);
+                drive(57, 0.5);
                 break;
             case LEFT:
-                drive(36.5, 0.5);
+                drive(34.5, 0.5);
                 break;
             default:
-                drive(55, 0.5);
+                drive(57, 0.5);
         }
         rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000);

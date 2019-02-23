@@ -26,16 +26,16 @@ public class Crater extends DeadReckoningBase {
                 rotation = -22;
                 break;
         }
-        drive(4, 0.1);
+        drive(4, 0.3);
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
         robot.getIntakeLatch().setPosition(0.8);
         final AtomicBoolean armMoved = new AtomicBoolean(false);
         threadManager.submit(getIntakeSample());
         //robot.intake(1);
-        drive(24, 0.5);
+        drive(26, 0.5);
         sleep(200);
-        drive(5, -0.5);
+        drive(7, -0.5);
         robot.getIntakeLatch().setPosition(0.2);
         robot.moveArm(0);
         robot.getLid().setPosition(.8);
@@ -73,13 +73,13 @@ public class Crater extends DeadReckoningBase {
         threadManager.submit(getArmReset());
         switch (sample){
             case LEFT:
-                drive(55, 0.8);
+                drive(61, 0.8);
                 break;
             case RIGHT:
-                drive(54, 0.8);
+                drive(60, 0.8);
                 break;
             case CENTER:
-                drive(54, 0.8);
+                drive(58, 0.8);
                 break;
         }
     }

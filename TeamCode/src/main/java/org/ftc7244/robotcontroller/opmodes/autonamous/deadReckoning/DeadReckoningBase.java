@@ -63,7 +63,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         };
         intakeSample = () -> {
             //double timer = -1;
-            robot.intake(1);
+            robot.intake(-1);
             /*while((robot.getIntake().getPower() > 0.5 || robot.getIntake().getPower() < -0.5) && opModeIsActive()){
                 if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 10 && timer == -1){
                     timer = System.currentTimeMillis() + 1000;
@@ -179,6 +179,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     }
 
     public void parralelize(UltrasonicSensor us1, UltrasonicSensor us2, double distance, double p, double i, double d){
+
         double error = getRotationalError(0, -getError(us2, us1, distance));
         PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
         ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.3), 100), new TimeTerminator((long) 3e9));
@@ -192,50 +193,54 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.drive(0, 0);
 
     }
+    double angle = 0, us1, us2;
 
-    private double getError(UltrasonicSensor us1, UltrasonicSensor us2, double distance){
-        return Math.atan((us1.getUltrasonicLevel()-us2.getUltrasonicLevel())/distance);
+    public void orientGyroToWall(double wallAngle, UltrasonicSensor us1, UltrasonicSensor us2){
+        this.us1 = us1.getUltrasonicLevel();
+        this.us2 = us2.getUltrasonicLevel();
+        double angle = wallAngle + Math.atan((this.us1-this.us2)/13.25);
+        this.angle = angle;
+        gyro.offsetAxisTo(ExtendedGyroscopeProvider.Axis.YAW, angle);
     }
 
-/*    public void driveRange(double inches, double speed){
-        RangeTerminator terminator = new RangeTerminator(-robot.getCountsPerInch(), robot.getCountsPerInch());
-        speed *= -1;
-        double direction = speed<0?-1:1,
-                encoderOffset = robot.getDriveEncoderAverage(),
-                distanceTarget = inches*robot.getCountsPerInch()*direction,
-                distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset)),
-                gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
-                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+    public double getError(UltrasonicSensor us1, UltrasonicSensor us2, double distance){
+        double d1 = us1.getUltrasonicLevel(), d2 = us2.getUltrasonicLevel();
 
-        while (opModeIsActive() && !terminator.shouldTerminate(distanceError)){
-            double correction = control.correction(rotationError);
-            robot.drive(speed+correction, speed-correction);
-            telemetry.addData("rotational error", rotationError);
-            telemetry.addData("distance error", distanceError);
-            telemetry.update();
-            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
-            distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
+        double angle = Math.atan((d1-d2)/distance);
+
+        if(angle < Math.toRadians(-15)){
+            d2 = 0;
+        } else if(angle > Math.toRadians(15)){
+            d1 = 0;
         }
-        robot.drive(0, 0);
+        angle = Math.atan((d1-d2)/distance);
+        return angle;
     }
-*/
+
     public void drive(double inches, double speed){
+        drive(inches, speed, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW));
+    }
+
+    public void drive(double inches, double speed, double angle){
         InequalityTerminator terminator = new InequalityTerminator();
         speed *= -1;
         double direction = speed<0?-1:1,
                 encoderOffset = robot.getDriveEncoderAverage(),
                 distanceTarget = inches*robot.getCountsPerInch()*direction,
                 distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset)),
-                gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
-                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
-
+                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-angle);
         while (opModeIsActive() && !terminator.shouldTerminate(distanceError)){
+            telemetry.addData("Gyro", gyro.getRotation(YAW));
+            telemetry.addData("Angle", angle);
+            telemetry.addData("us1", us1);
+            telemetry.addData("us2", us2);
             double correction = control.correction(rotationError);
             robot.drive(speed+correction, speed-correction);
+            //robot.drive(speed+correction, speed-correction);
             telemetry.addData("rotational error", rotationError);
             telemetry.addData("distance error", distanceError);
             telemetry.update();
-            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-angle);
             distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
         }
         robot.drive(0, 0);
@@ -257,7 +262,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     public void unhang(){
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.moveArm(0.05);
+        robot.moveArm(0.1);
         robot.drive(0.15, 0.15);
         while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(5)){
             robot.getLeftDrive().setPower(-0.15);

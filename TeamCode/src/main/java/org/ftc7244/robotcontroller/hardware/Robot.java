@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
@@ -65,6 +66,7 @@ public class Robot extends Hardware {
 
     @Override
     public void initServos() {
+        RobotLog.e("1: " + lid + ", 2: " + latch + ", 3: " + jeClamelBurner);
         getLid().setPosition(0.8);
         latch.setPosition(0.2);
         jeClamelBurner.setPosition(0.8);
