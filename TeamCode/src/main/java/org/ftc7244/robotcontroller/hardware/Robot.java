@@ -17,7 +17,7 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
-    private static final double COUNTS_PER_INCH = 39.5138889; //39.5138889
+    private static final double COUNTS_PER_INCH = 342.5; //342.5, 317.25
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
@@ -69,7 +69,7 @@ public class Robot extends Hardware {
         RobotLog.e("1: " + lid + ", 2: " + latch + ", 3: " + jeClamelBurner);
         getLid().setPosition(0.8);
         latch.setPosition(0.2);
-        jeClamelBurner.setPosition(0.8);
+        jeClamelBurner.setPosition(0.6);
         getLid().setPosition(0.85);
         latch.setPosition(0.2);
     }
@@ -137,7 +137,7 @@ public class Robot extends Hardware {
 
     @Override
     public int getDriveEncoderAverage() {
-        return (leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
+        return (-1 * leftDrive2.getCurrentPosition());
     }
 
     @Override

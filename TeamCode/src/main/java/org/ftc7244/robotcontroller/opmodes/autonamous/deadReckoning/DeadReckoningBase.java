@@ -63,7 +63,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         };
         intakeSample = () -> {
             //double timer = -1;
-            robot.intake(-1);
+            robot.intake(1);
             /*while((robot.getIntake().getPower() > 0.5 || robot.getIntake().getPower() < -0.5) && opModeIsActive()){
                 if(robot.getIntake().getVelocity(AngleUnit.RADIANS) < 10 && timer == -1){
                     timer = System.currentTimeMillis() + 1000;
@@ -262,7 +262,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     public void unhang(){
         robot.getLeftDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.getRightDrive().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.moveArm(0.1);
+        robot.moveArm(0.2);
         robot.drive(0.15, 0.15);
         while(opModeIsActive() && Math.abs(gyro.getRotation(PITCH)) > Math.toRadians(5)){
             robot.getLeftDrive().setPower(-0.15);
@@ -302,10 +302,12 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         sleep(200);
         robot.getLid().setPosition(.8);
         sleep(500);
-        robot.moveArm(1);
         robot.getLid().setPosition(.4);
-        sleep(950);
-        robot.moveArm(0);
+        sleep(250);
+        threadManager.submit(armReset);
+        if(armIsReset != null){
+            while (!armIsReset.get() && opModeIsActive());
+        }
         samplePixyProvider.setLamps(false, false);
     }
 
