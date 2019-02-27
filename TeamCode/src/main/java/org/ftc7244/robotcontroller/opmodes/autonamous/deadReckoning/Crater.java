@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
@@ -36,7 +37,19 @@ public class Crater extends DeadReckoningBase {
         //robot.intake(1);
         drive(18, 0.5);
         sleep(200);
-        drive(3, -0.5);
+        switch(sample){
+            case LEFT:
+                drive(4, -0.5);
+                break;
+            case RIGHT:
+                drive(3, -0.5);
+                break;
+            case CENTER:
+                drive(3, -0.5);
+                break;
+            default:
+
+        }
         robot.getIntakeLatch().setPosition(0.05);
         robot.moveArm(0);
         robot.getLid().setPosition(.8);
@@ -50,7 +63,7 @@ public class Crater extends DeadReckoningBase {
                 drive(49, -0.5);
                 break;
             case LEFT:
-                drive(40, -0.5);
+                drive(41, -0.5);
                 break;
             default:
                 drive(43, -0.5);
@@ -68,19 +81,20 @@ public class Crater extends DeadReckoningBase {
                 drive(26, -0.5);
                 break;
         }
-        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000);
+        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(5));
         burnJeClamelRetrograde();
         dumpArm();
         threadManager.submit(getArmReset());
+        robot.setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.FLOAT);
         switch (sample){
             case LEFT:
-                drive(57, 0.8);
+                drive(41, 0.8);
                 break;
             case RIGHT:
-                drive(56, 0.8);
+                drive(44, 0.8);
                 break;
             case CENTER:
-                drive(54, 0.8);
+                drive(42, 0.8);
                 break;
         }
     }

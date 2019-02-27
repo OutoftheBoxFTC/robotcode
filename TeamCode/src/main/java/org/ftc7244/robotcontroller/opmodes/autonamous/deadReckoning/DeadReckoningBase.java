@@ -50,7 +50,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         armReset = () -> {
             armIsReset = new AtomicBoolean(false);
             double timer;
-            robot.moveArm(0.5);
+            robot.moveArm(1);
             while (opModeIsActive() && robot.getArmSwitch().getState()){}
             robot.moveArm(-0.5);
             while (opModeIsActive() && !robot.getArmSwitch().getState()){}
@@ -189,6 +189,22 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             telemetry.addData("error", error);
             telemetry.update();
             error = getRotationalError(0, -getError(us1, us2, distance));
+        }
+        robot.drive(0, 0);
+
+    }
+
+    public void parralelize(UltrasonicSensor us1, UltrasonicSensor us2, double distance, double p, double i, double d, double offset){
+
+        double error = getRotationalError(offset, -getError(us2, us1, distance));
+        PIDControl control = new PIDControl(p, i, d, Math.toRadians(15), true);
+        ConditionalTerminator terminator = new ConditionalTerminator(new SensitivityTerminator(Math.toRadians(0.3), 100), new TimeTerminator((long) 3e9));
+        while (opModeIsActive()&&!terminator.shouldTerminate(error)){
+            double correction = control.correction(error);
+            robot.drive(correction, -correction);
+            telemetry.addData("error", error);
+            telemetry.update();
+            error = getRotationalError(offset, -getError(us1, us2, distance));
         }
         robot.drive(0, 0);
 

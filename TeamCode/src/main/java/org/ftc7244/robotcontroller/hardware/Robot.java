@@ -140,6 +140,13 @@ public class Robot extends Hardware {
         return (-1 * leftDrive2.getCurrentPosition());
     }
 
+    public void setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior zeroPowerBehavior){
+        leftDrive.setZeroPowerBehavior(zeroPowerBehavior);
+        rightDrive.setZeroPowerBehavior(zeroPowerBehavior);
+        leftDrive2.setZeroPowerBehavior(zeroPowerBehavior);
+        rightDrive2.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
     @Override
     public void resetDriveEncoders() {
 
