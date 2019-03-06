@@ -69,7 +69,7 @@ public class Robot extends Hardware {
         RobotLog.e("1: " + lid + ", 2: " + latch + ", 3: " + jeClamelBurner);
         getLid().setPosition(0.8);
         latch.setPosition(0.2);
-        jeClamelBurner.setPosition(0.6);
+        jeClamelBurner.setPosition(0.65);
         getLid().setPosition(0.85);
         latch.setPosition(0.2);
     }

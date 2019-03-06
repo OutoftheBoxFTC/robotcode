@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider;
+import org.ftc7244.robotcontroller.sensor.pixycam.PixycamSample;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,11 +20,11 @@ public class Depot extends DeadReckoningBase {
         double rotation = 0;
         switch (sample){
             case LEFT:
-                rotation = 22;
+                rotation = 24;
                 break;
             case RIGHT:
                 mineralDistance = 19;
-                rotation = -22;
+                rotation = -24;
                 break;
         }
         drive(2, 0.3);
@@ -33,17 +34,17 @@ public class Depot extends DeadReckoningBase {
         robot.intake(1);
         drive(mineralDistance, 0.5);
         sleep(200);
-        robot.getIntakeLatch().setPosition(0.2);
+        robot.getIntakeLatch().setPosition(0.05);
         final AtomicBoolean armMoved = new AtomicBoolean(false);
         switch(sample){
             case LEFT:
-                drive(17, -0.5);
+                drive(21, -0.5);
                 break;
             case RIGHT:
-                drive(17, -0.5);
+                drive(19, -0.5);
                 break;
             case CENTER:
-                drive(19, -0.5);
+                drive(21, -0.5);
                 break;
             default:
 
@@ -58,9 +59,14 @@ public class Depot extends DeadReckoningBase {
         while (!armMoved.get());
         robot.intake(0);
         robot.getLid().setPosition(.4);
+        robot.getIntakeLatch().setPosition(0.8);
         sleep(1000);
         threadManager.submit(getArmReset());
-        drive(6, 0.5);
+        robot.getIntakeLatch().setPosition(0.05);
+        int distance = 6;
+        if(sample != null && !sample.equals(PixycamSample.SampleTransform.CENTER))
+            distance += 4;
+        drive(distance, 0.5);
         robot.getLid().setPosition(.8);
         rotateGyro(82 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
         switch (sample) {
@@ -77,31 +83,31 @@ public class Depot extends DeadReckoningBase {
         parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(3));
         switch (sample) {
             case LEFT:
-                drive(50, -0.5);
+                drive(43, -0.5);
                 break;
             case RIGHT:
-                drive(48, -0.5);
+                drive(41, -0.5);
                 break;
             case CENTER:
-                drive(53, -0.5);
+                drive(47, -0.5);
                 break;
         }
-        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(-5));
         burnJeClamelRetrograde();
-        sleep(1500);
+        sleep(1000);
+        parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(-1.5));
         threadManager.submit(getArmReset());
         robot.getJeClamelBurner().setPosition(0.6);
         robot.setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.getLid().setPosition(.4);
         switch (sample){
             case LEFT:
-                drive(41, 0.8);
+                drive(35, 0.8);
                 break;
             case RIGHT:
-                drive(44, 0.8);
+                drive(38, 0.8);
                 break;
             case CENTER:
-                drive(42, 0.8);
+                drive(56, 0.8);
                 break;
         }
     }

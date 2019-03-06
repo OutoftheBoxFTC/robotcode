@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp(name="TeleOp")
 public class NewTeleOp extends LinearOpMode {
-    private static final double ARM_DOWN_PRESSURE = 0.1, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.85, INTAKE_LATCH_CLOSED = 0.05;
+    private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.85, INTAKE_LATCH_CLOSED = 0.05;
     private Robot robot;
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
@@ -90,8 +90,8 @@ public class NewTeleOp extends LinearOpMode {
             raisingArm = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
             sleep(500);
-            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 2000){
-                robot.moveArm((-1 * (2060 - robot.getRaisingArm1().getCurrentPosition())) / 100);
+            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 1900){
+                robot.moveArm((-1 * (1960 - robot.getRaisingArm1().getCurrentPosition())) / 100);
             }
             robot.moveArm(0);
             raisingArm = false;
@@ -115,13 +115,10 @@ public class NewTeleOp extends LinearOpMode {
             if (intakeTrigger.isPressed()) {
                 armMod = ARM_DOWN_PRESSURE;
                 robot.intake(1);
-                pixy.setLED(255, 255, 255);
             }else if(outtakeTrigger.isPressed()){ //Else if the right trigger is pressed
                 robot.intake(-1); //Outtake
-                pixy.setLED(255, 0, 0);
             }else{
                 robot.intake(0);
-                pixy.setLED(0, 128, 128);
             }
             if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED) && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED)){ //If both wheels are going full speed backwards
                 if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards
@@ -142,9 +139,11 @@ public class NewTeleOp extends LinearOpMode {
                 robot.getLatch().setPosition(0.2);
             }
             if(lidButton.isPressed()){
-                robot.getLid().setPosition(0.58);
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200){
                     robot.getIntakeLatch().setPosition(INTAKE_LATCH_OPEN);
+                    robot.getLid().setPosition(0.58);
+                }else{
+                    robot.getLid().setPosition(0.28);
                 }
             }else{
                 if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100){

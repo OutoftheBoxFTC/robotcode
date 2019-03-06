@@ -19,11 +19,11 @@ public class DoubleCrater extends DeadReckoningBase {
         double rotation = 0, mineralDistance = 18;
         switch (sample){
             case LEFT:
-                rotation = 22;
+                rotation = 24;
                 break;
             case RIGHT:
                 mineralDistance = 16;
-                rotation = -22;
+                rotation = -24;
                 break;
         }
         drive(2, 0.3);
@@ -57,7 +57,7 @@ public class DoubleCrater extends DeadReckoningBase {
         robot.intake(0);
         switch (sample) {
             case CENTER:
-                drive(31, 0.5);
+                drive(32, 0.5);
                 break;
             case RIGHT:
                 drive(37, 0.5);
@@ -100,18 +100,25 @@ public class DoubleCrater extends DeadReckoningBase {
             drive(15, -0.5);
             rotateGyro(45, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
             burnJeClamelRetrograde();
-            dumpArm();
-            rotateGyro(-50, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            //dumpArm();
+            rotateGyro(-55, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
+            //robot.drive(-0.25, 0.25);
+            //sleep(500);
+            //robot.drive(0, 0);
         }
         else {
             if(!sample.equals(PixycamSample.SampleTransform.RIGHT)){
                 drive(distance+6, -0.5);
             }
             rotateGyro(90, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
-            drive(9, -0.5);
+            if(sample.equals(PixycamSample.SampleTransform.RIGHT)) {
+                drive(15, -0.5);
+            }else{
+                drive(9, -0.5);
+            }
             parralelize(robot.getLeadingRightUS(), robot.getTrailingRightUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(1.5));
             burnJeClamelRetrograde();
-            dumpArm();
+            //dumpArm();
         }
         threadManager.submit(getArmReset());
         robot.setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.FLOAT);

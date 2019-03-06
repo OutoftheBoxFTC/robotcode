@@ -81,8 +81,8 @@ public class Crater extends DeadReckoningBase {
                 drive(26, -0.5);
                 break;
         }
-        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(5));
         burnJeClamelRetrograde();
+        parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(5));
         dumpArm();
         threadManager.submit(getArmReset());
         robot.setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.FLOAT);
