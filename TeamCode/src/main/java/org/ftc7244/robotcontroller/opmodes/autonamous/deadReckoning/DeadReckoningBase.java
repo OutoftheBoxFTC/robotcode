@@ -2,12 +2,15 @@ package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
+import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.DistanceSensorTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
@@ -234,6 +237,31 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             robot.drive(speed+correction, speed-correction);
             telemetry.addData("rotational error", rotationError);
             telemetry.addData("distance error", distanceError);
+            telemetry.update();
+            rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+            distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
+        }
+        robot.drive(0, 0);
+    }
+
+    public void driveToWall(double maxInches, double speed, double stopDistance, DistanceSensor sensor){
+        InequalityTerminator inequalityTerminator = new InequalityTerminator();
+        DistanceSensorTerminator distanceTerminator = new DistanceSensorTerminator(sensor, stopDistance);
+        ConditionalTerminator terminator = new ConditionalTerminator(inequalityTerminator, distanceTerminator);
+        speed *= -1;
+        double direction = speed<0?-1:1,
+                encoderOffset = robot.getDriveEncoderAverage(),
+                distanceTarget = maxInches*robot.getCountsPerInch()*direction,
+                distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset)),
+                gyroOffset = gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW),
+                rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
+
+        while (opModeIsActive() && !terminator.shouldTerminate(distanceError)){
+            double correction = control.correction(rotationError);
+            robot.drive(speed+correction, speed-correction);
+            telemetry.addData("rotational error", rotationError);
+            telemetry.addData("distance error", distanceError);
+            telemetry.addData("distance sensor", sensor.getDistance(DistanceUnit.INCH));
             telemetry.update();
             rotationError = getRotationalError(0, gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-gyroOffset);
             distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));

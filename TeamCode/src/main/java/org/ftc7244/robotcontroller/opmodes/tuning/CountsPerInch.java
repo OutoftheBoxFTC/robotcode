@@ -29,8 +29,8 @@ public class CountsPerInch extends LinearOpMode {
             telemetry.addLine("A to reset");
             telemetry.addLine("B to lock");
             if(!b.isPressed()){
-                //countsPerInch = ((robot.getDriveEncoderAverage() - initial) / 36);
-                countsPerInch = 21.8;
+                countsPerInch = ((robot.getDriveEncoderAverage() - initial) / 36);
+                countsPerInch = 352.5;
             }
             if(a.isPressed()){
                 initial = robot.getDriveEncoderAverage();

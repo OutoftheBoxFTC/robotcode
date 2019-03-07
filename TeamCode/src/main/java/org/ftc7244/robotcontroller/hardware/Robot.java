@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
 public class Robot extends Hardware {
-    private static final double COUNTS_PER_INCH = 39.5138889; //39.5138889
+    private static final double COUNTS_PER_INCH = 342.5; //342.5
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
@@ -26,6 +27,7 @@ public class Robot extends Hardware {
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
+    private DistanceSensor backDistanceSensor;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -60,6 +62,7 @@ public class Robot extends Hardware {
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         intakeKicker = getOrNull(map.servo, "intakeKicker");
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
+        backDistanceSensor = map.get(DistanceSensor.class, "backDistanceSensor");
         leftDrive2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -135,7 +138,7 @@ public class Robot extends Hardware {
 
     @Override
     public int getDriveEncoderAverage() {
-        return (leftDrive.getCurrentPosition()+rightDrive.getCurrentPosition())/2;
+        return leftDrive2.getCurrentPosition() * -1;
     }
 
     @Override
@@ -227,5 +230,9 @@ public class Robot extends Hardware {
 
     public Servo getJeClamelBurner() {
         return jeClamelBurner;
+    }
+
+    public DistanceSensor getBackDistanceSensor() {
+        return backDistanceSensor;
     }
 }

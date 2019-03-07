@@ -3,6 +3,7 @@ package org.ftc7244.robotcontroller.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -59,6 +60,8 @@ public class NewTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
+        robot.getLeftDrive2().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.getLeftDrive2().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(0.2);
@@ -184,9 +187,10 @@ public class NewTeleOp extends LinearOpMode {
             if(armUpButton.isPressed() && armUpButtonUpdated){
                 threadManager.submit(armRaise);
             }
-            telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
-            telemetry.addData("RaisingArm2", robot.getRaisingArm2().getPower());
-            telemetry.addData("ArmMod", armMod);
+            telemetry.addData("left", robot.getLeftDrive().getCurrentPosition());
+            telemetry.addData("left2", robot.getLeftDrive2().getCurrentPosition());
+            telemetry.addData("right", robot.getRightDrive().getCurrentPosition());
+            telemetry.addData("right2", robot.getRightDrive2().getCurrentPosition());
             telemetry.update();
         }
         pixy.setLamps(false, false);
