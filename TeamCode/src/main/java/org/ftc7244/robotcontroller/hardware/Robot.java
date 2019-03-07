@@ -2,6 +2,7 @@ package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -30,6 +31,10 @@ public class Robot extends Hardware {
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
+    }
+
+    public Robot(OpMode opMode){
+        super((LinearOpMode)opMode, COUNTS_PER_INCH);
     }
 
     @Override
