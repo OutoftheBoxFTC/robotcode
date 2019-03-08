@@ -1,6 +1,7 @@
 package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -16,7 +17,7 @@ import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 public class Robot extends Hardware {
     private static final double COUNTS_PER_INCH = 39.5138889;
 
-
+    private RevBlinkinLedDriver blinkinLedDriver;
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
     private DcMotorEx leftDrive, rightDrive;
@@ -53,6 +54,7 @@ public class Robot extends Hardware {
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
+        blinkinLedDriver = getOrNull(map, RevBlinkinLedDriver.class, "blinkin");
         //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         resetMotors(raisingArm2);
     }
@@ -198,5 +200,9 @@ public class Robot extends Hardware {
 
     public Servo getLid() {
         return lid;
+    }
+
+    public RevBlinkinLedDriver getBlinkinLedDriver() {
+        return blinkinLedDriver;
     }
 }
