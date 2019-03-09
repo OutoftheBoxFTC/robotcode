@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -69,7 +70,9 @@ public class MainTeleOp extends LinearOpMode {
             sleep(720);
             slowingDown = false;
         };
+        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_FAST);
         waitForStart();
+        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             if(!slowingDown) {
@@ -78,7 +81,8 @@ public class MainTeleOp extends LinearOpMode {
                 }else{
                     robot.drive(gamepad1.left_stick_y * DRIVE_MODIFIER, gamepad1.right_stick_y * DRIVE_MODIFIER);
                 }
-                antiTipTimeTarget = System.currentTimeMillis() + 750;            }else{
+                antiTipTimeTarget = System.currentTimeMillis() + 750;
+            }else{
                 robot.brakeDriveMotors(modifier);
             }
             if (intakeTrigger.isPressed()) {

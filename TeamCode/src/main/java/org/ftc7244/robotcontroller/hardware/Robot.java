@@ -1,6 +1,7 @@
 package org.ftc7244.robotcontroller.hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -28,6 +29,7 @@ public class Robot extends Hardware {
     private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
     private Servo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
+    private RevBlinkinLedDriver sidePanelBlinkin;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -67,6 +69,7 @@ public class Robot extends Hardware {
         intakeKicker = getOrNull(map.servo, "intakeKicker");
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
         leftDrive2.setDirection(DcMotorSimple.Direction.REVERSE);
+        sidePanelBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin1");
     }
 
     @Override
@@ -241,5 +244,9 @@ public class Robot extends Hardware {
 
     public Servo getJeClamelBurner() {
         return jeClamelBurner;
+    }
+
+    public RevBlinkinLedDriver getSidePanelBlinkin() {
+        return sidePanelBlinkin;
     }
 }
