@@ -52,6 +52,11 @@ public class Pixycam2Provider {
      */
     public void start(){
         pixy.engage();
+        if(mineral.equals(Mineral.GOLD)){
+            request[4] = (byte) 1;
+        }else{
+            request[4] = (byte) 2;
+        }
     }
 
     /**

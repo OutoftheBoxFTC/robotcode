@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.opmodes.autonamous.deadReckoning;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
@@ -85,7 +86,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.getLeftDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
-
+        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         threadManager = Executors.newCachedThreadPool();
 
@@ -125,6 +126,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             if(hanging)
                 unhang();
+            robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
             run();
             if(armIsReset != null){
                 while (!armIsReset.get());

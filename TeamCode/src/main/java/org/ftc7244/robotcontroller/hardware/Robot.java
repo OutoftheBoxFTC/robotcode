@@ -26,7 +26,7 @@ public class Robot extends Hardware {
     private DcMotorEx leftDrive, rightDrive, leftDrive2, rightDrive2, intake;
     private DcMotor raisingArm1, raisingArm2;
     private BNO055IMU imu;
-    private I2cDeviceSynch goldI2c, silverI2c, sampleI2c;
+    private I2cDeviceSynch intakeI2c, sampleI2c;
     private Servo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
     private RevBlinkinLedDriver sidePanelBlinkin;
@@ -51,8 +51,7 @@ public class Robot extends Hardware {
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
         raisingArm1 = getOrNull(map.dcMotor, "arm1");
         raisingArm2 = getOrNull(map.dcMotor, "arm2");
-        goldI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
-        silverI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
+        intakeI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         imu = getOrNull(map, BNO055IMU.class, "imu");
 
@@ -196,12 +195,8 @@ public class Robot extends Hardware {
         return rightDrive;
     }
 
-    public I2cDeviceSynch getGoldI2c() {
-        return goldI2c;
-    }
-
-    public I2cDeviceSynch getSilverI2c() {
-        return silverI2c;
+    public I2cDeviceSynch getIntakeI2c() {
+        return intakeI2c;
     }
 
     public DcMotor getRaisingArm1() {
