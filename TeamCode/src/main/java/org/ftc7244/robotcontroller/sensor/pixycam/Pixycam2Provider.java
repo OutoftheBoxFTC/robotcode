@@ -42,6 +42,11 @@ public class Pixycam2Provider {
      * */
     public void update(){
         pixy.engage();
+        if(mineral.equals(Mineral.GOLD)){
+            request[4] = (byte) 1;
+        }else{
+            request[4] = (byte) 2;
+        }
         pixy.write(0, request);
         data = pixy.read(0, 26);
         pixyData = endianToShort(data);
@@ -52,6 +57,11 @@ public class Pixycam2Provider {
      */
     public void start(){
         pixy.engage();
+        if(mineral.equals(Mineral.GOLD)){
+            request[4] = (byte) 1;
+        }else{
+            request[4] = (byte) 2;
+        }
     }
 
     /**

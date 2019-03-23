@@ -12,13 +12,13 @@ public class ArmResetTests extends LinearOpMode {
         robot.init();
         robot.initServos();
         waitForStart();
-        while(opModeIsActive() && robot.getArmSwitch().getState()){
-            robot.moveArm(0.5);
-        }
-        robot.moveArm(-0.3);
-        sleep(750);
-        while(opModeIsActive() && robot.getArmSwitch().getState()){
-            robot.moveArm(0.1);
+        double offset = robot.getRaisingArm1().getCurrentPosition();
+        while (opModeIsActive()){
+            if(!robot.getArmSwitch().getState()){
+                offset = robot.getRaisingArm1().getCurrentPosition();
+            }
+            telemetry.addData("ArmPosition", robot.getRaisingArm1().getCurrentPosition() - offset);
+            telemetry.update();
         }
     }
 }
