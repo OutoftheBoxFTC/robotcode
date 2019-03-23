@@ -64,7 +64,7 @@ public class Robot extends Hardware {
         latch = getOrNull(map.servo, "latch");
         lid = getOrNull(map.servo, "lid");
         jeClamelBurner = getOrNull(map.servo, "jeClamelBurner");
-        //sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
+        sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         intakeKicker = getOrNull(map.servo, "intakeKicker");
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
         leftDrive2.setDirection(DcMotorSimple.Direction.REVERSE);

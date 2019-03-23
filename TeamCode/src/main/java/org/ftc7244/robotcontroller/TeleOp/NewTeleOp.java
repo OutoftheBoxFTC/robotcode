@@ -3,6 +3,7 @@ package org.ftc7244.robotcontroller.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,7 +26,7 @@ public class NewTeleOp extends LinearOpMode {
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm, armRaise;
+    private Runnable latchMove, antiTip, resetArm, armRaise, armRaiseScoring;
     Pixycam2Provider pixy;
     /**
      * Driver Controls:
@@ -90,10 +91,15 @@ public class NewTeleOp extends LinearOpMode {
             raisingArm = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
             sleep(500);
-            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 1900){
-                robot.moveArm((-1 * (1960 - robot.getRaisingArm1().getCurrentPosition())) / 100);
+            robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 2476.0){
+                robot.moveArm(-1);
             }
             robot.moveArm(0);
+            sleep(150);
+            robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             raisingArm = false;
         };
         waitForStart();
