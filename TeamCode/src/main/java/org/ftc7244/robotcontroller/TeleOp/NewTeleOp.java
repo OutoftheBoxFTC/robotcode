@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp(name="TeleOp")
 public class NewTeleOp extends LinearOpMode {
-    private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.85, INTAKE_LATCH_CLOSED = 0.05;
+    private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2400.0;
     private Robot robot;
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
@@ -93,7 +93,7 @@ public class NewTeleOp extends LinearOpMode {
             sleep(500);
             robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < 2476.0){
+            while(opModeIsActive() && robot.getRaisingArm1().getCurrentPosition() - armOffset < ARM_RAISE_POSITION){
                 robot.moveArm(-1);
             }
             robot.moveArm(0);
