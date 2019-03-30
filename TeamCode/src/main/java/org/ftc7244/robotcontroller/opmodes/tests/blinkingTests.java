@@ -2,9 +2,10 @@ package org.ftc7244.robotcontroller.opmodes.tests;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+@Disabled
 @TeleOp
 public class blinkingTests extends OpMode {
     RevBlinkinLedDriver revBlinkinLedDriver;

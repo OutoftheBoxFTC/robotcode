@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.sensor.pixycam;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,7 +10,7 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 public class IntakePixyProviderTests extends LinearOpMode {
     Robot robot;
     Pixycam2Provider pixyGold, pixySilver;
-
+    int counter = 0, max = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new Robot(this);
@@ -27,9 +28,19 @@ public class IntakePixyProviderTests extends LinearOpMode {
             telemetry.addData("Silver Width", pixySilver.getWidth());
             if(pixyGold.getWidth() > 290 || pixySilver.getWidth() > 290 || (pixyGold.getWidth() > 1 && pixySilver.getWidth() > 1)){
                 telemetry.addData("Two Minerals", true);
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                counter ++;
             }else{
                 telemetry.addData("Two Minerals", false);
+                if(pixyGold.getWidth() == -1 && pixySilver.getWidth() == -1) {
+                    robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
+                }else{
+                    robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                }
+                max = Math.max(counter, max);
+                counter = 0;
             }
+            telemetry.addData("Max", max);
             telemetry.update();
         }
     }

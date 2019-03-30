@@ -1,10 +1,11 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
-
+@Disabled
 @TeleOp(name="Lasagna")
 public class TurnTests extends LinearOpMode {
 

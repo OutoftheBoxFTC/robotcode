@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.AutonomousProcedure;
@@ -7,7 +8,7 @@ import org.ftc7244.robotcontroller.autonamous.control.ConstantControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
-
+@Disabled
 @TeleOp(name = "Basic Turn Test")
 public class BasicTurnTest extends AutonomousProcedure {
 

@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cAddr;
@@ -13,7 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
-
+@Disabled
 @TeleOp
 /*
 Bytes    16-bit word    Description

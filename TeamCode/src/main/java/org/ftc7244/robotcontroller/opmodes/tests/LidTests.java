@@ -1,10 +1,11 @@
 package org.ftc7244.robotcontroller.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
-
+@Disabled
 @TeleOp
 public class LidTests extends OpMode {
     Robot robot;

@@ -1,5 +1,6 @@
 package org.ftc7244.robotcontroller.TeleOp;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -26,8 +27,9 @@ public class NewTeleOp extends LinearOpMode {
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
     private boolean slowingDown = false, raisingArm = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm, armRaise, armRaiseScoring;
+    private Runnable latchMove, antiTip, resetArm, armRaise, modifyBlinkinState;
     Pixycam2Provider pixy;
+    private AtomicBoolean antiTipOn;
     /**
      * Driver Controls:
      *
@@ -60,6 +62,12 @@ public class NewTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
+        antiTipOn = new AtomicBoolean(false);
+        modifyBlinkinState = () -> {
+            antiTipOn.set(true);
+            sleep(1500);
+            antiTipOn.set(false);
+        };
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
@@ -130,12 +138,14 @@ public class NewTeleOp extends LinearOpMode {
                 if(gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5){ //And both sticks are pushed forwards
                     modifier = -1;
                     threadManager.submit(antiTip);
+                    threadManager.submit(modifyBlinkinState);
                     slowingDown = true;
                 }
             }else if(robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED){
                 if(gamepad1.left_stick_y > 0.5 && gamepad1.right_stick_y > 0.5){
                     modifier = 1;
                     threadManager.submit(antiTip);
+                    threadManager.submit(modifyBlinkinState);
                     slowingDown = true;
                 }
             }
@@ -187,6 +197,11 @@ public class NewTeleOp extends LinearOpMode {
             }
             if(armUpButton.isPressed() && armUpButtonUpdated){
                 threadManager.submit(armRaise);
+            }
+            if(antiTipOn.get()){
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+            }else{
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
             }
             telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
             telemetry.addData("RaisingArm2", robot.getRaisingArm2().getPower());
