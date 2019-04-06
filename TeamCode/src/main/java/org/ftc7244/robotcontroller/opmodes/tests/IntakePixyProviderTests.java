@@ -1,4 +1,4 @@
-package org.ftc7244.robotcontroller.sensor.pixycam;
+package org.ftc7244.robotcontroller.opmodes.tests;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.sensor.pixycam.Pixycam2Provider;
+
 @TeleOp
 public class IntakePixyProviderTests extends LinearOpMode {
     Robot robot;
@@ -26,7 +28,7 @@ public class IntakePixyProviderTests extends LinearOpMode {
             pixySilver.update();
             telemetry.addData("Gold Width", pixyGold.getWidth());
             telemetry.addData("Silver Width", pixySilver.getWidth());
-            if(pixyGold.getWidth() > 290 || pixySilver.getWidth() > 290 || (pixyGold.getWidth() > 1 && pixySilver.getWidth() > 1)){
+            if(pixyGold.getWidth() > 290 || pixySilver.getWidth() > 215 || (pixyGold.getWidth() > 1 && pixySilver.getWidth() > 1)){
                 telemetry.addData("Two Minerals", true);
                 robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 counter ++;

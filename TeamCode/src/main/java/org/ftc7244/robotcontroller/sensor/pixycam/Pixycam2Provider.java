@@ -59,7 +59,7 @@ public class Pixycam2Provider {
         pixy.engage();
         if(mineral.equals(Mineral.GOLD)){
             request[4] = (byte) 1;
-        }else{
+        }else if(mineral.equals(Mineral.SILVER)){
             request[4] = (byte) 2;
         }
     }
@@ -131,7 +131,8 @@ public class Pixycam2Provider {
      */
     public enum Mineral{
         GOLD,
-        SILVER
+        SILVER,
+        ONE_SILVER
     }
 
     private List<Short> endianToShort(byte[] byteArray){
