@@ -8,15 +8,16 @@ public class IntakePixyProvider {
     Pixycam2Provider pixySilver;
     Pixycam2Provider pixyOneSilver;
     public int[] silverValues, goldValues;
-    int counterSilver = 0, counterGold = 0;
-    int status = 0;
+    int counterSilver = 0, counterGold = 0, silverLow = 0;
+    int status = 0, tempMax = 0;
+    public int max = 0;
     public int silverAverage, goldAverage;
     public IntakePixyProvider(I2cDeviceSynch pixy){
         pixyGold = new Pixycam2Provider(Pixycam2Provider.Mineral.GOLD, pixy);
         pixySilver = new Pixycam2Provider(Pixycam2Provider.Mineral.SILVER, pixy);
         pixyOneSilver = new Pixycam2Provider(Pixycam2Provider.Mineral.ONE_SILVER, pixy);
-        silverValues = new int[20];
-        goldValues = new int[20];
+        silverValues = new int[20]; //BEST 20
+        goldValues = new int[10]; //BEST 20
         for(int i = 0; i < silverValues.length; i ++){
             silverValues[i] = 0;
         }
@@ -51,9 +52,10 @@ public class IntakePixyProvider {
                 tmpG ++;
             }
         }
-        if(tmpS > 10){
+        if(tmpS > 19){
             silverAverage = -1;
         }else{
+            silverAverage = 0;
             for(int i = 0; i < silverValues.length; i ++){
                 if(silverValues[i] != -1){
                     tmpS ++;
@@ -62,9 +64,10 @@ public class IntakePixyProvider {
             }
             silverAverage = maxS/tmpS;
         }
-        if(tmpG > 10){
+        if(tmpG > 9){
             goldAverage = -1;
         }else{
+            goldAverage = 0;
             for(int i = 0; i < goldValues.length; i ++){
                 if(goldValues[i] != -1){
                     tmpG ++;
@@ -77,10 +80,13 @@ public class IntakePixyProvider {
             status = 2;
         }else if(silverAverage > 280){ //Best so far: 215
             status = 2;
+            tempMax ++;
         } else if(goldAverage > 1 && silverAverage > 1){
             status = 2;
         } else {
             status = 1;
+            max = Math.max(tempMax, max);
+            tempMax = 0;
         }
         if(goldAverage == -1 && silverAverage == -1){
             status = 0;

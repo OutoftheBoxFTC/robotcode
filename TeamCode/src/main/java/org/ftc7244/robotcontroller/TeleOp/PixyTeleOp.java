@@ -25,7 +25,7 @@ public class PixyTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2600.0;
     private Robot robot;
     private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
-    private boolean slowingDown = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false;
+    private boolean slowingDown = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false, lidOpened = true;
     private ExecutorService threadManager;
     private Runnable latchMove, antiTip, resetArm, armRaise, pixyThread;
     I2cDeviceSynch pixy;
@@ -167,6 +167,7 @@ public class PixyTeleOp extends LinearOpMode {
                 if (robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200) {
                     robot.getIntakeLatch().setPosition(INTAKE_LATCH_OPEN);
                     robot.getLid().setPosition(0.28);
+                    lidOpened = true;
                 } else {
                     robot.getLid().setPosition(0.28);
                 }
@@ -174,9 +175,14 @@ public class PixyTeleOp extends LinearOpMode {
                 if (robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && robot.getRaisingArm1().getCurrentPosition() - armOffset > 100) {
                     robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
                 }
-                robot.getLid().setPosition(0.80);
+                robot.getLid().setPosition(0.82);
             }else if(!raisingArm.get()){
-                robot.getLid().setPosition(0.85);
+                if(robot.getRaisingArm1().getCurrentPosition() - armOffset > 2200 && lidOpened){
+                    robot.getLid().setPosition(0.28);
+                }else {
+                    lidOpened = false;
+                    robot.getLid().setPosition(0.82);
+                }
             }
             if (armLockButton.isPressed()) {
                 armMod = ARM_HANG_OFFSET;
@@ -218,6 +224,7 @@ public class PixyTeleOp extends LinearOpMode {
             }
             telemetry.addData("Gold", intakePixyProvider.goldAverage);
             telemetry.addData("Silver", intakePixyProvider.silverAverage);
+            telemetry.addData("MaxFramesGold", intakePixyProvider.max);
             telemetry.update();
         }
     }
