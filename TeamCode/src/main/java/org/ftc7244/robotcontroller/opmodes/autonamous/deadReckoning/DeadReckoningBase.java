@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.R;
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
@@ -29,7 +27,7 @@ import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.
 import static org.ftc7244.robotcontroller.sensor.gyroscope.ExtendedGyroProvider.ExtendedGyroscopeProvider.Axis.YAW;
 
 public abstract class DeadReckoningBase extends LinearOpMode {
-    private PIDControl control;
+    private PIDControl control, arcControl;
 
     //protected GyroscopeProvider gyro;
     protected ExtendedGyroscopeProvider gyro;
@@ -93,6 +91,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
         //control = new PIDControl(Math.toRadians(15), true, "default_pid", hardwareMap.appContext);
         control = new PIDControl(0.45, 0.0000000025, 19000000, Math.toRadians(15), true);
+        arcControl = new PIDControl(1, 0, 1, 0, true);
         startTime = System.nanoTime();
         try {
             //init providers
@@ -265,6 +264,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.drive(0, 0);
     }
 
+    private static final double kp = 0.1, kd = 0.01;
     public void driveArc(double radius, double angle, double power){
         angle = restrictAngle(Math.toRadians(angle));
         if(radius < 0 || angle == 0)
@@ -281,8 +281,17 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                 angleOffset = restrictAngle(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)),
                 leftOffset = robot.getLeftDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH,
                 rightOffset = robot.getRightDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH;
-
+        if(v1>1){
+            v2 /= v1;
+            v1 = 1;
+        }
+        else if(v2 > 1){
+            v1 /= v2;
+            v2 = 1;
+        }
+        InequalityTerminator leftTerminator = new InequalityTerminator(), rightTerminator = new InequalityTerminator();
         boolean running = true;
+
         while (running){
             double currentAngle = restrictAngle(restrictAngle(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-angleOffset)),
                     leftDistance = robot.getLeftDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH-leftOffset,
@@ -290,20 +299,19 @@ public abstract class DeadReckoningBase extends LinearOpMode {
                     leftVelocity = robot.getLeftDrive().getVelocity()/Robot.COUNTS_PER_INCH,
                     rightVelocity = robot.getRightDrive().getVelocity()/Robot.COUNTS_PER_INCH;
 
-
+            double ldV = (currentAngle*r2-leftDistance)*kp+(leftVelocity-v2)*kd,
+                    rdV = (currentAngle*r1-rightDistance)*kp+(rightVelocity-v1)*kd;
+            robot.drive(v2+ldV, v1+rdV);
+            running = !(leftTerminator.shouldTerminate(leftDistance-d2)||rightTerminator.shouldTerminate(rightDistance-d1));
         }
     }
 
     /**
-     * @param angle
+     * @param angle the angle on some random domain
      * @return angle restricted to range of 0-2pi
      */
     private double restrictAngle(double angle){
-        double restricted = angle%(Math.PI*2);
-        if(angle<0){
-            restricted = 2*Math.PI-restricted;
-        }
-        return restricted;
+        return ((angle%Math.PI*2)+Math.PI*2)%(Math.PI*2);
     }
 
     public double getRotationalError(double rotationTarget, double currentRotation) {

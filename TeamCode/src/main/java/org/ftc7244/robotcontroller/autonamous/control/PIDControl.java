@@ -54,4 +54,9 @@ public class PIDControl extends ControlSystem {
         integral = 0;
         lastTime = 0;
     }
+
+    @Override
+    public PIDControl clone() {
+        return new PIDControl(kp, ki, kd, integralRange, integralReset);
+    }
 }
