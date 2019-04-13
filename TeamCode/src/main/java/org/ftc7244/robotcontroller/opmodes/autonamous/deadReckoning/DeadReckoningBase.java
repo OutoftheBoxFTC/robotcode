@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.R;
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.ConditionalTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.InequalityTerminator;
@@ -262,6 +263,47 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             distanceError = -(distanceTarget+(robot.getDriveEncoderAverage()-encoderOffset));
         }
         robot.drive(0, 0);
+    }
+
+    public void driveArc(double radius, double angle, double power){
+        angle = restrictAngle(Math.toRadians(angle));
+        if(radius < 0 || angle == 0)
+            return;
+        if(radius==0)
+            rotateGyro(angle);
+        double direction = angle<0?-1:1,
+                r1 = radius + Robot.WHEEL_TO_CENTER*direction,//right distance
+                r2 = radius - Robot.WHEEL_TO_CENTER*direction,//left distance
+                d1 = r1*angle,
+                d2 = r2*angle,
+                v1 = power/radius*r1,
+                v2 = power/radius*r2,
+                angleOffset = restrictAngle(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)),
+                leftOffset = robot.getLeftDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH,
+                rightOffset = robot.getRightDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH;
+
+        boolean running = true;
+        while (running){
+            double currentAngle = restrictAngle(restrictAngle(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)-angleOffset)),
+                    leftDistance = robot.getLeftDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH-leftOffset,
+                    rightDistance = robot.getRightDrive().getCurrentPosition()/Robot.COUNTS_PER_INCH-rightOffset,
+                    leftVelocity = robot.getLeftDrive().getVelocity()/Robot.COUNTS_PER_INCH,
+                    rightVelocity = robot.getRightDrive().getVelocity()/Robot.COUNTS_PER_INCH;
+
+
+        }
+    }
+
+    /**
+     * @param angle
+     * @return angle restricted to range of 0-2pi
+     */
+    private double restrictAngle(double angle){
+        double restricted = angle%(Math.PI*2);
+        if(angle<0){
+            restricted = 2*Math.PI-restricted;
+        }
+        return restricted;
     }
 
     public double getRotationalError(double rotationTarget, double currentRotation) {

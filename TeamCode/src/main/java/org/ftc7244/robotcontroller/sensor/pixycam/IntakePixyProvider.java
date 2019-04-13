@@ -17,7 +17,7 @@ public class IntakePixyProvider {
         pixySilver = new Pixycam2Provider(Pixycam2Provider.Mineral.SILVER, pixy);
         pixyOneSilver = new Pixycam2Provider(Pixycam2Provider.Mineral.ONE_SILVER, pixy);
         silverValues = new int[20]; //BEST 20
-        goldValues = new int[10]; //BEST 20
+        goldValues = new int[10]; //BEST 10
         for(int i = 0; i < silverValues.length; i ++){
             silverValues[i] = 0;
         }
