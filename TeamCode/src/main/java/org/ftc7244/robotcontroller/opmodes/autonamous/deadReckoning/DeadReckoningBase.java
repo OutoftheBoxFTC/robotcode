@@ -301,8 +301,8 @@ public abstract class DeadReckoningBase extends LinearOpMode {
 
             double ldV = (currentAngle*r2-leftDistance)*kp+(leftVelocity-v2)*kd,
                     rdV = (currentAngle*r1-rightDistance)*kp+(rightVelocity-v1)*kd;
-            robot.drive(v2+ldV, v1+rdV);
-            running = !(leftTerminator.shouldTerminate(leftDistance-d2)||rightTerminator.shouldTerminate(rightDistance-d1));
+            //robot.drive(v2+ldV, v1+rdV);
+            running = (!(leftTerminator.shouldTerminate(leftDistance-d2)||rightTerminator.shouldTerminate(rightDistance-d1)))&&opModeIsActive();
         }
     }
 
@@ -311,7 +311,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
      * @return angle restricted to range of 0-2pi
      */
     private double restrictAngle(double angle){
-        return ((angle%Math.PI*2)+Math.PI*2)%(Math.PI*2);
+        return ((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
     }
 
     public double getRotationalError(double rotationTarget, double currentRotation) {

@@ -1,6 +1,5 @@
 package org.ftc7244.robotcontroller.sensor.pixycam;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 public class IntakePixyProvider {
