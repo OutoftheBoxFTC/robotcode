@@ -12,22 +12,25 @@ import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.input.PressButton;
 import org.ftc7244.robotcontroller.sensor.pixycam.IntakePixyProvider;
-import org.ftc7244.robotcontroller.sensor.pixycam.Pixycam2Provider;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 @TeleOp(name="PTeleOp")
 public class PixyTeleOp extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2600.0;
     private Robot robot;
-    private double timer = 0, modifier = 1, armMod = 1, armOffset, timeTarget = 0, antiTipTimeTarget = 0;
+    private double modifier = 1;
+    private double armMod = 1;
+    private double armOffset;
+    private double antiTipTimeTarget = 0;
     private boolean slowingDown = false, test = false, intakeKickerUpdated = false, resetting = false, intakeResetUpdated = false, armUpButtonUpdated = false, lidOpened = true;
     private ExecutorService threadManager;
-    private Runnable latchMove, antiTip, resetArm, armRaise, pixyThread;
+    private Runnable latchMove;
+    private Runnable antiTip;
+    private Runnable resetArm;
+    private Runnable armRaise;
     I2cDeviceSynch pixy;
     IntakePixyProvider intakePixyProvider;
     AtomicBoolean raisingArm;
@@ -47,15 +50,16 @@ public class PixyTeleOp extends LinearOpMode {
      */
     Button intakeTrigger, outtakeTrigger, slowButton, lidButton, armLockButton, intakeKicker, intakeReset, armUpButton;
     PressButton Bbutton;
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         raisingArm = new AtomicBoolean(false);
         threadManager = Executors.newCachedThreadPool();
         robot = new Robot(this);
         robot.init();
         robot.initServos();
         pixy = robot.getIntakeI2c();
-        intakePixyProvider = new IntakePixyProvider(pixy);
+        intakePixyProvider = new IntakePixyProvider(pixy, robot);
         slowButton = new PressButton(gamepad1, ButtonType.RIGHT_TRIGGER);
         intakeTrigger = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
         outtakeTrigger = new Button(gamepad2, ButtonType.RIGHT_TRIGGER);
@@ -66,7 +70,6 @@ public class PixyTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
-        intakePixyProvider.start();
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
@@ -121,12 +124,11 @@ public class PixyTeleOp extends LinearOpMode {
             robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             raisingArm.set(false);
         };
-        intakePixyProvider.start();
         waitForStart();
         frames = 0;
         start = System.currentTimeMillis();
+        threadManager.execute(intakePixyProvider);
         while (opModeIsActive()) {
-            intakePixyProvider.update();
             intakeKickerUpdated = intakeKicker.isUpdated();
             intakeResetUpdated = intakeReset.isUpdated();
             armUpButtonUpdated = armUpButton.isUpdated();
@@ -219,11 +221,11 @@ public class PixyTeleOp extends LinearOpMode {
                 threadManager.submit(armRaise);
             }
             if(intakePixyProvider.getStatus() == 0){
-                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT;
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
             }else if(intakePixyProvider.getStatus() == 1){
-                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
             }else if(intakePixyProvider.getStatus() == 2){
-                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
             if(robot.getArmSwitch().getState()){
                 robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -234,12 +236,9 @@ public class PixyTeleOp extends LinearOpMode {
             }
             //robot.getSidePanelBlinkin().setPosition(0.5);
             frames ++;
-            telemetry.addData("Silver", intakePixyProvider.prevSilver == intakePixyProvider.pixySilver.getWidth());
-            telemetry.addData("Gold", intakePixyProvider.prevGold == intakePixyProvider.pixyGold.getWidth());
-            telemetry.addData("Gold1", intakePixyProvider.goldAverage);
-            telemetry.addData("Silver2", intakePixyProvider.silverAverage);
             telemetry.addData("Status", intakePixyProvider.getStatus());
-            telemetry.addData("FPS", (double)frames / ((System.currentTimeMillis() - start) * 1000));
+            telemetry.addData("Main loop FPS", (double)frames / ((System.currentTimeMillis() - start) * 1000));
+            telemetry.addData("Filter loop FPS", intakePixyProvider.getFps());
             telemetry.update();
         }
     }

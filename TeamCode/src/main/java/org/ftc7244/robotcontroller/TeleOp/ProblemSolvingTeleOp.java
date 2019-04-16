@@ -49,7 +49,7 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
         robot.init();
         robot.initServos();
         pixy = robot.getIntakeI2c();
-        intakePixyProvider = new IntakePixyProvider(pixy);
+        intakePixyProvider = new IntakePixyProvider(pixy, robot);
         slowButton = new PressButton(gamepad1, ButtonType.RIGHT_TRIGGER);
         intakeTrigger = new Button(gamepad2, ButtonType.LEFT_TRIGGER);
         outtakeTrigger = new Button(gamepad2, ButtonType.RIGHT_TRIGGER);
@@ -60,7 +60,6 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
-        intakePixyProvider.start();
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
@@ -104,7 +103,6 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
             robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             raisingArm = false;
         };
-        intakePixyProvider.start();
         waitForStart();
         while (opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
@@ -205,9 +203,6 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
             }else if(intakePixyProvider.getStatus() == 2){
                 //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
-            max = Math.max(max, intakePixyProvider.silverAverage);
-            telemetry.addData("Gild", intakePixyProvider.goldAverage);
-            telemetry.addData("Bilver", intakePixyProvider.silverAverage);
             telemetry.addData("Max", max);
             telemetry.update();
         }
