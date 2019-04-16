@@ -28,16 +28,16 @@ public class IntakePixyProviderTests extends LinearOpMode {
             pixySilver.update();
             telemetry.addData("Gold Width", pixyGold.getWidth());
             telemetry.addData("Silver Width", pixySilver.getWidth());
-            if(pixyGold.getWidth() > 290 || pixySilver.getWidth() > 215 || (pixyGold.getWidth() > 1 && pixySilver.getWidth() > 1)){
+            if(pixyGold.getWidth() > 290 || pixySilver.getWidth() > 215                                                                                                                                                  || (pixyGold.getWidth() > 1 && pixySilver.getWidth() > 1)){
                 telemetry.addData("Two Minerals", true);
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 counter ++;
             }else{
                 telemetry.addData("Two Minerals", false);
                 if(pixyGold.getWidth() == -1 && pixySilver.getWidth() == -1) {
-                    robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
+                    //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
                 }else{
-                    robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                    //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
                 }
                 max = Math.max(counter, max);
                 counter = 0;

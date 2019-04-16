@@ -70,9 +70,9 @@ public class MainTeleOp extends LinearOpMode {
             sleep(720);
             slowingDown = false;
         };
-        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_FAST);
+        //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_FAST);
         waitForStart();
-        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+        //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
         while(opModeIsActive()) {
             intakeKickerUpdated = intakeKicker.isUpdated();
             if(!slowingDown) {

@@ -29,7 +29,7 @@ public class Robot extends Hardware {
     private I2cDeviceSynch intakeI2c, sampleI2c;
     private Servo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
-    private RevBlinkinLedDriver sidePanelBlinkin;
+    private RevBlinkinLedDriver backBlinkin, sidePanelBlinkin;
     public Robot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
@@ -69,6 +69,7 @@ public class Robot extends Hardware {
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
         leftDrive2.setDirection(DcMotorSimple.Direction.REVERSE);
         sidePanelBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin1");
+        backBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin2");
     }
 
     @Override
@@ -243,5 +244,9 @@ public class Robot extends Hardware {
 
     public RevBlinkinLedDriver getSidePanelBlinkin() {
         return sidePanelBlinkin;
+    }
+
+    public RevBlinkinLedDriver getBackBlinkin() {
+        return backBlinkin;
     }
 }

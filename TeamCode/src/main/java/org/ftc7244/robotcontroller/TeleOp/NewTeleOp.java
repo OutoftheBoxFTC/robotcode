@@ -199,9 +199,9 @@ public class NewTeleOp extends LinearOpMode {
                 threadManager.submit(armRaise);
             }
             if(antiTipOn.get()){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
             }else{
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
             }
             telemetry.addData("RaisingArm1", robot.getRaisingArm1().getPower());
             telemetry.addData("RaisingArm2", robot.getRaisingArm2().getPower());

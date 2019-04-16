@@ -31,6 +31,7 @@ public class PixyTeleOp extends LinearOpMode {
     I2cDeviceSynch pixy;
     IntakePixyProvider intakePixyProvider;
     AtomicBoolean raisingArm;
+    long start, frames;
     /**
      * Driver Controls:
      *
@@ -88,7 +89,7 @@ public class PixyTeleOp extends LinearOpMode {
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
             robot.getLid().setPosition(0.8);
             sleep(500);
-            while (robot.getRaisingArm1().getCurrentPosition() - armOffset < 836 && opModeIsActive()) {
+            while (robot.getRaisingArm1().getCurrentPosition() - armOffset < 300 && opModeIsActive()) {
                 robot.getLid().setPosition(0.8);
                 robot.moveArm(-1);
             }
@@ -122,6 +123,8 @@ public class PixyTeleOp extends LinearOpMode {
         };
         intakePixyProvider.start();
         waitForStart();
+        frames = 0;
+        start = System.currentTimeMillis();
         while (opModeIsActive()) {
             intakePixyProvider.update();
             intakeKickerUpdated = intakeKicker.isUpdated();
@@ -216,15 +219,27 @@ public class PixyTeleOp extends LinearOpMode {
                 threadManager.submit(armRaise);
             }
             if(intakePixyProvider.getStatus() == 0){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT;
             }else if(intakePixyProvider.getStatus() == 1){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
             }else if(intakePixyProvider.getStatus() == 2){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
-            telemetry.addData("Gold", intakePixyProvider.goldAverage);
-            telemetry.addData("Silver", intakePixyProvider.silverAverage);
-            telemetry.addData("MaxFramesGold", intakePixyProvider.max);
+            if(robot.getArmSwitch().getState()){
+                robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }else{
+                robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            }
+            //robot.getSidePanelBlinkin().setPosition(0.5);
+            frames ++;
+            telemetry.addData("Silver", intakePixyProvider.prevSilver == intakePixyProvider.pixySilver.getWidth());
+            telemetry.addData("Gold", intakePixyProvider.prevGold == intakePixyProvider.pixyGold.getWidth());
+            telemetry.addData("Gold1", intakePixyProvider.goldAverage);
+            telemetry.addData("Silver2", intakePixyProvider.silverAverage);
+            telemetry.addData("Status", intakePixyProvider.getStatus());
+            telemetry.addData("FPS", (double)frames / ((System.currentTimeMillis() - start) * 1000));
             telemetry.update();
         }
     }

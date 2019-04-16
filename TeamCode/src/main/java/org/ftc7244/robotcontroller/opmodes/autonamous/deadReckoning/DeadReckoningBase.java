@@ -41,6 +41,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
     private boolean gyroCalibrated, hanging;
     private AtomicBoolean armIsReset;
     private long startTime;
+    double latchOpen = 0.05, latchClosed = 0.8;
     //Servo on port 3
     public DeadReckoningBase(boolean hanging){
         this.hanging = hanging;
@@ -86,7 +87,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         robot.getLeftDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.getRightDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.initServos();
-        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         ultrasonic = new UltrasonicSystem(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), robot.getLeadingRightUS(), robot.getTrailingRightUS());
         threadManager = Executors.newCachedThreadPool();
 
@@ -126,7 +127,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             if(hanging)
                 unhang();
-            robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+            //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
             run();
             if(armIsReset != null){
                 while (!armIsReset.get());

@@ -10,7 +10,6 @@ import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.RangeTe
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.SensitivityTerminator;
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.terminator.TimeTerminator;
 import org.ftc7244.robotcontroller.opmodes.tuning.parameter.TunableDecimal;
-@Disabled
 @TeleOp(name = "PID Controller Tuner")
 public class PIDControllerTuner extends ControlSystemTuner {
 

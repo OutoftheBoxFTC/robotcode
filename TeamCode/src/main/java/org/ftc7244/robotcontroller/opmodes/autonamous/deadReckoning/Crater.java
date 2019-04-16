@@ -31,7 +31,7 @@ public class Crater extends DeadReckoningBase {
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
         sleep(500);
-        robot.getIntakeLatch().setPosition(0.8);
+        robot.getIntakeLatch().setPosition(latchOpen);
         final AtomicBoolean armMoved = new AtomicBoolean(false);
         threadManager.submit(getIntakeSample());
         //robot.intake(1);
@@ -50,7 +50,7 @@ public class Crater extends DeadReckoningBase {
             default:
 
         }
-        robot.getIntakeLatch().setPosition(0.05);
+        robot.getIntakeLatch().setPosition(latchClosed);
         robot.moveArm(0);
         robot.getLid().setPosition(.8);
         rotateGyro(-90 - rotation, 0.8, 0.0000000025, 19000000, (long) 1.5e9);
@@ -60,7 +60,7 @@ public class Crater extends DeadReckoningBase {
                 drive(43, -0.5);
                 break;
             case RIGHT:
-                drive(49, -0.5);
+                drive(51, -0.5);
                 break;
             case LEFT:
                 drive(41, -0.5);
@@ -83,7 +83,6 @@ public class Crater extends DeadReckoningBase {
         }
         burnJeClamelRetrograde();
         parralelize(robot.getLeadingLeftUS(), robot.getTrailingLeftUS(), 13.25, 0.8, 0.0000000025, 19000000, Math.toRadians(5));
-        dumpArm();
         threadManager.submit(getArmReset());
         robot.setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.FLOAT);
         switch (sample){

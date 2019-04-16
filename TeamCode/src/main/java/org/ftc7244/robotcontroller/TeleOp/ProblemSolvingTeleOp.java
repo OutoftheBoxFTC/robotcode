@@ -107,7 +107,6 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
         intakePixyProvider.start();
         waitForStart();
         while (opModeIsActive()) {
-            intakePixyProvider.update();
             intakeKickerUpdated = intakeKicker.isUpdated();
             intakeResetUpdated = intakeReset.isUpdated();
             armUpButtonUpdated = armUpButton.isUpdated();
@@ -200,11 +199,11 @@ public class ProblemSolvingTeleOp extends LinearOpMode {
                 threadManager.submit(armRaise);
             }
             if(intakePixyProvider.getStatus() == 0){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
             }else if(intakePixyProvider.getStatus() == 1){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
             }else if(intakePixyProvider.getStatus() == 2){
-                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
             max = Math.max(max, intakePixyProvider.silverAverage);
             telemetry.addData("Gild", intakePixyProvider.goldAverage);

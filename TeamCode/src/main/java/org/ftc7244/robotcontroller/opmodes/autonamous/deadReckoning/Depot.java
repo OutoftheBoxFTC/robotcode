@@ -30,11 +30,11 @@ public class Depot extends DeadReckoningBase {
         drive(2, 0.3);
         rotateGyro(rotation-Math.toDegrees(gyro.getRotation(ExtendedGyroscopeProvider.Axis.YAW)), 1, 0.0000000025, 19000000, (long)1e9);
         robot.moveArm(0.15);
-        robot.getIntakeLatch().setPosition(0.8);
+        robot.getIntakeLatch().setPosition(latchOpen);
         robot.intake(1);
         drive(mineralDistance, 0.5);
         sleep(200);
-        robot.getIntakeLatch().setPosition(0.05);
+        robot.getIntakeLatch().setPosition(latchClosed);
         final AtomicBoolean armMoved = new AtomicBoolean(false);
         switch(sample){
             case LEFT:
@@ -59,10 +59,10 @@ public class Depot extends DeadReckoningBase {
         while (!armMoved.get());
         robot.intake(0);
         robot.getLid().setPosition(.4);
-        robot.getIntakeLatch().setPosition(0.8);
+        robot.getIntakeLatch().setPosition(latchOpen);
         sleep(1000);
         threadManager.submit(getArmReset());
-        robot.getIntakeLatch().setPosition(0.05);
+        robot.getIntakeLatch().setPosition(latchClosed);
         int distance = 6;
         if(sample != null && !sample.equals(PixycamSample.SampleTransform.CENTER))
             distance += 4;
