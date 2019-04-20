@@ -226,6 +226,8 @@ public class PixyTeleOp extends LinearOpMode {
                 robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
             }else if(intakePixyProvider.getStatus() == 2){
                 robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }else if(intakePixyProvider.getStatus() == 3){
+                robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
             }
             if(robot.getArmSwitch().getState()){
                 robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -239,6 +241,7 @@ public class PixyTeleOp extends LinearOpMode {
             telemetry.addData("Status", intakePixyProvider.getStatus());
             telemetry.addData("Main loop FPS", (double)frames / ((System.currentTimeMillis() - start) * 1000));
             telemetry.addData("Filter loop FPS", intakePixyProvider.getFps());
+
             telemetry.update();
         }
     }

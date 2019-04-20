@@ -62,7 +62,7 @@ public class IntakePixyProvider implements Runnable {
                     tmpG++;
                 }
             }
-            if (tmpS > 19) {
+            if (tmpS > silverValues.length-1) {
                 silverAverage = -1;
             } else {
                 silverAverage = 0;
@@ -75,7 +75,7 @@ public class IntakePixyProvider implements Runnable {
                 }
                 silverAverage = maxS / tmpS;
             }
-            if (tmpG > 19) {
+            if (tmpG > goldValues.length-1) {
                 goldAverage = -1;
             } else {
                 goldAverage = 0;
@@ -88,13 +88,13 @@ public class IntakePixyProvider implements Runnable {
                 }
                 goldAverage = maxG / tmpG;
             }
-            if (goldAverage > 250) { //Best so far: 275
+            if (goldAverage > 275) { //Best so far: 275
                 status.set(2);
-            } else if (silverAverage > 260) { //Best so far: 215
+            } else if (silverAverage > 280) { //Best so far: 215
                 status.set(2);
                 tempMax++;
             } else if (goldAverage > 40 && silverAverage > 40) {
-                status.set(2);
+                status.set(3);
             } else {
                 status.set(1);
                 max = Math.max(tempMax, max);
