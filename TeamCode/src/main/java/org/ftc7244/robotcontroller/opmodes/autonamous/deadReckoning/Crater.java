@@ -21,7 +21,7 @@ public class Crater extends DeadReckoningBase {
         double rotation = 0;
         switch (sample){
             case LEFT:
-                rotation = 22;
+                rotation = 24;
                 break;
             case RIGHT:
                 rotation = -22;

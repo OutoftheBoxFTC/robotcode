@@ -23,7 +23,7 @@ public class Depot extends DeadReckoningBase {
                 rotation = 24;
                 break;
             case RIGHT:
-                mineralDistance = 19;
+                mineralDistance = 18;
                 rotation = -24;
                 break;
         }
@@ -41,7 +41,7 @@ public class Depot extends DeadReckoningBase {
                 drive(21, -0.5);
                 break;
             case RIGHT:
-                drive(19, -0.5);
+                drive(21, -0.5);
                 break;
             case CENTER:
                 drive(21, -0.5);
@@ -51,7 +51,9 @@ public class Depot extends DeadReckoningBase {
         }
         threadManager.submit(()->{
             robot.moveArm(-1);
-            while (robot.getRaisingArm1().getCurrentPosition()<2050 && opModeIsActive());
+            while (robot.getRaisingArm1().getCurrentPosition()<2600 && opModeIsActive());
+            robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             armMoved.set(true);
             robot.moveArm(0);
         });
@@ -61,6 +63,8 @@ public class Depot extends DeadReckoningBase {
         robot.getLid().setPosition(.4);
         robot.getIntakeLatch().setPosition(latchOpen);
         sleep(1000);
+        robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         threadManager.submit(getArmReset());
         robot.getIntakeLatch().setPosition(latchClosed);
         int distance = 6;

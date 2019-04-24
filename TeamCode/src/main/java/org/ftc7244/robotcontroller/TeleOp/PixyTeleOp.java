@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @TeleOp(name="PTeleOp")
 public class PixyTeleOp extends LinearOpMode {
-    private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2600.0;
+    private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2550.0;
     private Robot robot;
     private double modifier = 1;
     private double armMod = 1;
@@ -234,7 +234,6 @@ public class PixyTeleOp extends LinearOpMode {
                 robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
-            //robot.getSidePanelBlinkin().setPosition(0.5);
             frames ++;
             telemetry.addData("Status", intakePixyProvider.getStatus());
             telemetry.addData("Main loop FPS", (double)frames / ((System.currentTimeMillis() - start) * 1000));

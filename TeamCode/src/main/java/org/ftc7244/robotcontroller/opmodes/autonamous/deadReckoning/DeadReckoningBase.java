@@ -94,6 +94,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
         //control = new PIDControl(Math.toRadians(15), true, "default_pid", hardwareMap.appContext);
         control = new PIDControl(0.45, 0.0000000025, 19000000, Math.toRadians(15), true);
         startTime = System.nanoTime();
+        robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         try {
             //init providers
             gyro.init(robot);
@@ -127,7 +128,7 @@ public abstract class DeadReckoningBase extends LinearOpMode {
             robot.getRaisingArm1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             if(hanging)
                 unhang();
-            //robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
+            robot.getSidePanelBlinkin().setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_FAST);
             run();
             if(armIsReset != null){
                 while (!armIsReset.get());
