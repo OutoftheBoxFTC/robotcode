@@ -7,7 +7,6 @@ import org.ftc7244.robotcontroller.autonamous.drive.orientation.TranslationalPro
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
-import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
 public class DriveController {
     private Orientation orientation;
@@ -17,10 +16,10 @@ public class DriveController {
 
     private Robot robot;
 
-    public DriveController(Orientation orientation, UltrasonicSystem ultrasonic, GyroscopeProvider gyroscope, Robot robot){
+    public DriveController(Orientation orientation, GyroscopeProvider gyroscope, Robot robot){
         this.orientation  = orientation;
         this.robot = robot;
-        rotation = new RotationalProvider(ultrasonic, gyroscope, orientation);
+        rotation = new RotationalProvider(gyroscope, orientation);
         distance = new DistanceProvider(robot);
         translation = new TranslationalProvider(orientation, distance);
     }

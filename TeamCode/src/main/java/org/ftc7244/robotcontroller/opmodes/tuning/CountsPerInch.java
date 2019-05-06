@@ -8,7 +8,7 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.input.PressButton;
-import org.ftc7244.robotcontroller.opmodes.tuning.parameter.TunableDecimal;
+
 @TeleOp
 public class CountsPerInch extends LinearOpMode {
     Robot robot = new Robot(this);
@@ -20,10 +20,7 @@ public class CountsPerInch extends LinearOpMode {
         a = new Button(gamepad1, ButtonType.A);
         b = new PressButton(gamepad1, ButtonType.B);
         waitForStart();
-        robot.getLeftDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.getRightDrive().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.getLeftDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.getRightDrive2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.configureDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE, null);
         initial = robot.getDriveEncoderAverage();
         while (opModeIsActive()){
             telemetry.addLine("A to reset");

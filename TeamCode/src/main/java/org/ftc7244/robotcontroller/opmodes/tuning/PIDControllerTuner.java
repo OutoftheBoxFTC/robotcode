@@ -1,6 +1,5 @@
 package org.ftc7244.robotcontroller.opmodes.tuning;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.ftc7244.robotcontroller.autonamous.control.PIDControl;

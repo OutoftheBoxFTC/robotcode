@@ -26,18 +26,6 @@ public abstract class Hardware {
     }
 
     /**
-     * This is the codes own way of pausing. This has the the capability of stopping the wait if
-     * stop is requested and passing up an exception if it fails as well
-     *
-     * @param ms the duration to sleep in milliseconds
-     * @throws InterruptedException if the code fails to terminate before stop requested
-     */
-    public static void sleep(long ms) throws InterruptedException {
-        long target = System.currentTimeMillis() + ms;
-        while (target > System.currentTimeMillis()) Thread.sleep(1);
-    }
-
-    /**
      * Get the value associated with an id and instead of raising an error return null and log it
      *
      * @param map  the hardware map from the HardwareMap
@@ -124,13 +112,6 @@ public abstract class Hardware {
      * @param rightPower Power to driveController right side of robot
      */
     public abstract void drive(double leftPower, double rightPower);
-
-    /**
-     * Drives robot at a given power to a given distance using encoders
-     * @param power Power to driveController robot at
-     * @param inches Inches to driveController robot
-     */
-    public abstract void driveToInch(double power, double inches);
 
     /**
      * Resets the direction and encoder offsets of all the driveController motors

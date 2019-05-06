@@ -2,11 +2,9 @@ package org.ftc7244.robotcontroller.autonamous.drive.orientation;
 
 import org.ftc7244.robotcontroller.autonamous.drive.procedure.DriveProcedure;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
-import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
 public class RotationalProvider {
     private GyroscopeProvider gyroscope;
-    private UltrasonicSystem ultrasonic;
     private DriveProcedure currentDriveProcedure;
 
     private double gyroscopeOffset;
@@ -19,8 +17,7 @@ public class RotationalProvider {
      * The wall which the active ultrasonic system side will face
      */
 
-    public RotationalProvider(UltrasonicSystem ultrasonic, GyroscopeProvider gyroscope, Orientation orientation){
-        this.ultrasonic = ultrasonic;
+    public RotationalProvider(GyroscopeProvider gyroscope, Orientation orientation){
         this.gyroscope = gyroscope;
         this.orientation = orientation;
         gyroscopeOffset = -orientation.getR();
@@ -48,12 +45,6 @@ public class RotationalProvider {
     }
 
     public double retrieveAbsoluteRotation(){
-        if(usingUltrasonic){
-            double ultrasonicValue = ultrasonic.getAbsoluteRotation();
-            if(ultrasonicValue != Double.POSITIVE_INFINITY) {
-                orientGyro(ultrasonicValue);
-            }
-        }
         double rotation = retrieveGyroscopeReading();
         orientation.setR(rotation);
         return rotation;
