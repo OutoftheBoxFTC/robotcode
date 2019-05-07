@@ -2,16 +2,16 @@ package org.ftc7244.robotcontroller.sensor.pixycam;
 
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
-import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.hardware.Hardware;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class IntakePixyProvider implements Runnable {
     AtomicInteger status;
-    private Robot robot;
+    private Hardware robot;
     private double fps;
     I2cDeviceSynch pixy;
-    public IntakePixyProvider(I2cDeviceSynch pixy, Robot robot){
+    public IntakePixyProvider(I2cDeviceSynch pixy, Hardware robot){
         status = new AtomicInteger(0);
         this.robot = robot;
         this.pixy = pixy;

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.ftc7244.robotcontroller.hardware.Robot;
+import org.ftc7244.robotcontroller.hardware.SmartMotorTestRobot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.input.PressButton;
@@ -17,10 +18,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp(name="PTeleOp")
-public class PixyTeleOp extends LinearOpMode {
+@TeleOp(name="Smart Motor Teleop")
+public class SmartMotorTest extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2550.0;
-    private Robot robot;
+    private SmartMotorTestRobot robot;
     private double modifier = 1;
     private double armMod = 1;
     private double armOffset;
@@ -55,7 +56,7 @@ public class PixyTeleOp extends LinearOpMode {
     public void runOpMode() {
         raisingArm = new AtomicBoolean(false);
         threadManager = Executors.newCachedThreadPool();
-        robot = new Robot(this);
+        robot = new SmartMotorTestRobot(this);
         robot.init();
         robot.initServos();
         pixy = robot.getIntakeI2c();
@@ -150,13 +151,13 @@ public class PixyTeleOp extends LinearOpMode {
             } else {
                 robot.intake(0);
             }
-            if (robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED) && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED)) { //If both wheels are going full speed backwards
+            if (robot.getLeftDrive().getMotor().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED) && robot.getRightDrive().getMotor().getVelocity(AngleUnit.DEGREES) < (-1 * ANTI_TIP_TRIGGER_SPEED)) { //If both wheels are going full speed backwards
                 if (gamepad1.left_stick_y < -0.5 && gamepad1.right_stick_y < -0.5) { //And both sticks are pushed forwards
                     modifier = -1;
                     threadManager.submit(antiTip);
                     slowingDown = true;
                 }
-            } else if (robot.getLeftDrive().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED && robot.getRightDrive().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED) {
+            } else if (robot.getLeftDrive().getMotor().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED && robot.getRightDrive().getMotor().getVelocity(AngleUnit.DEGREES) > ANTI_TIP_TRIGGER_SPEED) {
                 if (gamepad1.left_stick_y > 0.5 && gamepad1.right_stick_y > 0.5) {
                     modifier = 1;
                     threadManager.submit(antiTip);

@@ -16,24 +16,24 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
 
-public class Robot extends Hardware {
+public class SmartMotorTestRobot extends Hardware {
     private static final double COUNTS_PER_INCH = 342.5; //342.5, 317.25
 
     private WebcamName w1, w2;
     private SickUltrasonic leadingLeftUS, leadingRightUS, trailingLeftUS, trailingRightUS;
-    private DcMotorEx leftDrive, rightDrive, leftDrive2, rightDrive2, intake;
-    private DcMotor raisingArm1, raisingArm2;
+    private SmartMotor leftDrive, rightDrive, leftDrive2, rightDrive2, intake;
+    private SmartMotor raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch intakeI2c, sampleI2c;
-    private Servo latch, lid, intakeKicker, jeClamelBurner;
+    private SmartServo latch, lid, intakeKicker, jeClamelBurner;
     private DigitalChannel armSwitch;
     private RevBlinkinLedDriver backBlinkin, sidePanelBlinkin;
-    public Robot(LinearOpMode opMode) {
+    public SmartMotorTestRobot(LinearOpMode opMode) {
         super(opMode, COUNTS_PER_INCH);
         //TODO determine counts per inch
     }
 
-    public Robot(OpMode opMode){
+    public SmartMotorTestRobot(OpMode opMode){
         super((LinearOpMode)opMode, COUNTS_PER_INCH);
     }
 
@@ -47,25 +47,26 @@ public class Robot extends Hardware {
         leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
-        raisingArm1 = getOrNull(map.dcMotor, "arm1");
-        raisingArm2 = getOrNull(map.dcMotor, "arm2");
+
+        raisingArm1 = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "arm1"));
+        raisingArm2 = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "arm2"));
         intakeI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         imu = getOrNull(map, BNO055IMU.class, "imu");
 
-        leftDrive = getOrNull(map, DcMotorEx.class, "leftDrive");
-        rightDrive = getOrNull(map, DcMotorEx.class, "rightDrive");
-        leftDrive2 = getOrNull(map, DcMotorEx.class, "leftDrive2");
-        rightDrive2 = getOrNull(map, DcMotorEx.class, "rightDrive2");
-        intake = getOrNull(map, DcMotorEx.class, "intake");
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        latch = getOrNull(map.servo, "latch");
-        lid = getOrNull(map.servo, "lid");
-        jeClamelBurner = getOrNull(map.servo, "jeClamelBurner");
+        leftDrive = new SmartMotor(getOrNull(map, DcMotorEx.class, "leftDrive"));
+        rightDrive = new SmartMotor(getOrNull(map, DcMotorEx.class, "rightDrive"));
+        leftDrive2 = new SmartMotor(getOrNull(map, DcMotorEx.class, "leftDrive2"));
+        rightDrive2 = new SmartMotor(getOrNull(map, DcMotorEx.class, "rightDrive2"));
+        intake = new SmartMotor(getOrNull(map, DcMotorEx.class, "intake"));
+        leftDrive.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
+        latch = new SmartServo(getOrNull(map.servo, "latch"));
+        lid = new SmartServo(getOrNull(map.servo, "lid"));
+        jeClamelBurner = new SmartServo(getOrNull(map.servo, "jeClamelBurner"));
         sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
-        intakeKicker = getOrNull(map.servo, "intakeKicker");
+        intakeKicker = new SmartServo(getOrNull(map.servo, "intakeKicker"));
         armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
-        leftDrive2.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftDrive2.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
         sidePanelBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin1");
         backBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin2");
     }
@@ -143,7 +144,7 @@ public class Robot extends Hardware {
 
     @Override
     public int getDriveEncoderAverage() {
-        return (-1 * leftDrive2.getCurrentPosition());
+        return (-1 * leftDrive2.getMotor().getCurrentPosition());
     }
 
     public void setDriveZeroPowerBehaviour(DcMotor.ZeroPowerBehavior zeroPowerBehavior){
@@ -186,11 +187,11 @@ public class Robot extends Hardware {
         return imu;
     }
 
-    public DcMotorEx getLeftDrive() {
+    public SmartMotor getLeftDrive() {
         return leftDrive;
     }
 
-    public DcMotorEx getRightDrive() {
+    public SmartMotor getRightDrive() {
         return rightDrive;
     }
 
@@ -198,17 +199,17 @@ public class Robot extends Hardware {
         return intakeI2c;
     }
 
-    public DcMotor getRaisingArm1() {
+    public SmartMotor getRaisingArm1() {
         return raisingArm1;
     }
 
-    public DcMotor getRaisingArm2() {
+    public SmartMotor getRaisingArm2() {
         return raisingArm2;
     }
 
-    public DcMotorEx getIntake(){return intake;}
+    public SmartMotor getIntake(){return intake;}
 
-    public Servo getLatch() {
+    public SmartServo getLatch() {
         return latch;
     }
 
@@ -216,11 +217,11 @@ public class Robot extends Hardware {
         return sampleI2c;
     }
 
-    public Servo getLid() {
+    public SmartServo getLid() {
         return lid;
     }
 
-    public Servo getIntakeLatch(){
+    public SmartServo getIntakeLatch(){
         return intakeKicker;
     }
 
@@ -228,15 +229,15 @@ public class Robot extends Hardware {
         return armSwitch;
     }
 
-    public DcMotorEx getLeftDrive2() {
+    public SmartMotor getLeftDrive2() {
         return leftDrive2;
     }
 
-    public DcMotorEx getRightDrive2() {
+    public SmartMotor getRightDrive2() {
         return rightDrive2;
     }
 
-    public Servo getJeClamelBurner() {
+    public SmartServo getJeClamelBurner() {
         return jeClamelBurner;
     }
 
