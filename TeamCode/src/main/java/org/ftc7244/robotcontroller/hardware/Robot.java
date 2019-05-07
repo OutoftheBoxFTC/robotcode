@@ -12,7 +12,7 @@ public class Robot extends Hardware {
     //TODO tbd
     private static final double COUNTS_PER_INCH = 0;
 
-    private DcMotorEx flDrive, frDrive, blDrive, brDrive;
+    private SmartMotor flDrive, frDrive, blDrive, brDrive;
     private I2cDeviceSynch sampleI2c;
     private BNO055IMU imu;
 
@@ -30,10 +30,10 @@ public class Robot extends Hardware {
         HardwareMap map = opMode.hardwareMap;
         imu = getOrNull(map, BNO055IMU.class, "imu");
 
-        flDrive = (DcMotorEx) getOrNull(map.dcMotor, "flDrive");
-        frDrive = (DcMotorEx) getOrNull(map.dcMotor, "frDrive");
-        blDrive = (DcMotorEx) getOrNull(map.dcMotor, "blDrive");
-        brDrive = (DcMotorEx) getOrNull(map.dcMotor, "brDrive");
+        flDrive = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "flDrive"));
+        frDrive = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "frDrive"));
+        blDrive = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "blDrive"));
+        brDrive = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "brDrive"));
 
         sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
     }
@@ -98,19 +98,19 @@ public class Robot extends Hardware {
         return sampleI2c;
     }
 
-    public DcMotorEx getBlDrive() {
+    public SmartMotor getBlDrive() {
         return blDrive;
     }
 
-    public DcMotorEx getBrDrive() {
+    public SmartMotor getBrDrive() {
         return brDrive;
     }
 
-    public DcMotorEx getFlDrive() {
+    public SmartMotor getFlDrive() {
         return flDrive;
     }
 
-    public DcMotorEx getFrDrive() {
+    public SmartMotor getFrDrive() {
         return frDrive;
     }
 
