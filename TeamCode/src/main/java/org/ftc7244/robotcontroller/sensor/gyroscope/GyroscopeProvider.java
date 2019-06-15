@@ -1,18 +1,11 @@
 package org.ftc7244.robotcontroller.sensor.gyroscope;
 
-import org.ftc7244.robotcontroller.sensor.Initializable;
-
-public abstract class GyroscopeProvider implements Initializable{
-
-    private double[] offsets;
-    public GyroscopeProvider(){
-        offsets = new double[3];
-    }
+public abstract class GyroscopeProvider {
 
     protected abstract double getReading(Axis axis);
 
     public double getRotation(Axis axis){
-        return (getReading(axis)-offsets[axis.index])%(Math.PI*2);
+        return getReading(axis)%(Math.PI*2);
     }
 
     public abstract boolean isCalibrated();
@@ -29,9 +22,5 @@ public abstract class GyroscopeProvider implements Initializable{
         public int getIndex() {
             return index;
         }
-    }
-
-    public void offsetAxisTo(Axis axis, double value){
-        offsets[axis.index] = getReading(axis)-value;
     }
 }

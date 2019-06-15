@@ -9,9 +9,11 @@ public class SmartMotor {
     private double previousPower;
     private DcMotor.RunMode previousRunMode;
     private DcMotor.ZeroPowerBehavior previousZeroPowerBehaviour;
+    private boolean enabled;
 
     public SmartMotor(DcMotorEx motor){
         this.motor = motor;
+        enabled = true;
         if(motor != null){
             previousRunMode = motor.getMode();
             previousZeroPowerBehaviour = motor.getZeroPowerBehavior();
@@ -19,7 +21,7 @@ public class SmartMotor {
     }
 
     public void setPower(double power){
-        if(power != previousPower){
+        if(power != previousPower&&enabled){
             previousPower = power;
             motor.setPower(power);
         }
@@ -45,5 +47,18 @@ public class SmartMotor {
 
     public DcMotorEx getMotor() {
         return motor;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void disable(){
+        setPower(0);
+        enabled = false;
+    }
+
+    public void enable(){
+        enabled = true;
     }
 }

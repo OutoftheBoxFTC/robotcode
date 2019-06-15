@@ -9,10 +9,6 @@ public class RevIMUProvider extends GyroscopeProvider{
 
     private BNO055IMU imu;
 
-    public RevIMUProvider(){
-        super();
-    }
-
     @Override
     protected double getReading(Axis axis) {
         Orientation orientation = imu.getAngularOrientation();
@@ -32,11 +28,10 @@ public class RevIMUProvider extends GyroscopeProvider{
         return imu.isGyroCalibrated();
     }
 
-    @Override
     public void init(Robot robot) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         imu = robot.getIMU();
         imu.initialize(parameters);
     }

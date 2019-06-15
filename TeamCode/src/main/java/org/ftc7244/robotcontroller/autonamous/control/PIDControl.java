@@ -1,13 +1,11 @@
 package org.ftc7244.robotcontroller.autonamous.control;
 
-import android.content.Context;
-
 public class PIDControl extends ControlSystem {
 
-    private final double kp, ki, kd;
+    private final double kp, ki, kd, integralRange;
     private final boolean integralReset;
 
-    private double proportional, integral, integralRange;
+    private double proportional, integral;
     private long lastTime;
 
     public PIDControl(double kp, double ki, double kd, double integralRange, boolean integralReset){
@@ -18,17 +16,11 @@ public class PIDControl extends ControlSystem {
         this.integralRange = integralRange;
     }
 
-    public PIDControl(double integralRange, boolean integralReset, String path, Context context){
-        double[] parameters = configFromFile(path, context);
-        kp = parameters[0];
-        ki = parameters[1];
-        kd = parameters[2];
-        this.integralRange = integralRange;
-        this.integralReset = integralReset;
-    }
-
     @Override
     public double correction(double error) {
+        if(lastTime == 0){
+            lastTime = System.nanoTime();
+        }
         long now = System.nanoTime(),
                 dt = now-lastTime;
         double derivative = (error - proportional)/dt;
