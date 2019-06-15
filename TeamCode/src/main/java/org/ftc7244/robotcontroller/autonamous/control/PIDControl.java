@@ -18,11 +18,8 @@ public class PIDControl extends ControlSystem {
 
     @Override
     public double correction(double error) {
-        if(lastTime == 0){
-            lastTime = System.nanoTime();
-        }
-        long now = System.nanoTime(),
-                dt = now-lastTime;
+        long now = System.nanoTime();
+        double dt = (now-lastTime)/1e9;
         double derivative = (error - proportional)/dt;
         derivative = (Double.isNaN(derivative) || Double.isInfinite(derivative) ? 0 : derivative);
         if(lastTime==0){

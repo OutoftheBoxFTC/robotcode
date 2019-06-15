@@ -43,7 +43,7 @@ public abstract class AutonomousProcedure extends LinearOpMode {
         }
         finally {
             robot.disableDriveMotors();
-            threadManager.shutdownNow();
+            threadManager.shutdown();
             threadManager.awaitTermination(100, TimeUnit.MILLISECONDS);
         }
     }
