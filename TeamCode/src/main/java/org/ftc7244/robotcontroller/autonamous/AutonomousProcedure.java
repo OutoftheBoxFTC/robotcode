@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.ftc7244.robotcontroller.hardware.Robot;
-import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
-import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

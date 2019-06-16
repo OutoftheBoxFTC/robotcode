@@ -7,20 +7,27 @@ import org.ftc7244.robotcontroller.hardware.Robot;
 
 public class RevIMUProvider extends GyroscopeProvider{
 
+    private static final double TAU = Math.PI*2;
+    //this is for efficiency. otherwise, i genuinely don't care.
+
     private BNO055IMU imu;
 
     @Override
     protected double getReading(Axis axis) {
         Orientation orientation = imu.getAngularOrientation();
+        double reading = Double.POSITIVE_INFINITY;
         switch (axis){
             case PITCH:
-                return orientation.secondAngle;
+                reading =  orientation.secondAngle;
+                break;
             case YAW:
-                return orientation.firstAngle;
+                reading = orientation.firstAngle;
+                break;
             case ROLL:
-                return orientation.thirdAngle;
+                reading = orientation.thirdAngle;
+                break;
         }
-        return Double.POSITIVE_INFINITY;
+        return ((reading%TAU)+TAU)%TAU;
     }
 
     @Override
