@@ -1,16 +1,16 @@
 package org.ftc7244.robotcontroller.hardware;
 
-import com.qualcomm.robotcore.hardware.Servo;
+import org.openftc.revextensions2.ExpansionHubServo;
 
 public class SmartServo {
-    private Servo servo;
+    private ExpansionHubServo servo;
     private double previousPosition;
-    public SmartServo(Servo servo){
+    public SmartServo(ExpansionHubServo servo){
         this.servo = servo;
         previousPosition = servo.getPosition();
     }
 
-    public Servo getServo() {
+    public ExpansionHubServo getServo() {
         return servo;
     }
 

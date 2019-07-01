@@ -9,7 +9,6 @@ import org.ftc7244.robotcontroller.autonamous.drive.orientation.Orientation;
 import org.ftc7244.robotcontroller.hardware.Robot;
 import org.ftc7244.robotcontroller.sensor.gyroscope.GyroscopeProvider;
 import org.ftc7244.robotcontroller.sensor.gyroscope.RevIMUProvider;
-import org.ftc7244.robotcontroller.sensor.pixycam.PixycamProvider;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.UltrasonicSystem;
 
 import java.util.concurrent.ExecutorService;

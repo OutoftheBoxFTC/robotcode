@@ -34,7 +34,7 @@ public class PixyTeleOp extends LinearOpMode {
     I2cDeviceSynch pixy;
     IntakePixyProvider intakePixyProvider;
     AtomicBoolean raisingArm;
-    long start, frames;
+    long start;
     /**
      * Driver Controls:
      *
@@ -70,6 +70,7 @@ public class PixyTeleOp extends LinearOpMode {
         intakeReset = new Button(gamepad2, ButtonType.X);
         armOffset = robot.getRaisingArm1().getCurrentPosition();
         armUpButton = new Button(gamepad2, ButtonType.A);
+        
         resetArm = () -> {
             resetting = true;
             robot.getIntakeLatch().setPosition(INTAKE_LATCH_CLOSED);
@@ -125,7 +126,6 @@ public class PixyTeleOp extends LinearOpMode {
             raisingArm.set(false);
         };
         waitForStart();
-        frames = 0;
         start = System.currentTimeMillis();
         threadManager.execute(intakePixyProvider);
         while (opModeIsActive()) {
@@ -236,9 +236,11 @@ public class PixyTeleOp extends LinearOpMode {
                 robot.getRaisingArm1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 robot.getRaisingArm2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
-            frames ++;
+            long now = System.currentTimeMillis();
+            double fps = 1000.0/(now-start);
+            start = now;
             telemetry.addData("Status", intakePixyProvider.getStatus());
-            telemetry.addData("Main loop FPS", (double)frames / (System.currentTimeMillis() - start) * 1000);
+            telemetry.addData("Main loop FPS", fps);
             telemetry.addData("Filter loop FPS", intakePixyProvider.getFps());
 
             telemetry.update();

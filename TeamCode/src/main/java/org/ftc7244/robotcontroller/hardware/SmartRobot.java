@@ -3,20 +3,22 @@ package org.ftc7244.robotcontroller.hardware;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.ftc7244.robotcontroller.sensor.ultrasonic.SickUltrasonic;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.ExpansionHubServo;
+import org.openftc.revextensions2.RevBulkData;
+import org.openftc.revextensions2.RevExtensions2;
 
-public class SmartMotorTestRobot extends Hardware {
+public class SmartRobot extends Hardware {
     private static final double COUNTS_PER_INCH = 342.5; //342.5, 317.25
 
     private WebcamName w1, w2;
@@ -25,21 +27,24 @@ public class SmartMotorTestRobot extends Hardware {
     private SmartMotor raisingArm1, raisingArm2;
     private BNO055IMU imu;
     private I2cDeviceSynch intakeI2c, sampleI2c;
-    private SmartServo latch, lid, intakeKicker, jeClamelBurner;
+    private SmartServo latch, lid, intakeLatch, jeClamelBurner;
     private DigitalChannel armSwitch;
     private RevBlinkinLedDriver backBlinkin, sidePanelBlinkin;
-    public SmartMotorTestRobot(LinearOpMode opMode) {
-        super(opMode, COUNTS_PER_INCH);
-        //TODO determine counts per inch
-    }
+    private ExpansionHubEx expansionHub;
 
-    public SmartMotorTestRobot(OpMode opMode){
-        super((LinearOpMode)opMode, COUNTS_PER_INCH);
+    private RevBulkData bulkData;
+
+
+    public SmartRobot(LinearOpMode opMode) {
+        super(opMode, COUNTS_PER_INCH);
     }
 
     @Override
     public void init() {
+        RevExtensions2.init();
+
         HardwareMap map = opMode.hardwareMap;
+        expansionHub = getOrNull(map, ExpansionHubEx.class, "Expansion Hub 2");
 
         w1 = getOrNull(map, WebcamName.class, "w1");
         w2 = getOrNull(map, WebcamName.class, "w2");
@@ -47,28 +52,31 @@ public class SmartMotorTestRobot extends Hardware {
         leadingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "leadingRightUS"));
         trailingLeftUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingLeftUS"));
         trailingRightUS = new SickUltrasonic(getOrNull(map.analogInput, "trailingRightUS"));
-
-        raisingArm1 = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "arm1"));
-        raisingArm2 = new SmartMotor((DcMotorEx) getOrNull(map.dcMotor, "arm2"));
+        armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
         intakeI2c = getOrNull(map, I2cDeviceSynch.class, "intakePixy");
         sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
         imu = getOrNull(map, BNO055IMU.class, "imu");
 
-        leftDrive = new SmartMotor(getOrNull(map, DcMotorEx.class, "leftDrive"));
-        rightDrive = new SmartMotor(getOrNull(map, DcMotorEx.class, "rightDrive"));
-        leftDrive2 = new SmartMotor(getOrNull(map, DcMotorEx.class, "leftDrive2"));
-        rightDrive2 = new SmartMotor(getOrNull(map, DcMotorEx.class, "rightDrive2"));
-        intake = new SmartMotor(getOrNull(map, DcMotorEx.class, "intake"));
-        leftDrive.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
-        latch = new SmartServo(getOrNull(map.servo, "latch"));
-        lid = new SmartServo(getOrNull(map.servo, "lid"));
-        jeClamelBurner = new SmartServo(getOrNull(map.servo, "jeClamelBurner"));
-        sampleI2c = getOrNull(map, I2cDeviceSynch.class, "sample");
-        intakeKicker = new SmartServo(getOrNull(map.servo, "intakeKicker"));
-        armSwitch = getOrNull(map.digitalChannel, "intakeSwitch");
-        leftDrive2.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
+
+        raisingArm1 = new SmartMotor((ExpansionHubMotor) getOrNull(map.dcMotor, "arm1"), this);
+        raisingArm2 = new SmartMotor((ExpansionHubMotor) getOrNull(map.dcMotor, "arm2"), this);
+        leftDrive = new SmartMotor((ExpansionHubMotor)getOrNull(map.dcMotor, "leftDrive"), this);
+        rightDrive = new SmartMotor((ExpansionHubMotor)getOrNull(map.dcMotor, "rightDrive"), this);
+        leftDrive2 = new SmartMotor((ExpansionHubMotor)getOrNull(map.dcMotor, "leftDrive2"), this);
+        rightDrive2 = new SmartMotor((ExpansionHubMotor)getOrNull(map.dcMotor, "rightDrive2"), this);
+        intake = new SmartMotor((ExpansionHubMotor)getOrNull(map.dcMotor, "intake"), this);
+
+
+        latch = new SmartServo((ExpansionHubServo)getOrNull(map.servo, "latch"));
+        lid = new SmartServo((ExpansionHubServo)getOrNull(map.servo, "lid"));
+        jeClamelBurner = new SmartServo((ExpansionHubServo)getOrNull(map.servo, "jeClamelBurner"));
+        intakeLatch = new SmartServo((ExpansionHubServo)getOrNull(map.servo, "intakeKicker"));
+
         sidePanelBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin1");
         backBlinkin = getOrNull(map, RevBlinkinLedDriver.class, "blinkin2");
+
+        leftDrive.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
+        leftDrive2.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
@@ -222,7 +230,7 @@ public class SmartMotorTestRobot extends Hardware {
     }
 
     public SmartServo getIntakeLatch(){
-        return intakeKicker;
+        return intakeLatch;
     }
 
     public DigitalChannel getArmSwitch(){
@@ -247,5 +255,17 @@ public class SmartMotorTestRobot extends Hardware {
 
     public RevBlinkinLedDriver getBackBlinkin() {
         return backBlinkin;
+    }
+
+    public RevBulkData getBulkData() {
+        return bulkData;
+    }
+
+    public boolean armSwitchState(){
+        return bulkData.getDigitalInputState(armSwitch);
+    }
+
+    public void bulkRead(){
+        bulkData = expansionHub.getBulkInputData();
     }
 }

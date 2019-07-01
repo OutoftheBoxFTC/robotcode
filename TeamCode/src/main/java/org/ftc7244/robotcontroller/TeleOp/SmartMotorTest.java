@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.ftc7244.robotcontroller.hardware.Robot;
-import org.ftc7244.robotcontroller.hardware.SmartMotorTestRobot;
+import org.ftc7244.robotcontroller.hardware.SmartRobot;
 import org.ftc7244.robotcontroller.opmodes.input.Button;
 import org.ftc7244.robotcontroller.opmodes.input.ButtonType;
 import org.ftc7244.robotcontroller.opmodes.input.PressButton;
@@ -21,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @TeleOp(name="Smart Motor Teleop")
 public class SmartMotorTest extends LinearOpMode {
     private static final double ARM_DOWN_PRESSURE = 0.05, ARM_HANG_OFFSET = 0.3, ANTI_TIP_TRIGGER_SPEED = 243, DRIVE_MODIFIER = 0.5, INTAKE_LATCH_OPEN = 0.05, INTAKE_LATCH_CLOSED = 0.95, ARM_RAISE_POSITION = 2550.0;
-    private SmartMotorTestRobot robot;
+    private SmartRobot robot;
     private double modifier = 1;
     private double armMod = 1;
     private double armOffset;
@@ -56,7 +55,7 @@ public class SmartMotorTest extends LinearOpMode {
     public void runOpMode() {
         raisingArm = new AtomicBoolean(false);
         threadManager = Executors.newCachedThreadPool();
-        robot = new SmartMotorTestRobot(this);
+        robot = new SmartRobot(this);
         robot.init();
         robot.initServos();
         pixy = robot.getIntakeI2c();

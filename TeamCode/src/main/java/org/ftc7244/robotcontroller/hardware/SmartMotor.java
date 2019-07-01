@@ -3,14 +3,19 @@ package org.ftc7244.robotcontroller.hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.openftc.revextensions2.ExpansionHubMotor;
+
 public class SmartMotor {
-    private DcMotorEx motor;
+    private ExpansionHubMotor motor;
 
     private double previousPower;
     private DcMotor.RunMode previousRunMode;
     private DcMotor.ZeroPowerBehavior previousZeroPowerBehaviour;
 
-    public SmartMotor(DcMotorEx motor){
+    private SmartRobot robot;
+
+    public SmartMotor(ExpansionHubMotor motor, SmartRobot robot){
+        this.robot = robot;
         this.motor = motor;
         if(motor != null){
             previousRunMode = motor.getMode();
@@ -40,10 +45,15 @@ public class SmartMotor {
     }
 
     public int getCurrentPosition(){
-        return motor.getCurrentPosition();
+        return robot.getBulkData().getMotorCurrentPosition(motor);
     }
 
-    public DcMotorEx getMotor() {
+    //TODO support velocity units (IE angular, absolute)
+    public double getMotorVelocity(){
+        return robot.getBulkData().getMotorVelocity(motor);
+    }
+
+    public ExpansionHubMotor getMotor() {
         return motor;
     }
 }
