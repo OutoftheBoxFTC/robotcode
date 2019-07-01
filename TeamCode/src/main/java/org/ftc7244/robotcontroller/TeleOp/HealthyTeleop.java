@@ -157,8 +157,10 @@ public class HealthyTeleop extends LinearOpMode {
                     armUpButtonUpdated = armUpButton.isUpdated();
 
             robot.bulkRead();
+            //TODO do via bulk read
             double vLeft = robot.getLeftDrive().getMotor().getVelocity(AngleUnit.DEGREES);
             double vRight = robot.getRightDrive().getMotor().getVelocity(AngleUnit.DEGREES);
+
             armPosition = robot.getRaisingArm1().getCurrentPosition();
             armSwitchPressed = !robot.armSwitchState();
             if (armSwitchPressed) {
